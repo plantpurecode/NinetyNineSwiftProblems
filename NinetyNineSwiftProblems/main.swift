@@ -1,6 +1,6 @@
 //
 //  main.swift
-//  testingground
+//  NinetyNineSwiftProblems
 //
 //  Created by Jacob Relkin on 7/14/18.
 //  Copyright © 2018 jacobrelkin. All rights reserved.
@@ -106,11 +106,11 @@ extension List {
     func copy() -> List? {
         return List<T>(values)
     }
-
+    
     var reversed:List<T> {
         return List(Array(values.reversed())) ?? self
     }
-
+    
     func reverse() {
         var index = 1
         var item:List<T>? = self
@@ -244,17 +244,17 @@ extension List where T == Any {
     private func flattenNew() -> List {
         var values = [T]()
         var node = Optional(self)
-
+        
         while let n = node {
             if let subList = n.value as? List<T> {
                 values.append(contentsOf: subList.flattenNew().values)
             } else {
                 values.append(n.value)
             }
-
+            
             node = n.nextItem
         }
-
+        
         return List<T>(values)!
     }
     
@@ -398,7 +398,7 @@ extension List where T == (Int, String) {
             for _ in 0..<count {
                 list.append(value)
             }
-        
+            
             node = n.nextItem
         }
         
@@ -412,7 +412,7 @@ extension List {
         guard times > 0 else {
             return nil
         }
-
+        
         var values = [T]()
         var node = Optional(self)
         
@@ -453,10 +453,10 @@ extension List {
         guard var head = copy() else {
             return nil
         }
-            
+        
         var index = 0
         var node = Optional(head)
-
+        
         while let n = node {
             let next = n.nextItem
             
@@ -508,7 +508,7 @@ extension List {
         guard let list = copy(),
             let fromNode = list[from],
             let endNode = fromNode[endIndex] else {
-            return nil
+                return nil
         }
         
         endNode.nextItem = nil
@@ -518,8 +518,7 @@ extension List {
 
 extension List where T : Hashable {
     func randomPermute() -> List {
-        var usedPermutations = Set<T>()
-        var permutations = [T]()
+        var permutations = Set<T>()
         
         while permutations.count < length {
             let selection = randomSelect(1).value
@@ -527,11 +526,10 @@ extension List where T : Hashable {
                 continue
             }
             
-            usedPermutations.insert(selection)
-            permutations.append(selection)
+            permutations.insert(selection)
         }
         
-        return List<T>(permutations)!
+        return List<T>(Array(permutations))!
     }
 }
 
@@ -550,7 +548,7 @@ extension List : CustomStringConvertible {
             buffer.append(String(describing: value))
             current = current?.nextItem
         }
-    
+        
         return "[" + buffer.joined(separator: ", ") + "]"
     }
 }
