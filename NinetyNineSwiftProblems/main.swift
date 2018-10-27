@@ -644,13 +644,15 @@ assert(list18.insertAt(index: 4, "new") == nil)
 assert(List.range(from: 4, 9) == List(4, 5, 6, 7, 8, 9)!)
 
 let list19 = List("a", "b", "c", "d", "e", "f", "g", "h")!
-print(list19.randomSelect(3))
+let list19rand3 = list19.randomSelect(3)
+assert(list19rand3.length == 3)
 
 let lotto = List.lotto(numbers: 5, 20)
 assert(lotto.length == 5)
 assert(lotto.randomSelect(1).value < 20)
-print("lotto of 5..20: " + lotto.description)
 
 let permutation = list19.randomPermute()
-assert(permutation.length == list19.length)
-print("random permutation of \(list19): " + permutation.description)
+let permSet = Set(permutation.values)
+
+// Assert that the permutation has the same count of, and all the elements in the list.
+assert(permSet.intersection(list19.values).count == list19.values.count)
