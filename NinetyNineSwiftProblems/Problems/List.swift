@@ -244,12 +244,10 @@ class List<T> {
         let len = length
         let index = len > 0 ? (len + amount) % len : 0
         let parts = split(at: index)
-        var result:List! = parts.1
+        let result = parts.1!
         
-        if result == nil {
-            result = parts.0
-        } else {
-            result.append(parts.0!)
+        if let firstPart = parts.0 {
+            result.append(firstPart)
         }
         
         return result

@@ -160,6 +160,10 @@ class ListTests : XCTestCase {
     func testSlice() {
         let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")!
         XCTAssertTrue(list.slice(3, 7)! == ["d", "e", "f", "g"])
+        
+        // Should return nil when providing out-of-bounds range.
+        let len = list.length
+        XCTAssertNil(list.slice(len, len))
     }
     
     func testRotation() {
@@ -170,6 +174,7 @@ class ListTests : XCTestCase {
     
     func testRemoveAt() {
         let list = List("a", "b", "c", "d")!
+        XCTAssertTrue(list.removeAt(0) == (List("b", "c", "d"), "a"))
         XCTAssertTrue(list.removeAt(1) == (List("a", "c", "d"), "b"))
         XCTAssertTrue(list.removeAt(3) == (List("a", "b", "c"), "d"))
         XCTAssertTrue(list.removeAt(4) == (nil, nil))
