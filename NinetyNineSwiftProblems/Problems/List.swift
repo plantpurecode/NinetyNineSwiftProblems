@@ -554,7 +554,7 @@ extension List {
         return list
     }
     
-    func permutations(_ group: Int) -> List<List<T>>? {
+    func permutations(_ group: Int = 0) -> List<List<T>>? {
         let vals = values
         var count = group
         

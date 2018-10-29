@@ -224,6 +224,15 @@ class ListTests : XCTestCase {
             let condition = intersection.count == group
             XCTAssertTrue(condition)
         }
+        
+        // Test permutations without giving a group parameter.
+        let list2 = List(1,2)!
+        let perms = list2.permutations()!
+        let random = perms.values.randomElement()!.values
+        XCTAssertTrue(random.count == list2.length)
+        
+        // Test giving a too-large group parameter.
+        XCTAssertNil(List(1,2)!.permutations(3))
     }
     
     func testCombinations() {
@@ -240,5 +249,14 @@ class ListTests : XCTestCase {
             let condition = intersection.count == group
             XCTAssertTrue(condition)
         }
+        
+        // Test combinations without giving a group parameter.
+        let list2 = List(1,2)!
+        let combos = list2.combinations()!
+        let random = combos.values.randomElement()!.values
+        XCTAssertTrue(random.count == list2.length)
+        
+        // Test giving a too-large group parameter.
+        XCTAssertNil(List(1,2)!.combinations(3))
     }
 }
