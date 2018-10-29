@@ -120,10 +120,7 @@ class ListTests : XCTestCase {
         XCTAssertTrue(list1.duplicateNew()! == ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
         
         let duplicated1 = ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c", "c", "c", "d", "d", "d"]
-        guard let dupList1 = list1.duplicateNew(times: 2) else {
-            XCTFail()
-            return
-        }
+        let dupList1 = list1.duplicateNew(times: 2)!
         
         XCTAssertTrue(dupList1 == duplicated1)
         XCTAssertNil(list1.duplicateNew(times: 0))
