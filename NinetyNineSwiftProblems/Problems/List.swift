@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combinatorics
 
 class List<T> {
     var value: T
@@ -539,20 +540,11 @@ extension List where T == (Int, String) {
     }
 }
 
-extension List where T : Hashable {
+extension List {
     func randomPermute() -> List {
-        var permutations = Set<T>()
-        
-        while permutations.count < length {
-            let selection = randomSelect(1).value
-            if permutations.contains(selection) {
-                continue
-            }
-            
-            permutations.insert(selection)
-        }
-        
-        return List<T>(Array(permutations))!
+        let v = values
+        let perms = Combinatorics.permutationsWithoutRepetitionFrom(v, taking: v.count)
+        return List<T>(perms.randomElement()!)!
     }
 }
 

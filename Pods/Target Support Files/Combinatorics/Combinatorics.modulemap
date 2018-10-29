@@ -1,0 +1,6 @@
+framework module Combinatorics {
+  umbrella header "Combinatorics-umbrella.h"
+
+  export *
+  module * { export * }
+}

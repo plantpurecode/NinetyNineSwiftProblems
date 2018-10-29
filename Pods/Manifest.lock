@@ -1,0 +1,16 @@
+PODS:
+  - Combinatorics (1.4)
+
+DEPENDENCIES:
+  - Combinatorics
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Combinatorics
+
+SPEC CHECKSUMS:
+  Combinatorics: 890b1bc586642f25f81c2274572295c1fe3a6460
+
+PODFILE CHECKSUM: 0a7122ea949d965369e91c9f34914357fe56796d
+
+COCOAPODS: 1.5.3
