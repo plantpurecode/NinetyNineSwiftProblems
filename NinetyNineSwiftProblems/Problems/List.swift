@@ -352,24 +352,6 @@ extension List where T == Any {
         return list
     }
     
-    // Recursive flatten that returns a new List
-    private func flattenNew() -> List {
-        var values = [T]()
-        var node = Optional(self)
-        
-        while let n = node {
-            if let subList = n.value as? List<T> {
-                values.append(contentsOf: subList.flattenNew().values)
-            } else {
-                values.append(n.value)
-            }
-            
-            node = n.nextItem
-        }
-        
-        return List<T>(values)!
-    }
-    
     // Inline flatten
     func flatten() {
         var node = Optional(self)
