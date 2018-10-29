@@ -321,15 +321,9 @@ class List<T> {
 extension List where T == Int {
     class func lotto(numbers: Int, _ maximum: Int) -> List {
         var values = Set<Int>()
-        var index = 0
-        while index < numbers {
-            let random = Int(arc4random_uniform(UInt32(maximum)))
-            if values.contains(random) {
-                continue
-            }
-            
+        while values.count < numbers {
+            let random = Int.random(in: 0...maximum)
             values.insert(random)
-            index += 1
         }
         
         return List(Array(values))!
