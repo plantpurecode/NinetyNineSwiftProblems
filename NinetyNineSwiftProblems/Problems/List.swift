@@ -395,7 +395,11 @@ extension List where T == Any {
     }
 }
 
-extension List where T : Equatable {
+extension List : Equatable where T : Equatable {
+    static func == (lhs: List<T>, rhs: List<T>) -> Bool {
+        return lhs.values == rhs.values
+    }
+    
     static func == (lhs: List<T>, rhs: [T]) -> Bool {
         return lhs.values == rhs
     }
@@ -407,7 +411,9 @@ extension List where T : Equatable {
         
         return first.value == rhs
     }
+}
 
+extension List where T : Equatable {
     func isPalindrome() -> Bool {
         var cNode:List<T>? = reversed
         var csNode = Optional(self)
@@ -547,11 +553,42 @@ extension List {
         let perms = values.permutations()
         return List<T>(perms.randomElement()!)!
     }
-}
-
-extension List : Equatable where T: Equatable {
-    static func == (lhs: List<T>, rhs: List<T>) -> Bool {
-        return lhs.values == rhs.values
+    
+    func combinations(_ group: Int = 0) -> List<List<T>>? {
+        let vals = values
+        var count = group
+        
+        if group == 0 {
+            // Default value provided - use vals.count
+            count = vals.count
+        }
+    
+        guard group <= vals.count else {
+            return nil
+        }
+        
+        let combos = Combinatorics.combinationsWithoutRepetitionFrom(vals, taking: count)
+        let list = List<List<T>>(combos.map { List($0)! })!
+        return list
+    }
+    
+    func permutations(_ group: Int) -> List<List<T>>? {
+        let vals = values
+        var count = group
+        
+        if group == 0 {
+            // Default value provided - use vals.count
+            count = vals.count
+        }
+        
+        guard group <= vals.count else {
+            return nil
+        }
+        
+        let perms = Combinatorics.permutationsWithoutRepetitionFrom(vals, taking: count)
+        let list = List<List<T>>(perms.map { List($0)! })!
+     
+        return list
     }
 }
 

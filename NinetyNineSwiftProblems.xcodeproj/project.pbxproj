@@ -13,7 +13,6 @@
 		52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F8716A218744C300AA73D3 /* AppDelegate.swift */; };
 		52F8716D218744C400AA73D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716C218744C400AA73D3 /* Assets.xcassets */; };
 		52F87170218744C400AA73D3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716E218744C400AA73D3 /* MainMenu.xib */; };
-		52F8717C218744C400AA73D3 /* NinetyNineSwiftProblemsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F8717B218744C400AA73D3 /* NinetyNineSwiftProblemsTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +50,6 @@
 		52F87171218744C400AA73D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		52F87172218744C400AA73D3 /* NinetyNineSwiftProblems.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NinetyNineSwiftProblems.entitlements; sourceTree = "<group>"; };
 		52F87177218744C400AA73D3 /* NinetyNineSwiftProblemsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinetyNineSwiftProblemsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		52F8717B218744C400AA73D3 /* NinetyNineSwiftProblemsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinetyNineSwiftProblemsTests.swift; sourceTree = "<group>"; };
 		52F8717D218744C400AA73D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BE9CD5F43B041798F16F629 /* Pods-NinetyNineSwiftProblems.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinetyNineSwiftProblems.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinetyNineSwiftProblems/Pods-NinetyNineSwiftProblems.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -136,7 +134,6 @@
 			isa = PBXGroup;
 			children = (
 				5222F36C21874765001C2B87 /* ListTests.swift */,
-				52F8717B218744C400AA73D3 /* NinetyNineSwiftProblemsTests.swift */,
 				52F8717D218744C400AA73D3 /* Info.plist */,
 			);
 			path = NinetyNineSwiftProblemsTests;
@@ -318,7 +315,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52F8717C218744C400AA73D3 /* NinetyNineSwiftProblemsTests.swift in Sources */,
 				5222F36D21874765001C2B87 /* ListTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

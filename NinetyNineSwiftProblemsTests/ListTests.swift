@@ -22,6 +22,18 @@ class ListTests : XCTestCase {
         XCTAssertTrue(defaultList == defaultValues)
     }
     
+    func testComparators() {
+        // List to List
+        XCTAssertEqual(List(1,2,3)!, List(1,2,3)!)
+        
+        // List to Array
+        XCTAssertTrue(List(1,2,3)! == [1,2,3])
+        
+        // Single value comparison
+        XCTAssertTrue(List(1)! == 1)
+        XCTAssertFalse(List(1,2)! == 1)
+    }
+    
     func testReversed() {
         XCTAssertTrue(defaultList.reversed == defaultValues.reversed())
     }
@@ -181,23 +193,52 @@ class ListTests : XCTestCase {
     func testRandomSelect() {
         let list = List("a", "b", "c", "d", "e", "f", "g", "h")!
         let rand3 = list.randomSelect(3)
+        let listSet = Set(list.values)
+        let randSet = Set(rand3.values)
+        
+        XCTAssertTrue(listSet.intersection(randSet).count == rand3.length)
         XCTAssertTrue(rand3.length == 3)
     }
     
     func testLotto() {
         let lotto = List.lotto(numbers: 5, 20)
         XCTAssertTrue(lotto.length == 5)
-        XCTAssertTrue(lotto.randomSelect(1).value < 20)
+        XCTAssertTrue(lotto.values.filter { $0 >= 20 }.count == 0)
     }
     
     func testPermutations() {
         let list = List("a", "b", "c")!
+        let length = list.length
         let randomPermutation = Set(list.randomPermute().values)
+        let group = Int(1 + arc4random_uniform(UInt32(length) - 1))
+
+        XCTAssertTrue(randomPermutation.intersection(list.values).count == length)
         
-        XCTAssertTrue(randomPermutation.intersection(list.values).count == list.values.count)
+        let distinctPermutations = list.permutations(group)!.values.map { $0.values }
+        
+        print("list is \(list), group is \(group), permutations are: \(distinctPermutations)")
+        
+        let set = Set(list.values)
+        distinctPermutations.forEach { perm in
+            let intersection = set.intersection(Set(perm))
+            let condition = intersection.count == group
+            XCTAssertTrue(condition)
+        }
     }
     
     func testCombinations() {
+        let length = 12
+        let list = List.lotto(numbers: length, 50)
+        let group = 1 + Int(arc4random_uniform(UInt32(length / 2)))
+        let combinations = list.combinations(group)!.values.map { $0.values }
         
+        print("list is \(list), group is \(group), combos are: \(combinations)")
+        
+        let set = Set(list.values)
+        combinations.forEach { combo in
+            let intersection = set.intersection(Set(combo))
+            let condition = intersection.count == group
+            XCTAssertTrue(condition)
+        }
     }
 }
