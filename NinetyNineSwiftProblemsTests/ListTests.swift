@@ -29,6 +29,16 @@ class ListTests : XCTestCase {
     func testLength() {
         XCTAssertTrue(defaultList.length == defaultValues.count)
     }
+    
+    func testSubscripting() {
+        let values = defaultList.values
+        for (i, _) in values.enumerated() {
+            XCTAssertEqual(defaultList[i]?.value, values[i])
+        }
+        
+        // Shouldn't allow subscripting above length
+        XCTAssertNil(defaultList[100])
+    }
 
     func testPenultimate() {
         XCTAssertTrue(defaultList.penultimate.value == defaultValues[defaultValues.count - 2])
@@ -43,7 +53,7 @@ class ListTests : XCTestCase {
             XCTAssertTrue(defaultList[i]!.value == value)
         }
     }
-    
+
     func testReverse() {
         let copy = defaultList.copy()!
         copy.reverse()
@@ -96,20 +106,35 @@ class ListTests : XCTestCase {
     func testDuplication() {
         let list1 = List("a", "b", "c", "c", "d")!
         XCTAssertTrue(list1.duplicateNew()! == ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
-        XCTAssertTrue(list1.duplicateNew(times: 2)! == ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c", "c", "c", "d", "d", "d"])
-
+        
+        let duplicated1 = ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c", "c", "c", "d", "d", "d"]
+        guard let dupList1 = list1.duplicateNew(times: 2) else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertTrue(dupList1 == duplicated1)
+        XCTAssertNil(list1.duplicateNew(times: 0))
+        
         let list2 = List("a", "b", "c", "c", "d")!
         list2.duplicate()
         XCTAssertTrue(list2 == ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
 
         let list3 = List("a", "b", "c", "c", "d")!
-        list3.duplicate(times: 3)
-        XCTAssertTrue(list3 == ["a", "a", "a", "a", "b", "b", "b", "b", "c", "c", "c", "c", "c", "c", "c", "c", "d", "d", "d", "d"])
+        let duplicated2 = ["a", "a", "a", "a", "b", "b", "b", "b", "c", "c", "c", "c", "c", "c", "c", "c", "d", "d", "d", "d"]
+    
+        // Should NOP when passing 0 times, so run assertion again
+        for t in [3, 0] {
+            list3.duplicate(times: t)
+            XCTAssertTrue(list3 == duplicated2)
+        }
     }
 
     func testDrop() {
         let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")!
         XCTAssertTrue(list.drop(every: 3)! == ["a", "b", "d", "e", "g", "h", "j", "k"])
+        
+        XCTAssertNil(list.drop(every: 0))
     }
     
     func testSplit() {
@@ -138,12 +163,15 @@ class ListTests : XCTestCase {
         XCTAssertTrue(list.removeAt(4) == (nil, nil))
     }
     
-    func testInsertAt() {
+    func testInsertion() {
         let list = List("a", "b", "c", "d")!
         XCTAssertTrue(list.insertAt(index: 1, "new")! == ["a", "new", "b", "c", "d"])
         XCTAssertTrue(list.insertAt(index: 0, "new")! == ["new", "a", "b", "c", "d"])
         XCTAssertTrue(list.insertAt(index: 3, "new")! == ["a", "b", "c", "d", "new"])
         XCTAssertTrue(list.insertAt(index: 4, "new") == nil)
+        
+        list.insert(List("e", "f", "g")!)
+        XCTAssertTrue(list == ["a", "e", "f", "g", "b", "c", "d"])
     }
     
     func testRange() {
@@ -167,5 +195,9 @@ class ListTests : XCTestCase {
         let randomPermutation = Set(list.randomPermute().values)
         
         XCTAssertTrue(randomPermutation.intersection(list.values).count == list.values.count)
+    }
+    
+    func testCombinations() {
+        
     }
 }

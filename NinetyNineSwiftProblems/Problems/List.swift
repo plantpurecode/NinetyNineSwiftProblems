@@ -170,9 +170,11 @@ class List<T> {
     }
     
     func drop(every: Int) -> List? {
-        guard var head = copy() else {
+        guard every > 0 else {
             return nil
         }
+
+        let head = copy()!
         
         var index = 0
         var node = Optional(head)
@@ -542,8 +544,7 @@ extension List where T == (Int, String) {
 
 extension List {
     func randomPermute() -> List {
-        let v = values
-        let perms = Combinatorics.permutationsWithoutRepetitionFrom(v, taking: v.count)
+        let perms = values.permutations()
         return List<T>(perms.randomElement()!)!
     }
 }
