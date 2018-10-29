@@ -210,7 +210,7 @@ class ListTests : XCTestCase {
         let list = List("a", "b", "c")!
         let length = list.length
         let randomPermutation = Set(list.randomPermute().values)
-        let group = Int(1 + arc4random_uniform(UInt32(length) - 1))
+        let group = Int.random(in: 1...length)
 
         XCTAssertTrue(randomPermutation.intersection(list.values).count == length)
         
@@ -238,7 +238,7 @@ class ListTests : XCTestCase {
     func testCombinations() {
         let length = 12
         let list = List.lotto(numbers: length, 50)
-        let group = 1 + Int(arc4random_uniform(UInt32(length / 2)))
+        let group = Int.random(in: 1...length)
         let combinations = list.combinations(group)!.values.map { $0.values }
         
         print("list is \(list), group is \(group), combos are: \(combinations)")
