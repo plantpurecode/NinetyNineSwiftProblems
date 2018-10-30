@@ -561,31 +561,59 @@ extension List {
         
         let perms = Combinatorics.permutationsWithoutRepetitionFrom(vals, taking: count)
         let list = List<List<T>>(perms.map { List($0)! })!
-     
+        
         return list
     }
     
     func group3() -> List<List<List<T>>>? {
-        var vals = values
+        return group(groups: List<Int>([2,3,4])!)
+    }
+    
+    func group(groups: List<Int>) -> List<List<List<T>>>? {
+        let gVals = groups.values
         
-        let allGroups:[[[T]]] = (2...4).map { $0 }.map {
-            let group = vals.permutations(taking: $0, withRepetition: false)
-            vals.removeFirst($0)
-            return group
-        }
-        
-        guard let first = allGroups.first,
-            let middle = Optional(allGroups[1]),
-            let last = allGroups.last else {
+        // Guard that the sum of the groups and the length of the list are equal
+        guard gVals.reduce(0, +) == length else {
             return nil
         }
         
-        let zipped = zip(first, zip(middle, last))
-        let list = zipped.map { [$0, $1.0, $1.1] }
+        var finalList = [[[T]]]()
+        var index = 0
+        var shouldBreak = false
+        var vals = values
         
-        return List<List<List<T>>>(list.compactMap {
+        let list = gVals.map { gv -> [[T]] in
+            let group = vals.permutations(taking: gv, withRepetition: false)
+            vals.removeFirst(gv)
+            return group
+        }
+        
+        while true {
+            var row = [[T]]()
+            
+            for i in 0..<gVals.count {
+                let r = list[i]
+                if index == r.count-1 {
+                    shouldBreak = true
+                    break
+                }
+                
+                row.append(r[index])
+            }
+            
+            if shouldBreak {
+                break
+            }
+            
+            index += 1
+            finalList.append(row)
+        }
+        
+        let mappedList = finalList.compactMap {
             List<List<T>>($0.compactMap({ List<T>($0) }))
-        })!
+        }
+        
+        return List<List<List<T>>>(mappedList)!
     }
 }
 

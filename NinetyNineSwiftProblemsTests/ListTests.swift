@@ -264,9 +264,36 @@ class ListTests : XCTestCase {
     
     func testGroup3() {
         let list = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")!
-        let group3 = list.group3()
+        let group3 = list.group3()!
+        
+        let lengthExpectations = [2,3,4]
+        group3.values.forEach { (listOfLists:List<List<String>>) in
+            let vals = listOfLists.values
+            
+            for (index, length) in lengthExpectations.enumerated() {
+                XCTAssertTrue(vals[index].length == length)
+            }
+        }
         
         let expectedFirstSubset = [["Aldo", "Beat"], ["Carla", "David", "Evi"], ["Flip", "Gary", "Hugo", "Ida"]]
-        XCTAssertEqual(group3?.value, List<List<String>>(expectedFirstSubset.map { List($0)! })!)
+        XCTAssertEqual(group3.value, List<List<String>>(expectedFirstSubset.map { List($0)! })!)
     }
+
+    func testGroupN() {
+        let list = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")!
+        let lengthExpectations = [2,2,5]
+        let group = list.group(groups: List(lengthExpectations)!)!
+    
+        group.values.forEach { (listOfLists:List<List<String>>) in
+            let vals = listOfLists.values
+            
+            for (index, length) in lengthExpectations.enumerated() {
+                XCTAssertTrue(vals[index].length == length)
+            }
+        }
+        
+        XCTAssertEqual(group.value, List(List("Aldo", "Beat")!, List("Carla", "David")!, List("Evi", "Flip", "Gary", "Hugo", "Ida")!))
+        XCTAssertNil(list.group(groups: List(1, 2, list.length)!)) // Sum of groups is greater than the length of the list.
+    }
+
 }
