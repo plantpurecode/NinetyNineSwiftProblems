@@ -322,7 +322,7 @@ extension List where T == Int {
     class func lotto(numbers: Int, _ maximum: Int) -> List {
         var values = Set<Int>()
         while values.count < numbers {
-            let random = Int.random(in: 0...maximum)
+            let random = Int.random(in: 0..<maximum)
             values.insert(random)
         }
         
@@ -563,6 +563,29 @@ extension List {
         let list = List<List<T>>(perms.map { List($0)! })!
      
         return list
+    }
+    
+    func group3() -> List<List<List<T>>>? {
+        var vals = values
+        
+        let allGroups:[[[T]]] = (2...4).map { $0 }.map {
+            let group = vals.permutations(taking: $0, withRepetition: false)
+            vals.removeFirst($0)
+            return group
+        }
+        
+        guard let first = allGroups.first,
+            let middle = Optional(allGroups[1]),
+            let last = allGroups.last else {
+            return nil
+        }
+        
+        let zipped = zip(first, zip(middle, last))
+        let list = zipped.map { [$0, $1.0, $1.1] }
+        
+        return List<List<List<T>>>(list.compactMap {
+            List<List<T>>($0.compactMap({ List<T>($0) }))
+        })!
     }
 }
 

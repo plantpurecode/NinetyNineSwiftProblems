@@ -261,4 +261,12 @@ class ListTests : XCTestCase {
         // Test giving a too-large group parameter.
         XCTAssertNil(List(1,2)!.combinations(3))
     }
+    
+    func testGroup3() {
+        let list = List("Aldo", "Beat", "Carla", "David", "Evi", "Flip", "Gary", "Hugo", "Ida")!
+        let group3 = list.group3()
+        
+        let expectedFirstSubset = [["Aldo", "Beat"], ["Carla", "David", "Evi"], ["Flip", "Gary", "Hugo", "Ida"]]
+        XCTAssertEqual(group3?.value, List<List<String>>(expectedFirstSubset.map { List($0)! })!)
+    }
 }
