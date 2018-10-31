@@ -242,10 +242,8 @@ class ListTests : XCTestCase {
         let list = List.lotto(numbers: length, 50)
         let group = Int.random(in: 1...length)
         let combinations = list.combinations(group)!.values.map { $0.values }
-        
-        print("list is \(list), group is \(group), combos are: \(combinations)")
-        
         let set = Set(list.values)
+        
         combinations.forEach { combo in
             let intersection = set.intersection(Set(combo))
             let condition = intersection.count == group
