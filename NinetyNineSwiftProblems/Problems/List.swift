@@ -24,18 +24,6 @@ class List<T> {
         value = first
         nextItem = List(Array(values.suffix(from: 1)))
     }
-
-    func append(_ list: List<T>) {
-        last.nextItem = list
-    }
-    
-    func insert(_ list: List<T>) {
-        if let next = nextItem {
-            list.append(next)
-        }
-        
-        nextItem = list
-    }
     
     var last: List<T> {
         var item = self
@@ -110,6 +98,19 @@ class List<T> {
     
     func copy() -> List? {
         return List<T>(values)
+    }
+    
+    
+    func append(_ list: List<T>) {
+        last.nextItem = list
+    }
+    
+    func insert(_ list: List<T>) {
+        if let next = nextItem {
+            list.append(next)
+        }
+        
+        nextItem = list
     }
     
     func reverse() {
