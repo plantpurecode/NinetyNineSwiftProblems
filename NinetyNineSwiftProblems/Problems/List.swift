@@ -628,6 +628,39 @@ extension List where T == List<Any> {
         
         return List(values.sorted { $0.length < $1.length })!
     }
+    
+    func lsortFreq() -> List<List<Any>>  {
+        let listsSortedByLengthFrequencies = values.reduce(into: [Int : (Int,  [List<Any>])]()) { (result, list) in
+            var lists: [List<Any>]?
+            var freq = 1
+            
+            if let (f, array) = result[list.length] {
+                freq = f + 1
+                lists = array
+            } else {
+                lists = [List<Any>]()
+            }
+            
+            lists!.append(list)
+            result[list.length] = (freq, lists!)
+        }.sorted() { (
+            first: (length: Int, info: (freq: Int, lists: [List<Any>])),
+            second: (length: Int, info: (freq: Int, lists: [List<Any>]))
+        ) -> Bool in
+            let ff = first.info.freq, sf = second.info.freq
+            guard ff != sf else {
+                return first.length > second.length
+            }
+            
+            return ff < sf
+        }
+        
+        let results = listsSortedByLengthFrequencies.reduce(into: [List<Any>]()) { (result, tuple: (key: Int, value: (Int, [List<Any>]))) in
+            result.append(contentsOf: tuple.value.1)
+        }
+        
+        return List<List<Any>>(results)!
+    }
 }
 
 extension List : CustomStringConvertible {

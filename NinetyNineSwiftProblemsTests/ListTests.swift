@@ -306,4 +306,11 @@ class ListTests : XCTestCase {
         
         XCTAssertTrue(sorted.values.map { $0.values as? [String] } == [["a", "b"], ["a", "b", "c"], ["a", "b", "c", "d", "e"]])
     }
+    
+    func testLengthFrequencySort() {
+        let list:List<List<Any>> = List(List("a", "b", "c")!, List("d", "e")!, List("f", "g", "h")!, List("d", "e")!, List("i", "j", "k", "l")!, List("m", "n")!, List("o")!)!
+        let result = list.lsortFreq()
+        
+        XCTAssertEqual(result.values.map { $0.values } as! [[String]], [["i", "j", "k", "l"], ["o"], ["a", "b", "c"], ["f", "g", "h"], ["d", "e"], ["d", "e"], ["m", "n"]])
+    }
 }
