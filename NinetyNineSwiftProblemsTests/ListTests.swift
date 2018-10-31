@@ -295,5 +295,11 @@ class ListTests : XCTestCase {
         XCTAssertEqual(group.value, List(List("Aldo", "Beat")!, List("Carla", "David")!, List("Evi", "Flip", "Gary", "Hugo", "Ida")!))
         XCTAssertNil(list.group(groups: List(1, 2, list.length)!)) // Sum of groups is greater than the length of the list.
     }
-
+    
+    func testLengthSort() {
+        let list = List<List<Any>>(List<Any>("a", "b", "c", "d", "e")!, List<Any>("a", "b")!, List<Any>("a", "b", "c")!)!
+        let sorted = list.lsort()
+        
+        XCTAssertTrue(sorted.values.map { $0.values as? [String] } == [["a", "b"], ["a", "b", "c"], ["a", "b", "c", "d", "e"]])
+    }
 }

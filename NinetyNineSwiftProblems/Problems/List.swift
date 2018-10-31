@@ -617,6 +617,12 @@ extension List {
     }
 }
 
+extension List where T == List<Any> {
+    func lsort() -> List<List<Any>> {
+        return List(values.sorted { $0.length < $1.length })!
+    }
+}
+
 extension List : CustomStringConvertible {
     public var description: String {
         var buffer = [String]()
