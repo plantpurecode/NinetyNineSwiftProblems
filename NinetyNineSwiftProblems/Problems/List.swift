@@ -619,6 +619,8 @@ extension List {
 
 extension List where T == List<Any> {
     func lsort() -> List<List<Any>> {
+        // TODO: Do this without cheating? ;)
+        
         return List(values.sorted { $0.length < $1.length })!
     }
 }
