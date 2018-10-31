@@ -242,7 +242,7 @@ class List<T> {
     
     func rotate(amount: Int) -> List {
         let len = length
-        let index = len > 0 ? (len + amount) % len : 0
+        let index = (len + amount) % len
         let parts = split(at: index)
         let result = parts.1!
         
