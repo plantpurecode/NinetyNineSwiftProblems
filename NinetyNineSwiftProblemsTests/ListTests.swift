@@ -277,6 +277,10 @@ class ListTests : XCTestCase {
         
         let expectedFirstSubset = [["Aldo", "Beat"], ["Carla", "David", "Evi"], ["Flip", "Gary", "Hugo", "Ida"]]
         XCTAssertEqual(group3.value, List<List<String>>(expectedFirstSubset.map { List($0)! })!)
+        
+        // Try calling it with a list of length != 9
+        let invalidLengthList = List((1...8).map { $0 })!
+        XCTAssertNil(invalidLengthList.group3())
     }
 
     func testGroupN() {

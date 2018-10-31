@@ -566,6 +566,10 @@ extension List {
     }
     
     func group3() -> List<List<List<T>>>? {
+        guard length == 9 else {
+            return nil
+        }
+        
         return group(groups: List<Int>([2,3,4])!)
     }
     
