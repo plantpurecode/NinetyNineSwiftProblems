@@ -312,3 +312,43 @@ class ListTests : XCTestCase {
         XCTAssertEqual(result.values.map { $0.values } as! [[String]], [["i", "j", "k", "l"], ["o"], ["a", "b", "c"], ["f", "g", "h"], ["d", "e"], ["d", "e"], ["m", "n"]])
     }
 }
+
+// A small sample of tests for the Sequence implementation, just in case.
+class ListSequenceTests : XCTestCase {
+    let list = List(1,2,3)!
+
+    func testContains() {
+        XCTAssertTrue(list.contains(1))
+        XCTAssertFalse(list.contains(0))
+    }
+    
+    func testDropFirst() {
+        XCTAssertEqual(Array(list.dropFirst()), [2,3])
+    }
+    
+    func testDropLast() {
+        XCTAssertEqual(Array(list.dropLast()), [1,2])
+    }
+    
+    func testElementsEqual() {
+        XCTAssertTrue(list.elementsEqual([1,2,3]))
+    }
+    
+    func testEnumerated() {
+        var index = 0
+        for (i, val) in list.enumerated() {
+            XCTAssertTrue(i == index)
+            XCTAssertTrue(val == list[i]?.value)
+            index += 1
+        }
+    }
+    
+    func testFilter() {
+        XCTAssertEqual(list.filter() { $0 != 1 }, [2,3])
+    }
+    
+    func testCompactMap() {
+        let nilList = List<Any>([nil, nil, 1])!
+        XCTAssertTrue(nilList.compactMap { $0 }.count == 1)
+    }
+}

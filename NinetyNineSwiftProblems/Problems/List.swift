@@ -663,6 +663,29 @@ extension List where T == List<Any> {
     }
 }
 
+extension List : Sequence {
+    struct ListIterator : IteratorProtocol {
+        typealias Element = T
+        let list:List
+        
+        init(_ givenList:List) {
+            list = givenList
+        }
+        
+        var index = 0
+        
+        mutating func next() -> T? {
+            let next = list[index]
+            index += 1
+            return next?.value
+        }
+    }
+    
+    func makeIterator() -> ListIterator {
+        return ListIterator(self)
+    }
+}
+
 extension List : CustomStringConvertible {
     public var description: String {
         var buffer = [String]()
