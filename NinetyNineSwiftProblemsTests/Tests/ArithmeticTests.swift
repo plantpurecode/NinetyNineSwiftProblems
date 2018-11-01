@@ -28,12 +28,21 @@ class ArithmeticTests: XCTestCase {
     }
     
     func testAllPrime() {
-        XCTAssertTrue(primes.allPrime())
+        XCTAssertTrue(try! primes.allPrime())
         
         let unorderedPrimes = [2,5,3,37,29,7]
-        XCTAssertTrue(unorderedPrimes.allPrime(greatestIndex: 3))
+        XCTAssertTrue(try! unorderedPrimes.allPrime(greatestIndex: 3))
         
-        // invalid index... should return false
-        XCTAssertFalse(unorderedPrimes.allPrime(greatestIndex: 10))
+        // invalid index... should throw
+        XCTAssertThrowsError(try unorderedPrimes.allPrime(greatestIndex: 10)) {
+            guard case Primes.Error.greatestIndexTooLarge = $0 else {
+                XCTFail("Invalid error type thrown")
+                return
+            }
+        }
+
+        XCTAssertFalse(try! [1,2].allPrime())
+        XCTAssertFalse(try! (1...10).map { $0 }.allPrime())
     }
 }
+
