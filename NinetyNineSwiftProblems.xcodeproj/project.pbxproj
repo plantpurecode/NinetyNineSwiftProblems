@@ -12,6 +12,7 @@
 		5222F36D21874765001C2B87 /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F36C21874765001C2B87 /* ListTests.swift */; };
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
+		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
 		52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F8716A218744C300AA73D3 /* AppDelegate.swift */; };
 		52F8716D218744C400AA73D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716C218744C400AA73D3 /* Assets.xcassets */; };
 		52F87170218744C400AA73D3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716E218744C400AA73D3 /* MainMenu.xib */; };
@@ -47,6 +48,7 @@
 		5222F36C21874765001C2B87 /* ListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTests.swift; sourceTree = "<group>"; };
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
+		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
 		52F87167218744C300AA73D3 /* NinetyNineSwiftProblems.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinetyNineSwiftProblems.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F8716A218744C300AA73D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52F8716C218744C400AA73D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -122,6 +124,14 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
+		526EA6F9218B00B90047835E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				526EA6FA218B00E70047835E /* SetExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		52F8715E218744C200AA73D3 = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +155,7 @@
 		52F87169218744C300AA73D3 /* NinetyNineSwiftProblems */ = {
 			isa = PBXGroup;
 			children = (
+				526EA6F9218B00B90047835E /* Extensions */,
 				5222F36A21874683001C2B87 /* App */,
 				5222F35F2187461C001C2B87 /* Problems */,
 				5222F36B2187468F001C2B87 /* Resources */,
@@ -330,6 +341,7 @@
 			files = (
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
 				52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */,
+				526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */,
 				5222F3632187461C001C2B87 /* List.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
