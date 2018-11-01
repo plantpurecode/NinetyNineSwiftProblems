@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jacob Relkin. All rights reserved.
 //
 
-import Foundation
 import XCTest
 @testable import NinetyNineSwiftProblems
 

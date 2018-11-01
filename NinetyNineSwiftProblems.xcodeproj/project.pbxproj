@@ -10,6 +10,8 @@
 		0AC3590A379260AA1A58DE2C /* Pods_NinetyNineSwiftProblems.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A25D3036A5E38893C688840 /* Pods_NinetyNineSwiftProblems.framework */; };
 		5222F3632187461C001C2B87 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F3602187461C001C2B87 /* List.swift */; };
 		5222F36D21874765001C2B87 /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F36C21874765001C2B87 /* ListTests.swift */; };
+		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
+		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F8716A218744C300AA73D3 /* AppDelegate.swift */; };
 		52F8716D218744C400AA73D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716C218744C400AA73D3 /* Assets.xcassets */; };
 		52F87170218744C400AA73D3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716E218744C400AA73D3 /* MainMenu.xib */; };
@@ -43,6 +45,8 @@
 		3A25D3036A5E38893C688840 /* Pods_NinetyNineSwiftProblems.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinetyNineSwiftProblems.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5222F3602187461C001C2B87 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
 		5222F36C21874765001C2B87 /* ListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTests.swift; sourceTree = "<group>"; };
+		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
+		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		52F87167218744C300AA73D3 /* NinetyNineSwiftProblems.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinetyNineSwiftProblems.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F8716A218744C300AA73D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52F8716C218744C400AA73D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -77,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				5222F3602187461C001C2B87 /* List.swift */,
+				526EA6EE218AD9B60047835E /* Arithmetic.swift */,
 			);
 			path = Problems;
 			sourceTree = "<group>";
@@ -98,6 +103,23 @@
 				52F87172218744C400AA73D3 /* NinetyNineSwiftProblems.entitlements */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		526EA6F4218ADA7C0047835E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				52F8717D218744C400AA73D3 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		526EA6F5218ADA8B0047835E /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				526EA6F2218ADA750047835E /* ArithmeticTests.swift */,
+				5222F36C21874765001C2B87 /* ListTests.swift */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		52F8715E218744C200AA73D3 = {
@@ -133,8 +155,8 @@
 		52F8717A218744C400AA73D3 /* NinetyNineSwiftProblemsTests */ = {
 			isa = PBXGroup;
 			children = (
-				5222F36C21874765001C2B87 /* ListTests.swift */,
-				52F8717D218744C400AA73D3 /* Info.plist */,
+				526EA6F5218ADA8B0047835E /* Tests */,
+				526EA6F4218ADA7C0047835E /* Resources */,
 			);
 			path = NinetyNineSwiftProblemsTests;
 			sourceTree = "<group>";
@@ -306,6 +328,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
 				52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */,
 				5222F3632187461C001C2B87 /* List.swift in Sources */,
 			);
@@ -316,6 +339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5222F36D21874765001C2B87 /* ListTests.swift in Sources */,
+				526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,7 +533,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;
-				INFOPLIST_FILE = NinetyNineSwiftProblemsTests/Info.plist;
+				INFOPLIST_FILE = NinetyNineSwiftProblemsTests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -532,7 +556,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;
-				INFOPLIST_FILE = NinetyNineSwiftProblemsTests/Info.plist;
+				INFOPLIST_FILE = NinetyNineSwiftProblemsTests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
