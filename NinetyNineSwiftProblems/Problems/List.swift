@@ -630,7 +630,7 @@ extension List where T == List<Any> {
     }
     
     func lsortFreq() -> List<List<Any>>  {
-        let listsSortedByLengthFrequencies = values.reduce(into: [Int : (Int,  [List<Any>])]()) { (result, list) in
+        let listsSortedByLengthFrequencies = values.reduce(into: [Int : (Int, [List<Any>])]()) { (result, list) in
             var lists: [List<Any>]?
             var freq = 1
             
