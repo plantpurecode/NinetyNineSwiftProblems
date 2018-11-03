@@ -12,15 +12,6 @@ import XCTest
 fileprivate let primes = [Int](arrayLiteral:2,3,5,7,11,13,17,19,23,29,31,37,41,43,47)
 
 class ArithmeticTests: XCTestCase {
-
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func testIsPrime() {
         primes.forEach {
             XCTAssertTrue($0.isPrime())
