@@ -18,10 +18,14 @@ struct Primes {
             return nil
         }
         
-        let secondToLast = Int(n.unsafeSubtracting(1))
+        let (secondToLast, overflowed) = n.subtractingReportingOverflow(1)
+        
+        guard overflowed == false else {
+            return nil
+        }
         
         var a = Array(repeating: false, count: 2)
-        a.append(contentsOf: Array(repeating: true, count: secondToLast))
+        a.append(contentsOf: Array(repeating: true, count: Int(secondToLast)))
         
         // TODO: Use sqrt as upper bound?
         for i in 2..<a.count where a[i] {
