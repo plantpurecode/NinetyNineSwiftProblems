@@ -46,6 +46,25 @@ extension Int {
     func isPrime() -> Bool {
         return (try? [self].allPrime()) ?? false
     }
+    
+    static func gcd(_ first: Int, _ second: Int) -> Int {
+        var a = 0
+        var b = first > second ? first : second
+        var r = first < second ? first : second
+        
+        while r != 0 {
+            a = b
+            b = r
+            r = a % b
+        }
+        
+        return b
+    }
+    
+    
+    func lcm(_ m: Int, _ n: Int) -> Int {
+        return m / Int.gcd(m, n) * n
+    }
 }
 
 extension Array where Element == Int {

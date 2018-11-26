@@ -35,5 +35,9 @@ class ArithmeticTests: XCTestCase {
         XCTAssertFalse(try! [1,2].allPrime())
         XCTAssertFalse(try! (1...10).map { $0 }.allPrime())
     }
+    
+    func testGCD() {
+        XCTAssertEqual(Int.gcd(36, 63), 9)
+    }
 }
 
