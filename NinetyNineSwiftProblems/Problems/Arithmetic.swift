@@ -43,6 +43,14 @@ struct Primes {
 }
 
 extension Int {
+    func totient() -> Int {
+        guard self != 1 else {
+            return 1
+        }
+        
+        return (1..<self).filter { $0.isCoprimeTo(self) }.count
+    }
+    
     func isPrime() -> Bool {
         return (try? [self].allPrime()) ?? false
     }

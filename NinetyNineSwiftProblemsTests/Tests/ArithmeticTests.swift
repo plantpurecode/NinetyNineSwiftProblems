@@ -48,5 +48,10 @@ class ArithmeticTests: XCTestCase {
         XCTAssertTrue(35.isCoprimeTo(64))
         XCTAssertFalse(35.isCoprimeTo(63))
     }
+    
+    func testTotient() {
+        XCTAssertEqual(1.totient(), 1)
+        XCTAssertEqual(10.totient(), 4)
+    }
 }
 
