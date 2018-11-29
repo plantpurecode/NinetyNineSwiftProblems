@@ -62,7 +62,7 @@ extension Int {
     }
     
     
-    func lcm(_ m: Int, _ n: Int) -> Int {
+    static func lcm(_ m: Int, _ n: Int) -> Int {
         return m / Int.gcd(m, n) * n
     }
 }

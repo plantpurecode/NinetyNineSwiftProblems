@@ -39,5 +39,9 @@ class ArithmeticTests: XCTestCase {
     func testGCD() {
         XCTAssertEqual(Int.gcd(36, 63), 9)
     }
+    
+    func testLCM() {
+        XCTAssertEqual(Int.lcm(4, 6), 12)
+    }
 }
 
