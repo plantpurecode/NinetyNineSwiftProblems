@@ -43,5 +43,10 @@ class ArithmeticTests: XCTestCase {
     func testLCM() {
         XCTAssertEqual(Int.lcm(4, 6), 12)
     }
+    
+    func testCoprime() {
+        XCTAssertTrue(35.isCoprimeTo(64))
+        XCTAssertFalse(35.isCoprimeTo(63))
+    }
 }
 

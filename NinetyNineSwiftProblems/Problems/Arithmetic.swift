@@ -47,6 +47,10 @@ extension Int {
         return (try? [self].allPrime()) ?? false
     }
     
+    func isCoprimeTo(_ other: Int) -> Bool {
+        return Int.gcd(self, other) == 1
+    }
+    
     static func gcd(_ first: Int, _ second: Int) -> Int {
         var a = 0
         var b = first > second ? first : second
