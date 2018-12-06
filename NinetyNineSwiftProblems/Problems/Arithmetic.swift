@@ -87,9 +87,7 @@ extension Array where Element == Int {
             throw Primes.Error.negativeNumber
         }
         
-        return try map {
-            return UInt($0)
-        }.allPrime(greatestIndex: greatestIndex)
+        return try map { UInt($0) }.allPrime(greatestIndex: greatestIndex)
     }
 }
 
