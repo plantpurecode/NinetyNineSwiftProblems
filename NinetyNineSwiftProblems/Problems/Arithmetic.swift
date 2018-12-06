@@ -63,14 +63,6 @@ extension Int {
         return m / gcd(m, n) * n
     }
     
-    func totient() -> Int {
-        guard self != 1 else {
-            return 1
-        }
-        
-        return (1..<self).filter { $0.isCoprimeTo(self) }.count
-    }
-    
     func isPrime() -> Bool {
         return (try? [self].allPrime()) ?? false
     }
@@ -94,6 +86,14 @@ extension Int {
         }
         
         return factors
+    }
+    
+    var totient: Int {
+        guard self != 1 else {
+            return 1
+        }
+        
+        return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
     
     var primeFactors: List<Int>? {
