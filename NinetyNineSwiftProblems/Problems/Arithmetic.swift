@@ -8,6 +8,12 @@
 
 import Foundation
 
+infix operator ^^ : MultiplicationPrecedence
+
+func ^^ (radix: Int, power: Int) -> Int {
+    return Int(pow(Double(radix), Double(power)))
+}
+
 struct Primes {
     enum Error : Swift.Error {
         case greatestIndexTooLarge
@@ -72,7 +78,7 @@ extension Int {
     }
     
     private func _rawPrimeFactorization() -> [Int] {
-        guard isPrime() == false else {
+        guard isPrime() == false, self > 1 else {
             return [self]
         }
         
@@ -94,6 +100,21 @@ extension Int {
         }
         
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
+    }
+    
+    var totientImproved: Int {
+        guard self != 1 else {
+            return 1
+        }
+        
+        let factors = primeFactorMultiplicityDict
+        
+        var tot = 1
+        for (factor, mult) in factors {
+            tot *= (factor - 1) * (factor ^^ (mult - 1))
+        }
+        
+        return tot
     }
     
     var primeFactors: List<Int>? {

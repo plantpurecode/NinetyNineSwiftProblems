@@ -60,8 +60,12 @@ class ArithmeticTests: XCTestCase {
     }
     
     func testTotient() {
-        XCTAssertEqual(1.totient, 1)
-        XCTAssertEqual(10.totient, 4)
+        let expectations = [1:1, 10:4, 486: 162, 1292:576, 38856: 12944]
+        
+        for (n, t) in expectations {
+            XCTAssertEqual(n.totient, t)
+            XCTAssertEqual(n.totientImproved, t)
+        }
     }
     
     func testPrimeFactors() {
