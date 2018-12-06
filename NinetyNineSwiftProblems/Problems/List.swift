@@ -551,16 +551,16 @@ extension List {
         let vals = values
         var count = group
         
+        guard group <= vals.count else {
+            return nil
+        }
+
         if group == 0 {
             // Default value provided - use vals.count
             count = vals.count
         }
         
-        guard group <= vals.count else {
-            return nil
-        }
-        
-        let perms = Combinatorics.permutationsWithoutRepetitionFrom(vals, taking: count)
+        let perms = vals.permutations(taking: count, withRepetition: false)
         let list = List<List<T>>(perms.map { List($0)! })!
         
         return list

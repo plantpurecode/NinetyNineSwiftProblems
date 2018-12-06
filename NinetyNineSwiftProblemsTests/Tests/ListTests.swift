@@ -217,13 +217,10 @@ class ListTests : XCTestCase {
         
         let distinctPermutations = list.permutations(group)!.values.map { $0.values }
         
-        print("list is \(list), group is \(group), permutations are: \(distinctPermutations)")
-        
         let set = Set(list.values)
         distinctPermutations.forEach { perm in
             let intersection = set.intersection(Set(perm))
-            let condition = intersection.count == group
-            XCTAssertTrue(condition)
+            XCTAssertTrue(intersection.count == group)
         }
         
         // Test permutations without giving a group parameter.
