@@ -74,5 +74,15 @@ class ArithmeticTests: XCTestCase {
         
         XCTAssertEqual(2.primeFactors, List(2))
     }
+    
+    func testPrimeFactorMultiplicity() {
+        let expected = [3:2, 5:1, 7:1]
+        315.primeFactorMultiplicity.values.forEach { tuple in
+            XCTAssertNotNil(expected[tuple.0])
+            XCTAssertEqual(tuple.1, expected[tuple.0])
+        }
+        
+        XCTAssertEqual(315.primeFactorMultiplicityDict, expected)
+    }
 }
 

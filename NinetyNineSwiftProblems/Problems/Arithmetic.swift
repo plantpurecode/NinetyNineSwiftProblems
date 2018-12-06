@@ -79,13 +79,9 @@ extension Int {
         return Int.gcd(self, other) == 1
     }
     
-    var primeFactors: List<Int>? {
-        guard self > 1 else {
-            return nil
-        }
-        
+    private func _rawPrimeFactorization() -> [Int] {
         guard isPrime() == false else {
-            return List(self)
+            return [self]
         }
         
         var n = self
@@ -97,8 +93,30 @@ extension Int {
             }
         }
         
-        return List(factors)
+        return factors
     }
+    
+    var primeFactors: List<Int>? {
+        guard self > 1 else {
+            return nil
+        }
+        
+        return List(_rawPrimeFactorization())
+    }
+
+    var primeFactorMultiplicity: List<(Int, Int)> {
+        return List(primeFactorMultiplicityDict.map { ($0.key, $0.value) })!
+    }
+    
+    var primeFactorMultiplicityDict: [Int : Int] {
+        let factors = _rawPrimeFactorization()
+        return factors.reduce([Int:Int]()) { (res, factor) -> [Int:Int] in
+            var result = res
+            result[factor] = (res[factor] ?? 0) + 1
+            return result
+        }
+    }
+    
 }
 
 extension Array where Element == Int {
