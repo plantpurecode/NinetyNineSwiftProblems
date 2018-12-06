@@ -542,7 +542,7 @@ extension List {
             return nil
         }
         
-        let combos = Combinatorics.combinationsWithoutRepetitionFrom(vals, taking: count)
+        let combos = vals.combinations(taking: count, withRepetition: false)
         let list = List<List<T>>(combos.map { List($0)! })!
         return list
     }
