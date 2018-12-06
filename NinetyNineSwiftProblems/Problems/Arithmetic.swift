@@ -45,6 +45,24 @@ struct Primes {
 }
 
 extension Int {
+    static func gcd(_ first: Int, _ second: Int) -> Int {
+        var a = 0
+        var b = first > second ? first : second
+        var r = first < second ? first : second
+        
+        while r != 0 {
+            a = b
+            b = r
+            r = a % b
+        }
+        
+        return b
+    }
+
+    static func lcm(_ m: Int, _ n: Int) -> Int {
+        return m / gcd(m, n) * n
+    }
+    
     func totient() -> Int {
         guard self != 1 else {
             return 1
@@ -61,23 +79,25 @@ extension Int {
         return Int.gcd(self, other) == 1
     }
     
-    static func gcd(_ first: Int, _ second: Int) -> Int {
-        var a = 0
-        var b = first > second ? first : second
-        var r = first < second ? first : second
-        
-        while r != 0 {
-            a = b
-            b = r
-            r = a % b
+    var primeFactors: List<Int>? {
+        guard self > 1 else {
+            return nil
         }
         
-        return b
-    }
-    
-    
-    static func lcm(_ m: Int, _ n: Int) -> Int {
-        return m / gcd(m, n) * n
+        guard isPrime() == false else {
+            return List(self)
+        }
+        
+        var n = self
+        var factors = [Int]()
+        for divisor in 2..<n {
+            while n % divisor == 0 {
+                factors.append(divisor)
+                n /= divisor
+            }
+        }
+        
+        return List(factors)
     }
 }
 

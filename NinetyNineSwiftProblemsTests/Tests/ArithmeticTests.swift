@@ -63,5 +63,16 @@ class ArithmeticTests: XCTestCase {
         XCTAssertEqual(1.totient(), 1)
         XCTAssertEqual(10.totient(), 4)
     }
+    
+    func testPrimeFactors() {
+        XCTAssertEqual(315.primeFactors, List(3, 3, 5, 7))
+        XCTAssertEqual(42.primeFactors, List(2, 3, 7))
+        
+        (-10...1).forEach {
+            XCTAssertNil($0.primeFactors)
+        }
+        
+        XCTAssertEqual(2.primeFactors, List(2))
+    }
 }
 
