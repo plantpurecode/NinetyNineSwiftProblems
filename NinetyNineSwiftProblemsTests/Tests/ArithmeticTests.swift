@@ -21,7 +21,9 @@ class ArithmeticTests: XCTestCase {
     }
     
     func testAllPrime() {
+        XCTAssertNoThrow(try primes.allPrime())
         XCTAssertTrue(try! primes.allPrime())
+        XCTAssertThrowsError(try primes.allPrime(greatestIndex: -2))
         
         let unorderedPrimes = [2,5,3,37,29,7]
         XCTAssertTrue(try! unorderedPrimes.allPrime(greatestIndex: 3))

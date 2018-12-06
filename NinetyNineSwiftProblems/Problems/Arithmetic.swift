@@ -11,6 +11,7 @@ import Foundation
 struct Primes {
     enum Error : Swift.Error {
         case greatestIndexTooLarge
+        case negativeGreatestIndex
         case negativeNumber
     }
     
@@ -94,6 +95,10 @@ extension Array where Element == Int {
 
 extension Array where Element == UInt {
     func allPrime(greatestIndex: Int = -1) throws -> Bool {
+        guard greatestIndex >= -1 else {
+            throw Primes.Error.negativeGreatestIndex
+        }
+        
         let gi = greatestIndex == -1 ? count-1 : greatestIndex
         guard gi < count else {
             throw Primes.Error.greatestIndexTooLarge
