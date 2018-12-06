@@ -23,12 +23,18 @@ class ArithmeticTests: XCTestCase {
     func testAllPrime() {
         XCTAssertNoThrow(try primes.allPrime())
         XCTAssertTrue(try! primes.allPrime())
-        XCTAssertThrowsError(try primes.allPrime(greatestIndex: -2))
         
         let unorderedPrimes = [2,5,3,37,29,7]
         XCTAssertTrue(try! unorderedPrimes.allPrime(greatestIndex: 3))
         
-        // invalid index... should throw
+        // invalid indexes should throw errors.
+        XCTAssertThrowsError(try primes.allPrime(greatestIndex: -2)) {
+            guard case Primes.Error.negativeGreatestIndex = $0 else {
+                XCTFail("Invalid error type thrown")
+                return
+            }
+        }
+        
         XCTAssertThrowsError(try unorderedPrimes.allPrime(greatestIndex: 10)) {
             guard case Primes.Error.greatestIndexTooLarge = $0 else {
                 XCTFail("Invalid error type thrown")
