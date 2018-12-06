@@ -11,6 +11,7 @@ import Foundation
 struct Primes {
     enum Error : Swift.Error {
         case greatestIndexTooLarge
+        case negativeNumber
     }
     
     static fileprivate func eratosthenesSieve(n: UInt) -> [UInt]? {
@@ -81,7 +82,13 @@ extension Int {
 
 extension Array where Element == Int {
     func allPrime(greatestIndex: Int = -1) throws -> Bool {
-        return try self.map { UInt($0) }.allPrime(greatestIndex: greatestIndex)
+        guard contains(where: { $0 < 0 }) == false else {
+            throw Primes.Error.negativeNumber
+        }
+        
+        return try map {
+            return UInt($0)
+        }.allPrime(greatestIndex: greatestIndex)
     }
 }
 

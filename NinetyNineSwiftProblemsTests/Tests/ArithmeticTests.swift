@@ -16,6 +16,8 @@ class ArithmeticTests: XCTestCase {
         primes.forEach {
             XCTAssertTrue($0.isPrime())
         }
+        
+        XCTAssertFalse((-1).isPrime())
     }
     
     func testAllPrime() {
