@@ -106,5 +106,19 @@ class ArithmeticTests: XCTestCase {
     func testListPrimesInRange() {
         XCTAssertEqual(Int.listPrimesInRange(range: UInt(7)...UInt(31)), List(7, 11, 13, 17, 19, 23, 29, 31))
     }
+    
+    func testGoldbach() {
+        let expectsNil = [0,1,2,3,5,7,9]
+        expectsNil.forEach {
+            XCTAssertNil($0.goldbach)
+        }
+
+        let result = 28.goldbach
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.0, 5)
+        XCTAssertEqual(result!.1, 23)
+        
+        XCTAssertNil(29.goldbach)
+    }
 }
 

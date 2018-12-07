@@ -110,6 +110,25 @@ extension Int {
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
     
+    var goldbach: (Int, Int)? {
+        // TODO: Throw specific errors instead of returning nil
+        
+        guard self > 2, self % 2 == 0 else {
+            return nil
+        }
+        
+        guard let primes = Primes.eratosthenesSieve(n: UInt(self)) else {
+            return nil
+        }
+        
+        let permutations = primes.permutations(taking: 2, withRepetition: false)
+        let found = permutations.first { permutation in
+            return permutation.first! + permutation.last! == self
+        }!.map { Int($0) }
+        
+        return (found.first!, found.last!)
+    }
+    
     func totientImproved(_ multiplicityDict: [Int: Int]? = nil) -> Int {
         guard self != 1 else {
             return 1
