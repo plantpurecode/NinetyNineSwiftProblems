@@ -64,7 +64,21 @@ class ArithmeticTests: XCTestCase {
         
         for (n, t) in expectations {
             XCTAssertEqual(n.totient, t)
-            XCTAssertEqual(n.totientImproved, t)
+            XCTAssertEqual(n.totientImproved(), t)
+        }
+    }
+    
+    func testTotientPerformance() {
+        measure {
+            let _ = 10090.totient
+        }
+    }
+    
+    func testTotientImprovedPerformance() {
+        let dict = 10090.primeFactorMultiplicityDict
+        
+        measure {
+            let _ = 10090.totientImproved(dict)
         }
     }
     

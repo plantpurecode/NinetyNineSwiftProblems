@@ -102,19 +102,17 @@ extension Int {
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
     
-    var totientImproved: Int {
+    func totientImproved(_ multiplicityDict: [Int: Int] = [:]) -> Int {
         guard self != 1 else {
             return 1
         }
         
-        let factors = primeFactorMultiplicityDict
-        
-        var tot = 1
-        for (factor, mult) in factors {
-            tot *= (factor - 1) * (factor ^^ (mult - 1))
+        let multiplicityDictionary = multiplicityDict.count > 0 ? multiplicityDict : primeFactorMultiplicityDict
+        return multiplicityDictionary.reduce(1) { tot, factorPair -> Int in
+            let (factor, mult) = factorPair
+            
+            return tot * (factor - 1) * (factor ^^ (mult - 1))
         }
-        
-        return tot
     }
     
     var primeFactors: List<Int>? {
@@ -137,7 +135,6 @@ extension Int {
             return result
         }
     }
-    
 }
 
 extension Array where Element == Int {
