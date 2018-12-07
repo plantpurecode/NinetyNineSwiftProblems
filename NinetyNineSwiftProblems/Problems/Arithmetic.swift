@@ -115,7 +115,7 @@ extension Int {
             return 1
         }
         
-        let multiplicityDictionary = multiplicityDict.count > 0 ? multiplicityDict : primeFactorMultiplicityDict
+        let multiplicityDictionary = multiplicityDict.count == 0 ? primeFactorMultiplicityDict : multiplicityDict
         return multiplicityDictionary.reduce(1) { tot, factorPair -> Int in
             let (factor, mult) = factorPair
             
