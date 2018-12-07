@@ -110,12 +110,12 @@ extension Int {
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
     
-    func totientImproved(_ multiplicityDict: [Int: Int] = [:]) -> Int {
+    func totientImproved(_ multiplicityDict: [Int: Int]? = nil) -> Int {
         guard self != 1 else {
             return 1
         }
         
-        let multiplicityDictionary = multiplicityDict.count == 0 ? primeFactorMultiplicityDict : multiplicityDict
+        let multiplicityDictionary = multiplicityDict ?? primeFactorMultiplicityDict
         return multiplicityDictionary.reduce(1) { tot, factorPair -> Int in
             let (factor, mult) = factorPair
             
