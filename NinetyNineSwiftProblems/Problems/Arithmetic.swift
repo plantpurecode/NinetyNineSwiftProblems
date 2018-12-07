@@ -77,6 +77,16 @@ extension Int {
         })
     }
     
+    static func goldbachCompositions(inRange range: ClosedRange<Int>) -> [Int : (Int, Int)] {
+        return range.filter {
+            $0 > range.lowerBound && $0 % 2 == 0
+        }.reduce([:]) { result, current in
+            var res = result
+            res[current] = current.goldbach!
+            return res
+        }
+    }
+    
     func isPrime() -> Bool {
         return (try? [self].allPrime()) ?? false
     }

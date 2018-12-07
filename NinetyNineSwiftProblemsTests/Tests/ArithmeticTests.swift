@@ -120,5 +120,23 @@ class ArithmeticTests: XCTestCase {
         
         XCTAssertNil(29.goldbach)
     }
+    
+    func testGoldbachCompositions() {
+        let compositions = Int.goldbachCompositions(inRange: 9...20)
+        let expected = [
+            10: [3, 7],
+            12: [5, 7],
+            14: [3, 11],
+            16: [3, 13],
+            18: [5, 13],
+            20: [3, 17]
+        ]
+        
+        for (number, goldbach) in compositions {
+            let expectedGoldbach = expected[number]
+            
+            XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
+        }
+    }
 }
 
