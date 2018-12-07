@@ -68,6 +68,14 @@ extension Int {
     static func lcm(_ m: Int, _ n: Int) -> Int {
         return m / gcd(m, n) * n
     }
+ 
+    static func listPrimesInRange(range: ClosedRange<UInt>) -> List<UInt>? {
+        let sieve = Primes.eratosthenesSieve(n: range.upperBound)!
+        
+        return List(sieve.filter {
+            $0 >= range.lowerBound
+        })
+    }
     
     func isPrime() -> Bool {
         return (try? [self].allPrime()) ?? false

@@ -102,5 +102,9 @@ class ArithmeticTests: XCTestCase {
         
         XCTAssertEqual(315.primeFactorMultiplicityDict, expected)
     }
+    
+    func testListPrimesInRange() {
+        XCTAssertEqual(Int.listPrimesInRange(range: UInt(7)...UInt(31)), List(7, 11, 13, 17, 19, 23, 29, 31))
+    }
 }
 
