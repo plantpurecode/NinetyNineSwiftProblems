@@ -14,6 +14,34 @@ func ^^ (radix: Int, power: Int) -> Int {
     return Int(pow(Double(radix), Double(power)))
 }
 
+struct EratosthenesSieveCache {
+    private var cache: [UInt] = []
+    
+    mutating func update(_ ns: [UInt]) {
+        guard ns.count > cache.count else {
+            return
+        }
+        
+        cache = ns
+    }
+    
+    func hasSieve(forMaximum m: UInt) -> Bool {
+        guard let last = cache.last else {
+            return false
+        }
+        
+        return last >= m
+    }
+    
+    func sieve(forMaximum m: UInt) -> [UInt] {
+        return Array(cache[0...cache.firstIndex(where: {
+            return $0 >= m
+        }).unsafelyUnwrapped])
+    }
+}
+
+var sieveCache = EratosthenesSieveCache()
+
 struct Primes {
     enum Error : Swift.Error {
         case greatestIndexTooLarge
@@ -24,6 +52,10 @@ struct Primes {
     static fileprivate func eratosthenesSieve(n: UInt) -> [UInt]? {
         guard n > 1 else {
             return nil
+        }
+        
+        guard sieveCache.hasSieve(forMaximum: n) == false else {
+            return sieveCache.sieve(forMaximum: n)
         }
         
         let (secondToLast, overflowed) = n.subtractingReportingOverflow(1)
@@ -44,9 +76,12 @@ struct Primes {
             }
         }
         
-        return a.enumerated().compactMap { i in
+        let sieve = a.enumerated().compactMap { i in
             i.element == false ? nil : UInt(i.offset)
         }
+        
+        sieveCache.update(sieve)
+        return sieve
     }
 }
 
