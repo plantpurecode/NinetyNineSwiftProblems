@@ -112,14 +112,28 @@ extension Int {
         })
     }
     
-    static func goldbachCompositions(inRange range: ClosedRange<Int>) -> [Int : (Int, Int)] {
-        return range.filter {
-            $0 > range.lowerBound && $0 % 2 == 0
-        }.reduce([:]) { result, current in
+    static func goldbachCompositions(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> [Int : (Int, Int)] {
+        return range.dropFirst().reduce([:]) { result, current in
+            guard let goldbach = current.goldbach(aboveMinimum: minimum) else {
+                return result
+            }
+            
             var res = result
-            res[current] = current.goldbach!
+            res[current] = goldbach
             return res
         }
+    }
+    
+    static func printGoldbachCompositionsLimited(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) {
+        let compositions = goldbachCompositions(inRange: range, aboveMinimum: minimum).sorted { (first, second) -> Bool in
+            return first.key < second.key
+        }
+        
+        print("\nPrinting \(compositions.count) Goldbach compositions...\n")
+        print(compositions.reduce("") { (result, current) -> String in
+            let (key, value) = current
+            return [result, "\(key) = \(value.0) + \(value.1)"].joined(separator: "\n")
+        })
     }
     
     func isPrime() -> Bool {
@@ -155,23 +169,32 @@ extension Int {
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
     
-    var goldbach: (Int, Int)? {
+    func goldbach(aboveMinimum minimum: Int = 3) -> (Int, Int)? {
         // TODO: Throw specific errors instead of returning nil
+        guard self != 2 else {
+            return (1, 1)
+        }
         
-        guard self > 2, self % 2 == 0 else {
+        guard self != 3 else {
+            return (1, 2)
+        }
+        
+        guard self > 3, minimum >= 3, self % 2 == 0 else {
             return nil
         }
         
-        guard let primes = Primes.eratosthenesSieve(n: UInt(self)) else {
-            return nil
+        for first in 0...self/2 {
+            let second = self - first
+            do {
+                if first >= minimum && second >= minimum {
+                    if try [first, second].allPrime() {
+                        return (first, second)
+                    }
+                }
+            } catch {}
         }
         
-        let permutations = primes.permutations(taking: 2, withRepetition: false)
-        let found = permutations.first { permutation in
-            return permutation.first! + permutation.last! == self
-        }!.map { Int($0) }
-        
-        return (found.first!, found.last!)
+        return nil
     }
     
     func totientImproved(_ multiplicityDict: [Int: Int]? = nil) -> Int {

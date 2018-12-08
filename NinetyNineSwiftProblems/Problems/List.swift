@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+// TODO: Remove dependency on Combinatorics library
 import Combinatorics
 
 class List<T> {
