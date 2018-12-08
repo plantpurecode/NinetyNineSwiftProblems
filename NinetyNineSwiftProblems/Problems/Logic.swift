@@ -124,3 +124,39 @@ func generateTruthTable(expression: (Bool, Bool) -> Bool) -> List<List<Bool>> {
     
     return List(lists)!
 }
+
+infix operator ∧ : LogicalConjunctionPrecedence
+func ∧(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.and, left, right)
+}
+
+infix operator ⊼ : LogicalConjunctionPrecedence
+func ⊼(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.nand, left, right)
+}
+
+infix operator ∨ : LogicalDisjunctionPrecedence
+func ∨(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.or, left, right)
+}
+
+infix operator ⊽ : LogicalDisjunctionPrecedence
+func ⊽(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.nor, left, right)
+}
+
+infix operator ⊕ : LogicalDisjunctionPrecedence
+func ⊕(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.xor, left, right)
+}
+
+infix operator → : LogicalDisjunctionPrecedence
+func →(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.impl, left, right)
+}
+
+infix operator ≡ : LogicalDisjunctionPrecedence
+func ≡(_ left: Bool, _ right: Bool) -> Bool {
+    return logExpr(.equ, left, right)
+}
+

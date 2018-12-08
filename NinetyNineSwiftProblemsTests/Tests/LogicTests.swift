@@ -61,4 +61,29 @@ class LogicTests: XCTestCase {
             XCTAssertEqual(result, type.truthTable)
         }
     }
+    
+    func testLogicalOperators() {
+        typealias LogicalOperator = (Bool, Bool) -> Bool
+        
+        let operatorsAndExpressionTypes:[(LogicalOperator, LogicalExpression.ExpressionType)] = [
+            (∧, .and),
+            (∨, .or),
+            (⊼, .nand),
+            (⊽, .nor),
+            (⊕, .xor),
+            (→, .impl),
+            (≡, .equ)
+        ]
+        
+        operatorsAndExpressionTypes.forEach { tuple in
+            let table = tuple.1.truthTable
+            
+            table.forEach { row in
+                let expectedResult = row.last!
+                let actualResult = tuple.0(row.first!, row[1])
+
+                XCTAssertEqual(expectedResult, actualResult)
+            }
+        }
+    }
 }
