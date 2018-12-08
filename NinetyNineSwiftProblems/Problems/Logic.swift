@@ -57,3 +57,13 @@ func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> 
     return LogicalExpression(left: l, right: r, type: type).evaluate()
 }
 
+func generateTruthTable(expression: (Bool, Bool) -> Bool) -> List<List<Bool>> {
+    let inputs = [[true, true], [false, false], [true, false], [false, true]]
+    
+    var lists = [List<Bool>]()
+    for combo in inputs {
+        lists.append(List(combo.first!, combo.last!, expression(combo.first!, combo.last!))!)
+    }
+    
+    return List(lists)!
+}
