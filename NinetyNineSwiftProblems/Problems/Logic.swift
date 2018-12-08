@@ -59,51 +59,51 @@ extension LogicalExpression.ExpressionType {
         case .and:
             return [
                 [true, true, true],
-                [false, false, false],
                 [true, false, false],
-                [false, true, false]
+                [false, true, false],
+                [false, false, false]
             ]
         case .or:
             return [
                 [true, true, true],
-                [false, false, false],
                 [true, false, true],
-                [false, true, true]
+                [false, true, true],
+                [false, false, false]
             ]
         case .nand:
             return [
                 [true, true, false],
-                [false, false, true],
                 [true, false, true],
-                [false, true, true]
+                [false, true, true],
+                [false, false, true]
             ]
         case .nor:
             return [
                 [true, true, false],
-                [false, false, true],
                 [true, false, false],
-                [false, true, false]
+                [false, true, false],
+                [false, false, true]
             ]
         case .xor:
             return [
                 [true, true, false],
-                [false, false, false],
                 [true, false, true],
-                [false, true, true]
+                [false, true, true],
+                [false, false, false],
             ]
         case .impl:
             return [
                 [true, true, true],
-                [false, false, true],
                 [true, false, false],
-                [false, true, true]
+                [false, true, true],
+                [false, false, true],
             ]
         case .equ:
             return [
                 [true, true, true],
-                [false, false, true],
                 [true, false, false],
-                [false, true, false]
+                [false, true, false],
+                [false, false, true]
             ]
         }
     }
@@ -113,16 +113,12 @@ func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> 
     return LogicalExpression(left: l, right: r, type: type).evaluate()
 }
 
-func generateTruthTable(expression: (Bool, Bool) -> Bool) -> List<List<Bool>> {
-    let inputs = [[true, true], [false, false], [true, false], [false, true]]
+func generateTruthTable(variables: Int = 2, expression: @escaping ([Bool]) -> Bool) -> List<List<Bool>> {
+    let inputs = [true, false].permutations(taking: variables, repeating: true)
     
-    var lists = [List<Bool>]()
-    for combo in inputs {
-        let list = List(combo.first!, combo.last!, expression(combo.first!, combo.last!))!
-        lists.append(list)
-    }
-    
-    return List(lists)!
+    return List(inputs.reduce([List<Bool>]()) { res, combo in
+        return res + [List(combo + [expression(combo)])!]
+    })!
 }
 
 infix operator ∧ : LogicalConjunctionPrecedence

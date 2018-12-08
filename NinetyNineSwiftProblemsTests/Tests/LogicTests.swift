@@ -54,12 +54,29 @@ class LogicTests: XCTestCase {
     
     func testTruthTableGeneration() {
         for type in LogicalExpression.ExpressionType.allCases {
-            let result = generateTruthTable(expression: { (l, r) -> Bool in
-                return logExpr(type, l, r)
+            let result = generateTruthTable(expression: { array in
+                return logExpr(type, array.first!, array.last!)
             }).values.map { $0.values }
 
             XCTAssertEqual(result, type.truthTable)
         }
+    
+        let table = generateTruthTable(variables: 3) { vars in
+            vars[0] ∧ vars[1] ∨ vars[2]
+        }.values.map { $0.values }
+        
+        let expectation = [
+            [true,  true,  true,  true],
+            [true,  true,  false, true],
+            [true,  false, true,  true],
+            [true,  false, false, false],
+            [false, true,  true,  true],
+            [false, true,  false, false],
+            [false, false, true,  true],
+            [false, false, false, false]
+        ]
+        
+        XCTAssertEqual(table, expectation)
     }
     
     func testLogicalOperators() {
