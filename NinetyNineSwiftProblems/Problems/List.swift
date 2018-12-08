@@ -8,9 +8,6 @@
 
 import Foundation
 
-// TODO: Remove dependency on Combinatorics library
-import Combinatorics
-
 class List<T> {
     var value: T
     var nextItem: List<T>?
@@ -544,7 +541,7 @@ extension List {
             return nil
         }
         
-        let combos = vals.combinations(taking: count, withRepetition: false)
+        let combos = vals.combinations(taking: count, repeating: false)
         let list = List<List<T>>(combos.map { List($0)! })!
         return list
     }
@@ -562,7 +559,7 @@ extension List {
             count = vals.count
         }
         
-        let perms = vals.permutations(taking: count, withRepetition: false)
+        let perms = vals.permutations(taking: count, repeating: false)
         let list = List<List<T>>(perms.map { List($0)! })!
         
         return list
@@ -590,7 +587,7 @@ extension List {
         var vals = values
         
         let list = gVals.map { gv -> [[T]] in
-            let group = vals.permutations(taking: gv, withRepetition: false)
+            let group = vals.permutations(taking: gv, repeating: false)
             vals.removeFirst(gv)
             return group
         }

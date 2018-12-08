@@ -1,6 +1,0 @@
-framework module Pods_NinetyNineSwiftProblems {
-  umbrella header "Pods-NinetyNineSwiftProblems-umbrella.h"
-
-  export *
-  module * { export * }
-}

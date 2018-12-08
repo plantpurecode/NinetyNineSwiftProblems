@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0AC3590A379260AA1A58DE2C /* Pods_NinetyNineSwiftProblems.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A25D3036A5E38893C688840 /* Pods_NinetyNineSwiftProblems.framework */; };
 		5222F3632187461C001C2B87 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F3602187461C001C2B87 /* List.swift */; };
 		5222F36D21874765001C2B87 /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F36C21874765001C2B87 /* ListTests.swift */; };
+		52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */; };
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
@@ -46,6 +46,7 @@
 		3A25D3036A5E38893C688840 /* Pods_NinetyNineSwiftProblems.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinetyNineSwiftProblems.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5222F3602187461C001C2B87 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
 		5222F36C21874765001C2B87 /* ListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTests.swift; sourceTree = "<group>"; };
+		52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
@@ -65,7 +66,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0AC3590A379260AA1A58DE2C /* Pods_NinetyNineSwiftProblems.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				526EA6FA218B00E70047835E /* SetExtensions.swift */,
+				52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -196,11 +197,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 52F87180218744C400AA73D3 /* Build configuration list for PBXNativeTarget "NinetyNineSwiftProblems" */;
 			buildPhases = (
-				719DE8BF07112C4982AACFAA /* [CP] Check Pods Manifest.lock */,
 				52F87163218744C300AA73D3 /* Sources */,
 				52F87164218744C300AA73D3 /* Frameworks */,
 				52F87165218744C300AA73D3 /* Resources */,
-				5BDDD31950A7F25A1321A837 /* [CP] Embed Pods Frameworks */,
 				5222F3682187462B001C2B87 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -287,59 +286,13 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		5BDDD31950A7F25A1321A837 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-NinetyNineSwiftProblems/Pods-NinetyNineSwiftProblems-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Combinatorics/Combinatorics.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Combinatorics.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinetyNineSwiftProblems/Pods-NinetyNineSwiftProblems-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		719DE8BF07112C4982AACFAA /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NinetyNineSwiftProblems-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		52F87163218744C300AA73D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
+				52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */,
 				52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */,
 				526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */,
 				5222F3632187461C001C2B87 /* List.swift in Sources */,
@@ -494,7 +447,6 @@
 		};
 		52F87181218744C400AA73D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D12D886153592AEF3B2B9C9 /* Pods-NinetyNineSwiftProblems.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/NinetyNineSwiftProblems.entitlements;
@@ -516,7 +468,6 @@
 		};
 		52F87182218744C400AA73D3 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8BE9CD5F43B041798F16F629 /* Pods-NinetyNineSwiftProblems.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/NinetyNineSwiftProblems.entitlements;
