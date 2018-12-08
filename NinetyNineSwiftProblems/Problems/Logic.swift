@@ -52,3 +52,8 @@ struct LogicalExpression {
         }
     }
 }
+
+func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> Bool {
+    return LogicalExpression(left: l, right: r, type: type).evaluate()
+}
+

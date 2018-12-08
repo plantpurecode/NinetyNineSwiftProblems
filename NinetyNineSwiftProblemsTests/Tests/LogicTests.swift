@@ -14,12 +14,12 @@ class LogicTests: XCTestCase {
     private func performTruthTableTest(_ table: [[Bool]], _ type: LogicalExpression.ExpressionType, line: UInt = #line) {
         for row in table {
             let operands = Array(row.suffix(from: 1))
-            let expression = LogicalExpression(left: operands.first!, right: operands.last!, type: type)
+            let evaluated = logExpr(type, operands.first!, operands.last!)
             
             if let expectation = row.first, expectation == true {
-                XCTAssertTrue(expression.evaluate(), "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
+                XCTAssertTrue(evaluated, "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
             } else {
-                XCTAssertFalse(expression.evaluate(), "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
+                XCTAssertFalse(evaluated, "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
             }
         }
     }
