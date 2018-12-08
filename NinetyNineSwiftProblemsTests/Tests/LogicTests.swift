@@ -11,8 +11,8 @@ import XCTest
 @testable import NinetyNineSwiftProblems
 
 class LogicTests: XCTestCase {
-    private func performTruthTableTest(_ table: [[Bool]], _ type: LogicalExpression.ExpressionType, line: UInt = #line) {
-        for row in table {
+    private func performTruthTableTest(_ type: LogicalExpression.ExpressionType, line: UInt = #line) {
+        for row in type.truthTable {
             let operands = Array(row.prefix(through: 1))
             let evaluated = logExpr(type, operands.first!, operands.last!)
             
@@ -25,95 +25,40 @@ class LogicTests: XCTestCase {
     }
     
     func testAnd() {
-        let table = [
-            [true, true, true],
-            [true, false, false],
-            [false, true, false],
-            [false, false, false]
-        ]
-        
-        performTruthTableTest(table, .and)
+        performTruthTableTest(.and)
     }
 
     func testOr() {
-        let table = [
-            [true, true, true],
-            [true, false, true],
-            [false, true, true],
-            [false, false, false]
-        ]
-        
-         performTruthTableTest(table, .or)
+         performTruthTableTest(.or)
     }
     
     func testNand() {
-        let table = [
-            [true, false, true],
-            [false, true, true],
-            [false, false, true],
-            [true, true, false]
-        ]
-        
-        performTruthTableTest(table, .nand)
+        performTruthTableTest(.nand)
     }
     
     func testNor() {
-        let table = [
-            [true, false, false],
-            [false, true, false],
-            [true, true, false],
-            [false, false, true],
-        ]
-        
-        performTruthTableTest(table, .nor)
+        performTruthTableTest(.nor)
     }
     
     func testXor() {
-        let table = [
-            [true, false, true],
-            [false, true, true],
-            [true, true, false],
-            [false, false, false],
-        ]
-        
-        performTruthTableTest(table, .xor)
+        performTruthTableTest(.xor)
     }
     
     func testImpl() {
-        let table = [
-            [true, true, true],
-            [true, false, false],
-            [false, true, true],
-            [false, false, true],
-        ]
-        
-        performTruthTableTest(table, .impl)
+        performTruthTableTest(.impl)
     }
-
     
     func testEqu() {
-        let table = [
-            [true, true, true],
-            [false, false, true],
-            [false, true, false],
-            [false, true, false]
-        ]
-        
-        performTruthTableTest(table, .equ)
+        performTruthTableTest(.equ)
     }
     
-    func testTruthTables() {
-        let table = [
-            [true, true, true],
-            [false, false, true],
-            [true, false, false],
-            [false, true, false]
-        ]
+    func testTruthTableGeneration() {
+        for type in LogicalExpression.ExpressionType.allCases {
+            let result = generateTruthTable(expression: { (l, r) -> Bool in
+                return logExpr(type, l, r)
+            }).values.map { $0.values }
 
-        let result = generateTruthTable(expression: { (l, r) -> Bool in
-            return logExpr(.equ, l, r)
-        }).values.map { $0.values }
-
-        XCTAssertEqual(result, table)
+            XCTAssertEqual(result, type.truthTable)
+        }
     }
 }

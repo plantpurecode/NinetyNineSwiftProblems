@@ -9,7 +9,7 @@
 import Foundation
 
 struct LogicalExpression {
-    enum ExpressionType : String {
+    enum ExpressionType : String, CaseIterable {
         case and
         case or
         case nand
@@ -53,6 +53,62 @@ struct LogicalExpression {
     }
 }
 
+extension LogicalExpression.ExpressionType {
+    var truthTable: [[Bool]] {
+        switch self {
+        case .and:
+            return [
+                [true, true, true],
+                [false, false, false],
+                [true, false, false],
+                [false, true, false]
+            ]
+        case .or:
+            return [
+                [true, true, true],
+                [false, false, false],
+                [true, false, true],
+                [false, true, true]
+            ]
+        case .nand:
+            return [
+                [true, true, false],
+                [false, false, true],
+                [true, false, true],
+                [false, true, true]
+            ]
+        case .nor:
+            return [
+                [true, true, false],
+                [false, false, true],
+                [true, false, false],
+                [false, true, false]
+            ]
+        case .xor:
+            return [
+                [true, true, false],
+                [false, false, false],
+                [true, false, true],
+                [false, true, true]
+            ]
+        case .impl:
+            return [
+                [true, true, true],
+                [false, false, true],
+                [true, false, false],
+                [false, true, true]
+            ]
+        case .equ:
+            return [
+                [true, true, true],
+                [false, false, true],
+                [true, false, false],
+                [false, true, false]
+            ]
+        }
+    }
+}
+
 func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> Bool {
     return LogicalExpression(left: l, right: r, type: type).evaluate()
 }
@@ -62,7 +118,8 @@ func generateTruthTable(expression: (Bool, Bool) -> Bool) -> List<List<Bool>> {
     
     var lists = [List<Bool>]()
     for combo in inputs {
-        lists.append(List(combo.first!, combo.last!, expression(combo.first!, combo.last!))!)
+        let list = List(combo.first!, combo.last!, expression(combo.first!, combo.last!))!
+        lists.append(list)
     }
     
     return List(lists)!
