@@ -11,17 +11,15 @@ import XCTest
 @testable import NinetyNineSwiftProblems
 
 class LogicTests: XCTestCase {
-    var expr = LogicalExpression(operands: [true, true])
-    
-    private func performTruthTableTest(_ table: [[Bool]], operation: @autoclosure () -> Bool, message: @autoclosure () -> String = "", line: UInt = #line) {
+    private func performTruthTableTest(_ table: [[Bool]], _ type: LogicalExpression.ExpressionType, line: UInt = #line) {
         for row in table {
             let operands = Array(row.suffix(from: 1))
-            expr.update(operands)
+            let expression = LogicalExpression(left: operands.first!, right: operands.last!, type: type)
             
             if let expectation = row.first, expectation == true {
-                XCTAssertTrue(operation(), message() + " (\(operands))", file: #file, line: line)
+                XCTAssertTrue(expression.evaluate(), "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
             } else {
-                XCTAssertFalse(operation(), message() + " (\(operands))", file: #file, line: line)
+                XCTAssertFalse(expression.evaluate(), "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
             }
         }
     }
@@ -34,7 +32,7 @@ class LogicTests: XCTestCase {
             [false, false, false]
         ]
         
-        performTruthTableTest(table, operation: expr.and(), message: "AND expression failed!")
+        performTruthTableTest(table, .and)
     }
 
     func testOr() {
@@ -45,7 +43,7 @@ class LogicTests: XCTestCase {
             [false, false, false]
         ]
         
-         performTruthTableTest(table, operation: expr.or(), message: "OR expression failed!")
+         performTruthTableTest(table, .or)
     }
     
     func testNand() {
@@ -56,7 +54,7 @@ class LogicTests: XCTestCase {
             [false, true, true]
         ]
         
-        performTruthTableTest(table, operation: expr.nand(), message: "NAND expression failed!")
+        performTruthTableTest(table, .nand)
     }
     
     func testNor() {
@@ -67,7 +65,7 @@ class LogicTests: XCTestCase {
             [true, false, false],
         ]
         
-        performTruthTableTest(table, operation: expr.nor(), message: "NOR expression failed!")
+        performTruthTableTest(table, .nor)
     }
     
     func testXor() {
@@ -78,7 +76,7 @@ class LogicTests: XCTestCase {
             [false, false, false],
         ]
         
-        performTruthTableTest(table, operation: expr.xor(), message: "XOR expression failed!")
+        performTruthTableTest(table, .xor)
     }
     
     func testImpl() {
@@ -89,7 +87,7 @@ class LogicTests: XCTestCase {
             [true, false, false],
         ]
         
-        performTruthTableTest(table, operation: expr.impl(), message: "IMPL expression failed!")
+        performTruthTableTest(table, .impl)
     }
 
     
@@ -101,6 +99,6 @@ class LogicTests: XCTestCase {
             [false, false, true]
         ]
         
-        performTruthTableTest(table, operation: expr.equ(), message: "EQU expression failed!")
+        performTruthTableTest(table, .equ)
     }
 }

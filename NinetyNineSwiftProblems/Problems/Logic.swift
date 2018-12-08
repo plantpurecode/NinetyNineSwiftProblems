@@ -9,43 +9,46 @@
 import Foundation
 
 struct LogicalExpression {
-    var booleanOperands: [Bool]
-    
-    init(operands: [Bool]) {
-        booleanOperands = operands
+    enum ExpressionType : String {
+        case and
+        case or
+        case nand
+        case nor
+        case xor
+        case impl
+        case equ
     }
     
-    mutating func update(_ operands: [Bool]) {
-        booleanOperands = operands
-    }
-}
-
-extension LogicalExpression {
-    func and() -> Bool {
-        return !booleanOperands.contains(false)
-    }
-
-    func or() -> Bool {
-        return booleanOperands.contains(true)
+    let left: Bool
+    let right: Bool
+    let type: ExpressionType
+    
+    // For convenience. Always has a count of 2
+    private let operands: [Bool]
+    
+    init(left l: Bool, right r: Bool, type t: ExpressionType) {
+        left = l
+        right = r
+        operands = [l, r]
+        type = t
     }
     
-    func nand() -> Bool {
-        return !booleanOperands.allSatisfy { $0 == true }
-    }
-    
-    func nor() -> Bool {
-        return booleanOperands.allSatisfy { $0 == false }
-    }
-    
-    func xor() -> Bool {
-        return booleanOperands.filter { $0 == true }.count == 1
-    }
-    
-    func impl() -> Bool {
-        return !(booleanOperands.first == true && booleanOperands.last == false)
-    }
-    
-    func equ() -> Bool {
-        return nor() || booleanOperands.allSatisfy { $0 == true }
+    func evaluate() -> Bool {
+        switch type {
+        case .and:
+            return !operands.contains(false)
+        case .or:
+            return operands.contains(true)
+        case .nand:
+            return !operands.allSatisfy { $0 }
+        case .nor:
+            return operands.allSatisfy { !$0 }
+        case .xor:
+            return operands.filter { $0 }.count == 1
+        case .impl:
+            return !(left == true && right == false)
+        case .equ:
+            return operands.allSatisfy { !$0 } || operands.allSatisfy { $0 }
+        }
     }
 }
