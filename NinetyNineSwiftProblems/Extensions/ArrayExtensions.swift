@@ -94,3 +94,13 @@ extension Array {
         return nonRepeatingPermutations(self, taking: taking ?? count)
     }
 }
+
+extension Array {
+    func convertToBinaryTuple() -> (Element, Element)? {
+        guard count == 2 else {
+            return nil
+        }
+        
+        return (first!, last!)
+    }
+}

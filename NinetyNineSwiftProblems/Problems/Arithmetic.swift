@@ -187,7 +187,7 @@ extension Int {
         for first in 0...self/2 {
             let both = [first, self - first]
             if both.allSatisfy({ $0 >= minimum }), (try? both.allPrime()) == true {
-                return (both.first!, both.last!)
+                return both.convertToBinaryTuple()
             }
         }
         
@@ -265,3 +265,4 @@ extension Array where Element == UInt {
         return Set(sieve).fullyIntersects(other: Set(self))
     }
 }
+
