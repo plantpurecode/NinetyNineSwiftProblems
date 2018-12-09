@@ -186,9 +186,15 @@ extension Int {
         
         for first in 0...self/2 {
             let both = [first, self - first]
-            if both.allSatisfy({ $0 >= minimum }), (try? both.allPrime()) == true {
-                return both.convertToBinaryTuple()
+            if !both.allSatisfy({ $0 >= minimum }) {
+                continue
             }
+ 
+            do {
+                if (try both.allPrime()) {
+                    return both.convertToBinaryTuple()
+                }
+            } catch {}
         }
         
         return nil
