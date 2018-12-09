@@ -102,6 +102,8 @@ class LogicTests: XCTestCase {
     
     func testGrayCodes() {
         XCTAssertNil(gray(0))
+        XCTAssertEqual(gray(1), List("0", "1"))
+        XCTAssertEqual(gray(2), List("00", "01", "11", "10"))
         XCTAssertEqual(gray(3), List("000", "001", "011", "010", "110", "111", "101", "100"))
     }
 }
