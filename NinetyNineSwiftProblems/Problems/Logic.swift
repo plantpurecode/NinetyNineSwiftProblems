@@ -156,41 +156,34 @@ func ≡(_ left: Bool, _ right: Bool) -> Bool {
     return logExpr(.equ, left, right)
 }
 
+private func toBinary(number: Int, ofLength length: Int) -> String {
+    var b = [Int](), x = number
+    
+    while x > 0 {
+        b.append(x % 2)
+        x = x / 2
+    }
+    
+    let string = String(repeating: "0", count: length - b.count)
+    
+    guard b.count >= 1 else {
+        return string
+    }
+    
+    return stride(from: b.count - 1, through: 0, by: -1).reduce(string) { str, current in
+        return str + "\(b[current])"
+    }
+}
+
 func gray(_ number: Int) -> List<String>? {
     guard number > 0 else {
         return nil
     }
-
-    var codes = [String]()
-    (0...1).forEach {
-        codes.append("\($0)")
-    }
     
-    var i = 2, j = 0
-    
-    while i < (1 << number) {
-        j = i - 1
+    let n = 1 << number
+    return List((0..<n).reduce([String]()) { codes, current in
+        let x = current ^ (current >> 1)
         
-        while j >= 0 {
-            codes.append(codes[j])
-            j -= 1
-        }
-        
-        j = 0
-        while j < i {
-            codes[j] = "0\(codes[j])"
-            j += 1
-        }
-        
-        j = i
-
-        while j < 2*i {
-            codes[j] = "1\(codes[j])"
-            j += 1
-        }
-        
-        i = i << 1
-    }
-    
-    return List(codes)!
+        return codes + [toBinary(number: x, ofLength: number)]
+    })!
 }
