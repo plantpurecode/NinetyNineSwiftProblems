@@ -18,19 +18,16 @@ func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard taking > 1 else {
         return elements.map { [$0] }
     }
-    
-    var combinations = [[T]]()
+
     var reducedElements = elements
-    
-    elements.forEach { element in
-        combinations += repeatingCombinations(reducedElements, taking: taking - 1).map {
+    return elements.reduce([[T]]()) { res, element in
+        let combined = res + repeatingCombinations(reducedElements, taking: taking - 1).map {
             [element] + $0
         }
         
         reducedElements.removeFirst()
+        return combined
     }
-    
-    return combinations
 }
 
 func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
@@ -41,17 +38,13 @@ func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
         return elements.map { [$0] }
     }
     
-    var combinations = [[T]]()
-    
-    elements.enumerated().forEach { index, element in
+    return elements.enumerated().reduce([[T]]()) { res, tuple in
         var reducedElements = elements
-        reducedElements.removeFirst(index + 1)
-        combinations += nonRepeatingCombinations(reducedElements, taking: taking - 1).map {
-            [element] + $0
+        reducedElements.removeFirst(tuple.offset + 1)
+        return res + nonRepeatingCombinations(reducedElements, taking: taking - 1).map {
+            [tuple.element] + $0
         }
     }
-    
-    return combinations
 }
 
 func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
@@ -62,16 +55,13 @@ func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
         return elements.map { [$0] }
     }
     
-    var permutations = [[T]]()
-    elements.enumerated().forEach { index, element in
+    return elements.enumerated().reduce([[T]]()) { res, tuple in
         var reducedElements = elements
-        reducedElements.remove(at: index)
-        permutations += nonRepeatingPermutations(reducedElements, taking: taking - 1).map {
-            [element] + $0
+        reducedElements.remove(at: tuple.offset)
+        return res + nonRepeatingPermutations(reducedElements, taking: taking - 1).map {
+            [tuple.element] + $0
         }
     }
-    
-    return permutations
 }
 
 func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
@@ -80,14 +70,11 @@ func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
         return elements.map {[$0]}
     }
     
-    var permutations = [[T]]()
-    elements.forEach { element in
-        permutations += repeatingPermutations(elements, taking: taking - 1).map {
+    return elements.reduce([[T]]()) { res, element in
+        return res + repeatingPermutations(elements, taking: taking - 1).map {
             [element] + $0
         }
     }
-    
-    return permutations
 }
 
 extension Array {
