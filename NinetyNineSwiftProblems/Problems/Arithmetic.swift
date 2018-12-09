@@ -185,14 +185,10 @@ extension Int {
         }
         
         for first in 0...self/2 {
-            let second = self - first
-            do {
-                if first >= minimum && second >= minimum {
-                    if try [first, second].allPrime() {
-                        return (first, second)
-                    }
-                }
-            } catch {}
+            let both = [first, self - first]
+            if both.allSatisfy({ $0 >= minimum }), (try? both.allPrime()) == true {
+                return (both.first!, both.last!)
+            }
         }
         
         return nil
