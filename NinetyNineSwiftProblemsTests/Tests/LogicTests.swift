@@ -99,4 +99,9 @@ class LogicTests: XCTestCase {
             }
         }
     }
+    
+    func testGrayCodes() {
+        XCTAssertNil(gray(0))
+        XCTAssertEqual(gray(3), List("000", "001", "011", "010", "110", "111", "101", "100"))
+    }
 }
