@@ -108,36 +108,40 @@ class ArithmeticTests: XCTestCase {
     }
     
     func testGoldbach() {
-        let expectsNil = [0,1,4,5,7,9]
-        expectsNil.forEach {
-            XCTAssertNil($0.goldbach())
-        }
+        measure {
+            let expectsNil = [0,1,4,5,7,9]
+            expectsNil.forEach {
+                XCTAssertNil($0.goldbach())
+            }
 
-        let result = 28.goldbach()
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result!.0, 5)
-        XCTAssertEqual(result!.1, 23)
-        
-        XCTAssertNil(29.goldbach())
+            let result = 28.goldbach()
+            XCTAssertNotNil(result)
+            XCTAssertEqual(result!.0, 5)
+            XCTAssertEqual(result!.1, 23)
+            
+            XCTAssertNil(29.goldbach())
+        }
     }
     
     func testGoldbachCompositions() {
-        let expected = [
-            10: [3, 7],
-            12: [5, 7],
-            14: [3, 11],
-            16: [3, 13],
-            18: [5, 13],
-            20: [3, 17]
-        ]
-        
-        for (number, goldbach) in Int.goldbachCompositions(inRange: 9...20) {
-            let expectedGoldbach = expected[number]
+        measure {
+            let expected = [
+                10: [3, 7],
+                12: [5, 7],
+                14: [3, 11],
+                16: [3, 13],
+                18: [5, 13],
+                20: [3, 17]
+            ]
             
-            XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
+            for (number, goldbach) in Int.goldbachCompositions(inRange: 9...20) {
+                let expectedGoldbach = expected[number]
+                
+                XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
+            }
+            
+            XCTAssertEqual(Int.goldbachCompositions(inRange: 1...2000, aboveMinimum: 50).count, 947)
         }
-        
-        XCTAssertEqual(Int.goldbachCompositions(inRange: 1...2000, aboveMinimum: 50).count, 947)
     }
 }
 
