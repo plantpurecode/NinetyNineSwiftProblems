@@ -17,9 +17,9 @@ class LogicTests: XCTestCase {
             let evaluated = logExpr(type, operands.first!, operands.last!)
             
             if let expectation = row.last, expectation == true {
-                XCTAssertTrue(evaluated, "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
+                XCTAssertTrue(evaluated, "\(type.rawValue) expression failed with operands (\(operands))", file: #file, line: line)
             } else {
-                XCTAssertFalse(evaluated, "\(type.rawValue) expression faile with operands (\(operands))", file: #file, line: line)
+                XCTAssertFalse(evaluated, "\(type.rawValue) expression failed with operands (\(operands))", file: #file, line: line)
             }
         }
     }
