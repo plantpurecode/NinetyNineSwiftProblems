@@ -150,15 +150,16 @@ extension Int {
         }
         
         var n = self
-        var factors = [Int]()
-        for divisor in 2..<n {
+        
+        return (2..<n).reduce([Int]()) { factors, divisor in
+            var mutableFactors = factors
             while n % divisor == 0 {
-                factors.append(divisor)
+                mutableFactors.append(divisor)
                 n /= divisor
             }
+            
+            return mutableFactors
         }
-        
-        return factors
     }
     
     var totient: Int {
