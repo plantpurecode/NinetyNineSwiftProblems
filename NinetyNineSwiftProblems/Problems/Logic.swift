@@ -157,21 +157,21 @@ func ≡(_ left: Bool, _ right: Bool) -> Bool {
 }
 
 private func toBinary(number: Int, ofLength length: Int) -> String {
-    var b = [Int](), x = number
+    var binary = [Int](), x = number
     
     while x > 0 {
-        b.append(x % 2)
+        binary.append(x % 2)
         x = x / 2
     }
     
-    let string = String(repeating: "0", count: length - b.count)
+    let padding = String(repeating: "0", count: length - binary.count)
     
-    guard b.count >= 1 else {
-        return string
+    guard binary.count >= 1 else {
+        return padding
     }
     
-    return stride(from: b.count - 1, through: 0, by: -1).reduce(string) { str, current in
-        return str + "\(b[current])"
+    return stride(from: binary.count - 1, through: 0, by: -1).reduce(padding) { str, current in
+        return str + "\(binary[current])"
     }
 }
 
