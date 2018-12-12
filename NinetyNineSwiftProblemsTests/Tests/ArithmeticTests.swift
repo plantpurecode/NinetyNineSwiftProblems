@@ -104,7 +104,15 @@ class ArithmeticTests: XCTestCase {
     }
     
     func testListPrimesInRange() {
-        XCTAssertEqual(Int.listPrimesInRange(range: UInt(7)...UInt(31)), List(7, 11, 13, 17, 19, 23, 29, 31))
+        XCTAssertEqual(Int.listPrimesInRange(range: 7...31), List(7, 11, 13, 17, 19, 23, 29, 31))
+    }
+    
+    func testPrimeGenerationRuntime() {
+        // This test will be disabled normally in order to keep overall test suite runtime to a minimum.
+        
+        measure {
+            let _ = Primes.generate(upTo: 5_000_000)
+        }
     }
     
     func testGoldbach() {
@@ -140,7 +148,7 @@ class ArithmeticTests: XCTestCase {
                 XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
             }
             
-            XCTAssertEqual(Int.goldbachCompositions(inRange: 1...2000, aboveMinimum: 50).count, 947)
+            XCTAssertEqual(Int.goldbachCompositions(inRange: 1...5000, aboveMinimum: 50).count, 2447)
         }
     }
 }

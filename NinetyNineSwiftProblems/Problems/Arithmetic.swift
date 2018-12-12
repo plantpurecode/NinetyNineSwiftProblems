@@ -14,34 +14,6 @@ func ^^ (radix: Int, power: Int) -> Int {
     return Int(pow(Double(radix), Double(power)))
 }
 
-struct EratosthenesSieveCache {
-    private var cache: [UInt] = []
-    
-    mutating func update(_ ns: [UInt]) {
-        guard ns.count > cache.count else {
-            return
-        }
-        
-        cache = ns
-    }
-    
-    func hasSieve(forMaximum m: UInt) -> Bool {
-        guard let last = cache.last else {
-            return false
-        }
-        
-        return last >= m
-    }
-    
-    func sieve(forMaximum m: UInt) -> [UInt] {
-        return Array(cache[0...cache.firstIndex(where: {
-            return $0 >= m
-        }).unsafelyUnwrapped])
-    }
-}
-
-var sieveCache = EratosthenesSieveCache()
-
 struct Primes {
     enum Error : Swift.Error {
         case greatestIndexTooLarge
@@ -49,39 +21,29 @@ struct Primes {
         case negativeNumber
     }
     
-    static fileprivate func eratosthenesSieve(n: UInt) -> [UInt]? {
-        guard n > 1 else {
-            return nil
+    static func generate(upTo n: Int) -> [Int] {
+        var composite = Array(repeating: false, count: n + 1)
+        var primes: [Int] = []
+        
+        if n >= 55 {
+            // Upper bound for the number of primes up to and including `n`,
+            // from https://en.wikipedia.org/wiki/Prime_number_theorem#Non-asymptotic_bounds_on_the_prime-counting_function :
+            let d = Double(n)
+            let upperBound = Int(d / (log(d) - 4))
+            primes.reserveCapacity(upperBound)
         }
         
-        guard sieveCache.hasSieve(forMaximum: n) == false else {
-            return sieveCache.sieve(forMaximum: n)
-        }
+        let squareRootN = Int(Double(n).squareRoot())
         
-        let (secondToLast, overflowed) = n.subtractingReportingOverflow(1)
-        
-        guard overflowed == false else {
-            return nil
-        }
-        
-        var a = Array(repeating: false, count: 2)
-        a.append(contentsOf: Array(repeating: true, count: Int(secondToLast)))
-        
-        // TODO: Use sqrt as upper bound?
-        for i in 2..<a.count where a[i] {
-            var k = 2
-            while k*i < a.count {
-                a[k*i] = false
-                k += 1
+        (2...squareRootN).filter { !composite[$0] }.forEach { p in
+            primes.append(p)
+            
+            for q in stride(from: p * p, through: n, by: p) {
+                composite[q] = true
             }
         }
         
-        let sieve = a.enumerated().compactMap { i in
-            i.element == false ? nil : UInt(i.offset)
-        }
-        
-        sieveCache.update(sieve)
-        return sieve
+        return primes + (squareRootN...n).filter { !composite[$0] }
     }
 }
 
@@ -104,10 +66,10 @@ extension Int {
         return m / gcd(m, n) * n
     }
  
-    static func listPrimesInRange(range: ClosedRange<UInt>) -> List<UInt>? {
-        let sieve = Primes.eratosthenesSieve(n: range.upperBound)!
+    static func listPrimesInRange(range: ClosedRange<Int>) -> List<Int>? {
+        let primes = Primes.generate(upTo: range.upperBound)
         
-        return List(sieve.filter {
+        return List(primes.filter {
             $0 >= range.lowerBound
         })
     }
@@ -137,7 +99,21 @@ extension Int {
     }
     
     func isPrime() -> Bool {
-        return (try? [self].allPrime()) ?? false
+        guard self >= 2 else {
+            return false
+        }
+        
+        if [2, 3].contains(self) {
+            return true
+        }
+
+        for i in 2...Int(Double(self).squareRoot()) {
+            if self % i == 0 {
+                return false
+            }
+        }
+        
+        return true
     }
     
     func isCoprimeTo(_ other: Int) -> Bool {
@@ -189,12 +165,10 @@ extension Int {
             if !both.allSatisfy({ $0 >= minimum }) {
                 continue
             }
- 
-            do {
-                if (try both.allPrime()) {
-                    return both.convertToBinaryTuple()
-                }
-            } catch {}
+            
+            if (try? both.allPrime()) ?? false {
+                return both.convertToBinaryTuple()
+            }
         }
         
         return nil
@@ -241,34 +215,28 @@ extension Array where Element == Int {
             throw Primes.Error.negativeNumber
         }
         
-        return try map { UInt($0) }.allPrime(greatestIndex: greatestIndex)
-    }
-}
-
-extension Array where Element == UInt {
-    func allPrime(greatestIndex: Int = -1) throws -> Bool {
         guard greatestIndex >= -1 else {
             throw Primes.Error.negativeGreatestIndex
         }
-        
+
         let gi = greatestIndex == -1 ? count-1 : greatestIndex
         guard gi < count else {
             throw Primes.Error.greatestIndexTooLarge
         }
-        
-        let greatest = self[gi]
-        
-        guard let sieve = Primes.eratosthenesSieve(n: greatest) else {
-            return false
+
+        guard count >= 15 else {
+            // Use individual invocations of isPrime
+            return allSatisfy { $0.isPrime() }
         }
+    
+        let greatest = self[gi]
+        let primes = Primes.generate(upTo: greatest)
         
-        // If the sieve is equal, we're good.
-        if sieve == self {
+        if primes == self {
             return true
         }
         
-        // Check if the sieve and self fully intersect
-        return Set(sieve).fullyIntersects(other: Set(self))
+        return Set(primes).fullyIntersects(other: Set(self))
     }
 }
 

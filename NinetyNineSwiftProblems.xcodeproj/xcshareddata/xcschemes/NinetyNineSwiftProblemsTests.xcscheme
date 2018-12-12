@@ -64,6 +64,11 @@
                BlueprintName = "NinetyNineSwiftProblemsTests"
                ReferencedContainer = "container:NinetyNineSwiftProblems.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ArithmeticTests/testPrimeGenerationRuntime()">
+               </Test>
+            </SkippedTests>
             <LocationScenarioReference
                identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
                referenceType = "1">
