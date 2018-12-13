@@ -10,7 +10,7 @@ import Foundation
 
 // Combinatoric extensions on Array
 
-func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else {
         return [[]]
     }
@@ -30,7 +30,7 @@ func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     }
 }
 
-func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
     guard elements.count > 0 && taking > 0 else { return [[]] }
     
@@ -47,7 +47,7 @@ func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     }
 }
 
-func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
     guard elements.count >= taking && taking > 0 else { return [[]] }
     
@@ -64,7 +64,7 @@ func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
     }
 }
 
-func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else { return [[]] }
     guard taking > 1 else {
         return elements.map {[$0]}
