@@ -33,8 +33,16 @@ extension Tree {
         return right?.height ?? 0
     }
     
+    private var heightDifferential: Int {
+        return abs(leftHeight - rightHeight)
+    }
+    
+    func isBalanced() -> Bool {
+        return heightDifferential <= 1
+    }
+    
     func isCompletelyBalanced() -> Bool {
-        let hasCompletelyBalancedHeight = !(abs(leftHeight - rightHeight) > 1)
+        let hasCompletelyBalancedHeight = !(heightDifferential > 1)
         guard hasCompletelyBalancedHeight else {
             return false
         }
