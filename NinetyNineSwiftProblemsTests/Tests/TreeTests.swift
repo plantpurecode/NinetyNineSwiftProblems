@@ -25,4 +25,21 @@ class TreeTests: XCTestCase {
         XCTAssertEqual(Tree(1, Tree(2), Tree(3, Tree(4))).height, 3)
         XCTAssertFalse(Tree(1, Tree(2, Tree(3, Tree(4)))).isCompletelyBalanced())
     }
+    
+    func testHeight() {
+        XCTAssertEqual(Tree(1, Tree(2, Tree(3)), Tree(4, Tree(5, Tree(6)))).height, 4)
+    }
+    
+    func testBalancedTreeGeneration() {
+        let balancedTrees = Tree.makeBalancedTrees(nodes: 4, value: "x")!
+        let expected = List(
+            Tree("x", Tree("x"), Tree("x", nil, Tree("x"))),
+            Tree("x", Tree("x"), Tree("x", Tree("x"), nil)),
+            Tree("x", Tree("x", nil, Tree("x")), Tree("x")),
+            Tree("x", Tree("x", Tree("x"), nil), Tree("x"))
+        )!
+        
+        XCTAssertEqual(balancedTrees.length, expected.length)
+        XCTAssertTrue(balancedTrees.allSatisfy(expected.contains))
+    }
 }
