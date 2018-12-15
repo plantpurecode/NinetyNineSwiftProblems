@@ -21,7 +21,7 @@ class List<T> {
             return nil
         }
         value = first
-        nextItem = List(Array(values.suffix(from: 1)))
+        nextItem = List(Array(values.dropFirst()))
     }
     
     var last: List<T> {
