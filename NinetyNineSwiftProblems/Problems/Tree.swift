@@ -21,6 +21,10 @@ class Tree<T> {
 }
 
 extension Tree {
+    var nodeCount: Int {
+        return 1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
+    }
+    
     var height: Int {
         return 1 + max(leftHeight, rightHeight)
     }
@@ -37,13 +41,12 @@ extension Tree {
         return abs(leftHeight - rightHeight)
     }
     
-    func isBalanced() -> Bool {
-        return heightDifferential <= 1
+    private var nodeCountDifferential: Int {
+        return abs((left?.nodeCount ?? 0) - (right?.nodeCount ?? 0))
     }
     
     func isCompletelyBalanced() -> Bool {
-        let hasCompletelyBalancedHeight = !(heightDifferential > 1)
-        guard hasCompletelyBalancedHeight else {
+        guard !(nodeCountDifferential > 1) else {
             return false
         }
         
