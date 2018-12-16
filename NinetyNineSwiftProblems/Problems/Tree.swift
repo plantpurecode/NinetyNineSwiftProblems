@@ -27,6 +27,14 @@ extension Tree : CustomDebugStringConvertible {
 }
 
 extension Tree {
+    class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
+        guard let result = _makeBalancedTrees(nodes: n, value: value) else {
+            return nil
+        }
+        
+        return List(result)
+    }
+
     var isLeaf: Bool {
         return [left, right].compactMap { $0 }.count == 0
     }
@@ -47,6 +55,12 @@ extension Tree {
         return (right?.height).orZero
     }
     
+    var completelyBalanced: Bool {
+        return !(nodeCountDifferential > 1)
+    }
+    
+    // MARK: - Private
+    
     private var heightDifferential: Int {
         return abs(leftHeight - rightHeight)
     }
@@ -55,44 +69,36 @@ extension Tree {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
     
-    func isCompletelyBalanced() -> Bool {
-        return !(nodeCountDifferential > 1)
-    }
-    
-    class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
+    private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
+        func defaultNode() -> Tree {
+            return Tree(value)
+        }
+        
         switch n {
         case 0:
             return nil
         case 1:
-            return [Tree(value)]
+            return [defaultNode()]
         case 2:
-            return [Tree(value, Tree(value)), Tree(value, nil, Tree(value))]
+            return [Tree(value, defaultNode()), Tree(value, nil, defaultNode())]
         default:
-            let buildTreePair = { (x:Int, y:Int) -> [Tree<T>] in
-                var left = _makeBalancedTrees(nodes: x, value: value) ?? [Tree<T>?]()
-                var right = _makeBalancedTrees(nodes: y, value: value) ?? [Tree<T>?]()
-                left.pad(upTo: right.count - left.count, with: Tree(value))
-                right.pad(upTo: left.count - right.count, with: Tree(value))
+            func generateSubtrees(leftCount: Int, rightCount: Int) -> [Tree<T>] {
+                var left = _makeBalancedTrees(nodes: leftCount, value: value) ?? [Tree<T>?]()
+                var right = _makeBalancedTrees(nodes: rightCount, value: value) ?? [Tree<T>?]()
+                left.pad(upTo: right.count - left.count, with: defaultNode())
+                right.pad(upTo: left.count - right.count, with: defaultNode())
                 
                 return zip(right, left).map { Tree(value, $0, $1) }
             }
             
             if n.even {
-                return buildTreePair((n / 2) - 1, n / 2) + buildTreePair(n / 2, (n / 2) - 1)
+                return generateSubtrees(leftCount: (n / 2) - 1, rightCount: n / 2) +
+                    generateSubtrees(leftCount: n / 2, rightCount: (n / 2) - 1)
             } else {
-                return buildTreePair((n - 1) / 2, (n - 1) / 2)
+                return generateSubtrees(leftCount: (n - 1) / 2, rightCount: (n - 1) / 2)
             }
         }
     }
-    
-    class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
-        guard let result = _makeBalancedTrees(nodes: n, value: value) else {
-            return nil
-        }
-        
-        return List(result)
-    }
-
 }
 
 extension Int {
@@ -108,32 +114,5 @@ extension Int {
 extension Tree : Equatable where T : Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
         return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
-    }
-}
-
-extension Optional {
-    func or(_ value: Wrapped) -> Wrapped {
-        switch self {
-        case .none:
-            return value
-        case .some(let wrapped):
-            return wrapped
-        }
-    }
-}
-
-extension Optional where Wrapped : Numeric {
-    var orZero: Wrapped {
-        return or(0)
-    }
-}
-
-extension Array {
-    mutating func pad(upTo n: Int, with padding: Element) {
-        guard n > 0 else {
-            return
-        }
-        
-        self += (0..<n).map { _ in padding }
     }
 }

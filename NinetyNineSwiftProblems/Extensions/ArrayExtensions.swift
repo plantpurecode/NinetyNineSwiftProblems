@@ -103,4 +103,12 @@ extension Array {
         
         return (first!, last!)
     }
+    
+    mutating func pad(upTo n: Int, with padding: Element) {
+        guard n > 0 else {
+            return
+        }
+        
+        self += (0..<n).map { _ in padding }
+    }
 }

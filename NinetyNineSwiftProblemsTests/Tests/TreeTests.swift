@@ -11,7 +11,7 @@ import XCTest
 @testable import NinetyNineSwiftProblems
 
 class TreeTests: XCTestCase {
-    func testIsCompletelyBalanced() {
+    func testCompletelyBalanced() {
         let balancedTrees = [
             Tree(1, Tree(2, Tree(3), Tree(4)), Tree(5, Tree(6), Tree(7))),
             Tree(1, Tree(2), Tree(3)),
@@ -19,11 +19,11 @@ class TreeTests: XCTestCase {
         ]
         
         balancedTrees.forEach { tree in
-            XCTAssertTrue(tree.isCompletelyBalanced())
+            XCTAssertTrue(tree.completelyBalanced)
         }
         
         XCTAssertEqual(Tree(1, Tree(2), Tree(3, Tree(4))).height, 3)
-        XCTAssertFalse(Tree(1, Tree(2, Tree(3, Tree(4)))).isCompletelyBalanced())
+        XCTAssertFalse(Tree(1, Tree(2, Tree(3, Tree(4)))).completelyBalanced)
     }
     
     func testHeight() {
