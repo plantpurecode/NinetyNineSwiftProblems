@@ -99,16 +99,6 @@ extension Tree {
     }
 }
 
-extension Int {
-    var even: Bool {
-        return self % 2 == 0
-    }
-    
-    var odd: Bool {
-        return !even
-    }
-}
-
 extension Tree : Equatable where T : Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
         return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left

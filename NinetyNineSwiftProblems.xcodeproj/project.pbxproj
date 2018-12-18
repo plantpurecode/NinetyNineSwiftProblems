@@ -13,6 +13,7 @@
 		5222F36D21874765001C2B87 /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F36C21874765001C2B87 /* ListTests.swift */; };
 		52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */; };
 		5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959921C5D876002B5932 /* OptionalExtensions.swift */; };
+		5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959B21C98A78002B5932 /* IntExtensions.swift */; };
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
@@ -55,6 +56,7 @@
 		5222F36C21874765001C2B87 /* ListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTests.swift; sourceTree = "<group>"; };
 		52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		5234959921C5D876002B5932 /* OptionalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalExtensions.swift; sourceTree = "<group>"; };
+		5234959B21C98A78002B5932 /* IntExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtensions.swift; sourceTree = "<group>"; };
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				526EA6FA218B00E70047835E /* SetExtensions.swift */,
 				52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */,
 				5234959921C5D876002B5932 /* OptionalExtensions.swift */,
+				5234959B21C98A78002B5932 /* IntExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */,
 				52158CFB21C4001400B4980E /* Tree.swift in Sources */,
 				5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */,
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
