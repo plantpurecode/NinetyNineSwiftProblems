@@ -46,4 +46,20 @@ class TreeTests: XCTestCase {
             XCTAssertTrue(trees.allSatisfy(expected.contains))
         }
     }
+    
+    func testIsSymmetric() {
+        let testSet = [
+            Tree("a", Tree("b"), Tree("c")),
+            Tree("a", Tree("b", nil, Tree("c")), Tree("d", Tree("e"), nil))
+        ]
+        
+        let negativeTestSet = [
+            Tree("a", nil, Tree("b")),
+            Tree("a", Tree("b"), nil),
+            Tree("a", Tree("b", nil, Tree("c")), nil)
+        ]
+        
+        testSet.forEach { XCTAssertTrue($0.isSymmetric()) }
+        negativeTestSet.forEach { XCTAssertFalse($0.isSymmetric()) }
+    }
 }

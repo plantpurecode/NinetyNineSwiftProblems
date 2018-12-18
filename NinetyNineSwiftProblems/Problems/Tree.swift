@@ -58,6 +58,40 @@ extension Tree {
     var completelyBalanced: Bool {
         return !(nodeCountDifferential > 1)
     }
+
+    func isMirror(of tree: Tree) -> Bool {
+        // Are these both leaves?
+        if isLeaf, tree.isLeaf {
+            return true
+        }
+
+        let hasLeftAndRight = left != nil && tree.right != nil
+        let hasRightAndLeft = right != nil && tree.left != nil
+        
+        var leftMirror: Tree!, rightMirror: Tree!
+        
+        if hasLeftAndRight {
+            leftMirror = left
+            rightMirror = tree.right
+        } else if hasRightAndLeft {
+            leftMirror = right
+            rightMirror = tree.left!
+        } else {
+            // No corresponding node
+            return false
+        }
+        
+        // Has both - Recurse?
+        return leftMirror.isMirror(of: rightMirror)
+    }
+    
+    func isSymmetric() -> Bool {
+        guard let left = left, let right = right else {
+            return false
+        }
+        
+        return left.isMirror(of: right)
+    }
     
     // MARK: - Private
     
