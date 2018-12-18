@@ -31,7 +31,7 @@ class TreeTests: XCTestCase {
     }
     
     func testBalancedTreeGeneration() {
-        let balancedTrees = Tree.makeBalancedTrees(nodes: 4, value: "x")!
+        let balancedTrees = Tree.makeBalancedTrees(nodes: 4, value: "x")
         let expected = List(
             Tree("x", Tree("x"), Tree("x", nil, Tree("x"))),
             Tree("x", Tree("x"), Tree("x", Tree("x"), nil)),
@@ -39,7 +39,11 @@ class TreeTests: XCTestCase {
             Tree("x", Tree("x", Tree("x"), nil), Tree("x"))
         )!
         
-        XCTAssertEqual(balancedTrees.length, expected.length)
-        XCTAssertTrue(balancedTrees.allSatisfy(expected.contains))
+        XCTAssertNotNil(balancedTrees)
+        
+        if let trees = balancedTrees {
+            XCTAssertEqual(trees.length, expected.length)
+            XCTAssertTrue(trees.allSatisfy(expected.contains))
+        }
     }
 }

@@ -70,23 +70,21 @@ extension Tree {
     }
     
     private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
-        func defaultNode() -> Tree {
-            return Tree(value)
-        }
+        let leaf = Tree(value)
         
         switch n {
         case 0:
             return nil
         case 1:
-            return [defaultNode()]
+            return [leaf]
         case 2:
-            return [Tree(value, defaultNode()), Tree(value, nil, defaultNode())]
+            return [Tree(value, leaf), Tree(value, nil, leaf)]
         default:
             func generateSubtrees(leftCount: Int, rightCount: Int) -> [Tree<T>] {
                 var left = _makeBalancedTrees(nodes: leftCount, value: value) ?? [Tree<T>?]()
                 var right = _makeBalancedTrees(nodes: rightCount, value: value) ?? [Tree<T>?]()
-                left.pad(upTo: right.count - left.count, with: defaultNode())
-                right.pad(upTo: left.count - right.count, with: defaultNode())
+                left.pad(upTo: right.count - left.count, with: leaf)
+                right.pad(upTo: left.count - right.count, with: leaf)
                 
                 return zip(right, left).map { Tree(value, $0, $1) }
             }
