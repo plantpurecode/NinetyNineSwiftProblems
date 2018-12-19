@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tree<T : Comparable> {
+class Tree<T> {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -17,15 +17,6 @@ class Tree<T : Comparable> {
         self.value = value
         self.left = left
         self.right = right
-    }
-    
-    convenience init(list: List<T>!) {
-        let tree = Tree<T>(list[0]!.value)
-        list.dropFirst().forEach {
-            let _ = tree.insert(value: $0)
-        }
-        
-        self.init(tree.value, tree.left, tree.right)
     }
 }
 
@@ -105,24 +96,6 @@ extension Tree {
         return left.isMirror(of: right)
     }
     
-    func insert(value v: T) -> Tree {
-        if v < value {
-            if left == nil {
-                left = Tree(v)
-            } else {
-                _ = left!.insert(value: v)
-            }
-        } else if v > value {
-            if right == nil {
-                right = Tree(v)
-            } else {
-                _ = right!.insert(value: v)
-            }
-        }
-        
-        return self
-    }
-    
     // MARK: - Private
     
     private var heightDifferential: Int {
@@ -160,6 +133,35 @@ extension Tree {
                 return generateSubtrees(leftCount: (n - 1) / 2, rightCount: (n - 1) / 2)
             }
         }
+    }
+}
+
+extension Tree where T : Comparable {
+    convenience init(list: List<T>!) {
+        let tree = Tree<T>(list.value)
+        list.dropFirst().forEach {
+            let _ = tree.insert(value: $0)
+        }
+        
+        self.init(tree.value, tree.left, tree.right)
+    }
+
+    func insert(value v: T) -> Tree {
+        if v < value {
+            if left == nil {
+                left = Tree(v)
+            } else {
+                _ = left!.insert(value: v)
+            }
+        } else if v > value {
+            if right == nil {
+                right = Tree(v)
+            } else {
+                _ = right!.insert(value: v)
+            }
+        }
+        
+        return self
     }
 }
 
