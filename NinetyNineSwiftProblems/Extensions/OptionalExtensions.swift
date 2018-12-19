@@ -24,3 +24,4 @@ extension Optional where Wrapped : Numeric {
         return or(0)
     }
 }
+

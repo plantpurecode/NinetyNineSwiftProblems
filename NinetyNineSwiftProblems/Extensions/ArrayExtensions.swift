@@ -112,3 +112,13 @@ extension Array {
         self += (0..<n).map { _ in padding }
     }
 }
+
+extension Collection {
+    func allNil<T>() -> Bool where Element == Optional<T> {
+        return allSatisfy { $0 == nil }
+    }
+    
+    func allNotNil<T>() -> Bool where Element == Optional<T> {
+        return allSatisfy { $0 != nil }
+    }
+}

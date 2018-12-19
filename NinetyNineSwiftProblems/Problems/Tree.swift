@@ -65,27 +65,30 @@ extension Tree {
             return true
         }
 
-        let hasLeftAndRight = left != nil && tree.right != nil
-        let hasRightAndLeft = right != nil && tree.left != nil
+        let nodePairs = [
+            [left, tree.right],
+            [right, tree.left]
+        ]
         
-        var leftMirror: Tree!, rightMirror: Tree!
-        
-        if hasLeftAndRight {
-            leftMirror = left
-            rightMirror = tree.right
-        } else if hasRightAndLeft {
-            leftMirror = right
-            rightMirror = tree.left!
-        } else {
-            // No corresponding node
-            return false
+        return nodePairs.allSatisfy { nodePair in
+            let bothNil = nodePair.allNil()
+            let areMirrors = { () -> Bool in
+                guard nodePair.allNotNil() else {
+                    return false
+                }
+                
+                return nodePair[0]!.isMirror(of: nodePair[1]!)
+            }()
+            
+            return bothNil || areMirrors
         }
-        
-        // Has both - Recurse?
-        return leftMirror.isMirror(of: rightMirror)
     }
     
     func isSymmetric() -> Bool {
+        guard isLeaf == false else {
+            return true
+        }
+        
         guard let left = left, let right = right else {
             return false
         }

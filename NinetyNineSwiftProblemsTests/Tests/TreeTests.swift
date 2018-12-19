@@ -49,12 +49,17 @@ class TreeTests: XCTestCase {
     
     func testIsSymmetric() {
         let testSet = [
+            Tree("a"),
             Tree("a", Tree("b"), Tree("c")),
-            Tree("a", Tree("b", nil, Tree("c")), Tree("d", Tree("e"), nil))
+            Tree("a", Tree("b", nil, Tree("c")), Tree("d", Tree("e"), nil)),
+            Tree("a", Tree("b", Tree("c"), nil), Tree("d", nil, Tree("f")))
         ]
         
         let negativeTestSet = [
-            Tree("a", nil, Tree("b")),
+            Tree("a", Tree("b", Tree("d", nil, Tree("e"))), Tree("c")),
+            Tree("a", nil, Tree("b", Tree("d"))),
+            Tree("a", Tree("b"), Tree("c", nil, Tree("e"))),
+            Tree("a", Tree("b", nil, Tree("c", nil, Tree("d")))),
             Tree("a", Tree("b"), nil),
             Tree("a", Tree("b", nil, Tree("c")), nil)
         ]
