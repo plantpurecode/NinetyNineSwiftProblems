@@ -61,11 +61,14 @@ class TreeTests: XCTestCase {
             Tree("a", Tree("b"), Tree("c", nil, Tree("e"))),
             Tree("a", Tree("b", nil, Tree("c", nil, Tree("d")))),
             Tree("a", Tree("b"), nil),
-            Tree("a", Tree("b", nil, Tree("c")), nil)
+            Tree("a", Tree("b", nil, Tree("c")), nil),
         ]
         
         testSet.forEach { XCTAssertTrue($0.isSymmetric()) }
         negativeTestSet.forEach { XCTAssertFalse($0.isSymmetric()) }
+        
+        XCTAssertTrue(Tree(list: List(5, 3, 18, 1, 4, 12, 21)).isSymmetric())
+        XCTAssertFalse(Tree(list: List(3, 2, 5, 7, 4)).isSymmetric())
     }
     
     func testInsertion() {
@@ -75,5 +78,10 @@ class TreeTests: XCTestCase {
         XCTAssertEqual(Tree(4, nil, Tree(5, nil, Tree(7, Tree(6)))).insert(value: 8), Tree(4, nil, Tree(5, nil, Tree(7, Tree(6), Tree(8)))))
         
         XCTAssertNotEqual(Tree(4, nil, Tree(5)).insert(value: 1), Tree(4, nil, Tree(5, Tree(1))))
+    }
+    
+    func testListInitializer() {
+        let tree = Tree(list: List(3,2,5,7,1))
+        XCTAssertEqual(tree, Tree(3, Tree(2, Tree(1), nil), Tree(5, nil, Tree(7))))
     }
 }

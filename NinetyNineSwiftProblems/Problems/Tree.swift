@@ -18,6 +18,15 @@ class Tree<T : Comparable> {
         self.left = left
         self.right = right
     }
+    
+    convenience init(list: List<T>!) {
+        let tree = Tree<T>(list[0]!.value)
+        list.dropFirst().forEach {
+            let _ = tree.insert(value: $0)
+        }
+        
+        self.init(tree.value, tree.left, tree.right)
+    }
 }
 
 extension Tree : CustomDebugStringConvertible {
