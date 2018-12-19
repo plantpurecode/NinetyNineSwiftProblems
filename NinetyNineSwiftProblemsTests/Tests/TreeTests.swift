@@ -67,4 +67,13 @@ class TreeTests: XCTestCase {
         testSet.forEach { XCTAssertTrue($0.isSymmetric()) }
         negativeTestSet.forEach { XCTAssertFalse($0.isSymmetric()) }
     }
+    
+    func testInsertion() {
+        XCTAssertEqual(Tree(2, nil, Tree(3)).insert(value: 0), Tree(2, Tree(0), Tree(3)))
+        XCTAssertEqual(Tree(4, Tree(2)).insert(value: 0), Tree(4, Tree(2, Tree(0))))
+        XCTAssertEqual(Tree(4, Tree(3, Tree(2))).insert(value: 1), Tree(4, Tree(3, Tree(2, Tree(1)))))
+        XCTAssertEqual(Tree(4, nil, Tree(5, nil, Tree(7, Tree(6)))).insert(value: 8), Tree(4, nil, Tree(5, nil, Tree(7, Tree(6), Tree(8)))))
+        
+        XCTAssertNotEqual(Tree(4, nil, Tree(5)).insert(value: 1), Tree(4, nil, Tree(5, Tree(1))))
+    }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tree<T> {
+class Tree<T : Comparable> {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -94,6 +94,24 @@ extension Tree {
         }
         
         return left.isMirror(of: right)
+    }
+    
+    func insert(value v: T) -> Tree {
+        if v < value {
+            if left == nil {
+                left = Tree(v)
+            } else {
+                _ = left!.insert(value: v)
+            }
+        } else if v > value {
+            if right == nil {
+                right = Tree(v)
+            } else {
+                _ = right!.insert(value: v)
+            }
+        }
+        
+        return self
     }
     
     // MARK: - Private
