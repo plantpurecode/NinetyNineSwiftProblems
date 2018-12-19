@@ -8,7 +8,7 @@
 
 import Foundation
 
-// Combinatoric extensions on Array
+// Combinatoric extensions on Collection
 
 fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else {

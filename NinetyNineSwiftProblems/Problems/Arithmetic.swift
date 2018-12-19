@@ -209,7 +209,7 @@ extension Int {
     }
 }
 
-extension Array where Element == Int {
+extension Collection where Element == Int, Index == Int {
     func allPrime(greatestIndex: Int = -1) throws -> Bool {
         guard contains(where: { $0 < 0 }) == false else {
             throw Primes.Error.negativeNumber
@@ -232,7 +232,7 @@ extension Array where Element == Int {
         let greatest = self[gi]
         let primes = Primes.generate(upTo: greatest)
         
-        if primes == self {
+        if primes.elementsEqual(self) {
             return true
         }
         
