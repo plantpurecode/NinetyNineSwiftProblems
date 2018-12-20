@@ -59,6 +59,18 @@ extension Tree {
         return !(nodeCountDifferential > 1)
     }
 
+    var symmetric: Bool {
+        guard isLeaf == false else {
+            return true
+        }
+        
+        guard let left = left, let right = right else {
+            return false
+        }
+        
+        return left.isMirror(of: right)
+    }
+    
     func isMirror(of tree: Tree) -> Bool {
         // Are these both leaves?
         if isLeaf, tree.isLeaf {
@@ -82,18 +94,6 @@ extension Tree {
             
             return bothNil || areMirrors
         }
-    }
-    
-    func isSymmetric() -> Bool {
-        guard isLeaf == false else {
-            return true
-        }
-        
-        guard let left = left, let right = right else {
-            return false
-        }
-        
-        return left.isMirror(of: right)
     }
     
     // MARK: - Private
