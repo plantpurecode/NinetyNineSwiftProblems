@@ -110,9 +110,14 @@ class ArithmeticTests: XCTestCase {
     func testPrimeGenerationRuntime() {
         // This test will be disabled normally in order to keep overall test suite runtime to a minimum.
         
+        let upperBound = 5_000_000
+        var primeCount = 0
+        
         measure {
-            let _ = Primes.generate(upTo: 5_000_000)
+            primeCount = Primes.generate(upTo: upperBound).count
         }
+        
+        print("Found \(primeCount) primes up to \(upperBound)")
     }
     
     func testGoldbach() {
