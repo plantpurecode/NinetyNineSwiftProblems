@@ -105,7 +105,7 @@ extension Tree {
     private var nodeCountDifferential: Int {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
-    
+
     private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
         let leaf = Tree(value)
         
@@ -120,10 +120,11 @@ extension Tree {
             func generateSubtrees(leftCount: Int, rightCount: Int) -> [Tree<T>] {
                 var left = _makeBalancedTrees(nodes: leftCount, value: value) ?? [Tree<T>?]()
                 var right = _makeBalancedTrees(nodes: rightCount, value: value) ?? [Tree<T>?]()
+                
                 left.pad(upTo: right.count - left.count, with: leaf)
                 right.pad(upTo: left.count - right.count, with: leaf)
                 
-                return zip(right, left).map { Tree(value, $0, $1) }
+                return zip(left, right).map { Tree(value, $0, $1) }
             }
             
             if n.even {

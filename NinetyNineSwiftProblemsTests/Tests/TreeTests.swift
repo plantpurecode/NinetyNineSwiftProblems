@@ -50,9 +50,8 @@ class TreeTests: XCTestCase {
     func testSymmetric() {
         let testSet = [
             Tree("a"),
-            Tree("a", Tree("b"), Tree("c")),
-            Tree("a", Tree("b", nil, Tree("c")), Tree("d", Tree("e"), nil)),
-            Tree("a", Tree("b", Tree("c"), nil), Tree("d", nil, Tree("f")))
+            Tree("a", Tree("b", nil, Tree("c")), Tree("d", Tree("e"))),
+            Tree("a", Tree("b", Tree("c")), Tree("e", nil, Tree("f")))
         ]
         
         let negativeTestSet = [
@@ -64,7 +63,10 @@ class TreeTests: XCTestCase {
             Tree("a", Tree("b", nil, Tree("c")), nil),
         ]
         
-        testSet.forEach { XCTAssertTrue($0.symmetric) }
+        testSet.enumerated().forEach {
+            XCTAssertTrue($0.1.symmetric, "Tree at index \($0.0) isn't symmetric!")
+        }
+        
         negativeTestSet.forEach { XCTAssertFalse($0.symmetric) }
         
         XCTAssertTrue(Tree(list: List(5, 3, 18, 1, 4, 12, 21)).symmetric)
