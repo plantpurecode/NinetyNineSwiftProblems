@@ -90,7 +90,23 @@ class TreeTests: XCTestCase {
     func testHeightBalancedTreeGeneration() {
         let result = Tree.makeHeightBalancedTrees(height: 3, value: "x")
        
-        XCTAssertNotNil(result)
-        XCTAssertTrue(result!.values.allSatisfy { $0.heightBalanced })
+        guard let res = result else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertTrue(res.values.allSatisfy { $0.heightBalanced })
+    }
+    
+    func testHeightBalancedTreeGenerationReduxWithNodeCount() {
+        let result = Tree.makeHeightBalancedTrees(nodes: 15, value: "x")
+        
+        guard let res = result else {
+            XCTFail("Unexpectedly got a nil tree list")
+            return
+        }
+        
+        print("Found \(res.length) height balanced trees with 15 nodes")
+        XCTAssertTrue(res.values.allSatisfy { $0.heightBalanced })
     }
 }
