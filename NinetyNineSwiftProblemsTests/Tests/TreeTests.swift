@@ -86,4 +86,11 @@ class TreeTests: XCTestCase {
         let tree = Tree(list: List(3,2,5,7,1))
         XCTAssertEqual(tree, Tree(3, Tree(2, Tree(1), nil), Tree(5, nil, Tree(7))))
     }
+    
+    func testHeightBalancedTreeGeneration() {
+        let result = Tree.makeHeightBalancedTrees(height: 3, value: "x")
+       
+        XCTAssertNotNil(result)
+        XCTAssertTrue(result!.values.allSatisfy { $0.heightBalanced })
+    }
 }

@@ -34,6 +34,14 @@ extension Tree {
         
         return List(result)
     }
+    
+    class func makeHeightBalancedTrees(height: Int, value: T) -> List<Tree<T>>? {
+        guard let result = _makeHeightBalancedTrees(height: height, value: value) else {
+            return nil
+        }
+        
+        return List(result)
+    }
 
     var isLeaf: Bool {
         return [left, right].compactMap { $0 }.count == 0
@@ -53,6 +61,10 @@ extension Tree {
     
     var rightHeight: Int {
         return (right?.height).orZero
+    }
+    
+    var heightBalanced: Bool {
+        return heightDifferential <= 1
     }
     
     var completelyBalanced: Bool {
@@ -104,6 +116,28 @@ extension Tree {
     
     private var nodeCountDifferential: Int {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
+    }
+    
+    private class func _makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>]? {
+        switch height {
+        case height where height < 1:
+            return nil
+        case 1:
+            return [Tree(value)]
+        default:
+            let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)!
+            let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value) ?? Array(repeating: nil, count: maxHeightSubtree.count / 2)
+            
+            return maxHeightSubtree.flatMap { l in
+                return maxHeightSubtree.map { r in
+                    Tree(value, l, r)
+                }
+            } + maxHeightSubtree.flatMap { full in
+                minHeightSubtree.flatMap { short in
+                    [Tree(value, full, short), Tree(value, short, full)]
+                }
+            }
+        }
     }
 
     private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
