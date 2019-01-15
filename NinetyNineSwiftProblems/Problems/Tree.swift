@@ -55,6 +55,10 @@ extension Tree {
         return [left, right].compactMap { $0 }.count == 0
     }
     
+    var leafCount: Int {
+        return (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
+    }
+    
     var nodeCount: Int {
         return 1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
     }

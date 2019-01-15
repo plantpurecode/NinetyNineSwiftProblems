@@ -109,4 +109,11 @@ class TreeTests: XCTestCase {
         print("Found \(res.length) height balanced trees with 15 nodes")
         XCTAssertTrue(res.values.allSatisfy { $0.heightBalanced })
     }
+    
+    func testLeafCount() {
+        let elements = [10,11,8,1,5,7,12,6,3,4,9,2]
+        
+        XCTAssertEqual(Tree(list: List(elements)).leafCount, 5)
+        XCTAssertEqual(Tree("x", Tree("x"), nil).leafCount, 1)
+    }
 }
