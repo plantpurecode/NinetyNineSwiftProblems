@@ -116,4 +116,12 @@ class TreeTests: XCTestCase {
         XCTAssertEqual(Tree(list: List(elements)).leafCount, 5)
         XCTAssertEqual(Tree("x", Tree("x"), nil).leafCount, 1)
     }
+
+    func testLeaves() {
+        let elements = [10,11,8,1,5,7,12,6,3,4,9,2]
+        let tree = Tree(list: List(elements))
+
+        XCTAssertEqual(tree.leaves, List(2, 4, 6, 9, 12))
+    }
 }
+

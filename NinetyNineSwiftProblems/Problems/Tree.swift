@@ -59,6 +59,16 @@ extension Tree {
         return (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
     }
     
+    var leaves: List<T> {
+        guard isLeaf == false else {
+            return List(value)!
+        }
+        
+        return List([left, right].compactMap { $0 }.reduce([T](), {
+            return $0 + $1.leaves.values
+        }))!
+    }
+    
     var nodeCount: Int {
         return 1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
     }
