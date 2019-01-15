@@ -51,6 +51,22 @@ extension Tree {
         return List(result)
     }
     
+    class func makeCompleteTree(nodes: Int, value: T) -> Tree<T>? {
+        guard nodes > 0 else {
+            return nil
+        }
+        
+        func generate(index: Int) -> Tree<T>? {
+            guard index <= nodes else {
+                return nil
+            }
+            
+            return Tree(value, generate(index: 2 * index), generate(index: 2 * index + 1))
+        }
+        
+        return generate(index: 1)
+    }
+    
     var isLeaf: Bool {
         return [left, right].compactMap { $0 }.count == 0
     }

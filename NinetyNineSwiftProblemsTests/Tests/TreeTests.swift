@@ -139,5 +139,13 @@ class TreeTests: XCTestCase {
         XCTAssertEqual(test, List("b", "c"))
         XCTAssertNil(Tree("a").nodes(atLevel: 2))
     }
+    
+    func testMakingCompleteTrees() {
+        let expected = Tree("x", Tree("x", Tree("x"), Tree("x")), Tree("x", Tree("x"), nil))
+        let result = Tree.makeCompleteTree(nodes: 6, value: "x")
+        
+        XCTAssertEqual(result, expected)
+        XCTAssertNil(Tree.makeCompleteTree(nodes: 0, value: "x"))
+    }
 }
 
