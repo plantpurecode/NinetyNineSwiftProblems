@@ -141,6 +141,20 @@ extension Tree {
         }
     }
     
+    func nodes(atLevel level: Int) -> List<T>? {
+        switch level {
+        case level where level < 1:
+            return nil
+        case 1:
+            return List(value)
+        default:
+            let leftNodes = left?.nodes(atLevel: level - 1)?.values ?? [T]()
+            let rightNodes = right?.nodes(atLevel: level - 1)?.values ?? [T]()
+            
+            return List(leftNodes + rightNodes)
+        }
+    }
+    
     // MARK: - Private
     
     private var _heightDifferential: Int {
