@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tree<T> {
+class Tree<T> : CustomDebugStringConvertible {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -18,9 +18,7 @@ class Tree<T> {
         self.left = left
         self.right = right
     }
-}
-
-extension Tree : CustomDebugStringConvertible {
+    
     var debugDescription: String {
         return "(\(isLeaf ? "Leaf" : "Node") \(self.value)\(left != nil ? ", l: \(left!.debugDescription)" : "")\(right != nil ? ", r: " + right!.debugDescription : ""))"
     }
@@ -131,6 +129,21 @@ extension Tree {
         
         return List(prefix + successorNodes.map ({ $0.value }) + successorNodes.flatMap({ $0.internalNodes?.values ?? [] }))
     }
+    
+    // MARK: - Layout
+    
+    func layoutBinaryTree() -> PositionedTree<T>? {
+        return _layoutBinaryTreeInternal(x: 1, depth: 1).0
+    }
+    
+    private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
+        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
+        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
+        
+        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
+    }
+    
+    // MARK: -
     
     func isMirror(of tree: Tree) -> Bool {
         // Are these both leaves?
@@ -279,6 +292,21 @@ extension Tree where T : Comparable {
 extension Tree : Equatable where T : Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
         return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
+    }
+}
+
+class PositionedTree<T> : Tree<T> {
+    var x: Int
+    var y: Int
+    
+    init(x: Int, y: Int, value: T, _ left: Tree<T>? = nil, _ right: Tree<T>? = nil) {
+        self.x = x
+        self.y = y
+        super.init(value, left, right)
+    }
+    
+    override var debugDescription: String {
+        return "\(type(of: self))(x: \(x), y: \(y), value: \(value), \(left?.debugDescription ?? "nil"), \(right?.debugDescription ?? "nil")"
     }
 }
 
