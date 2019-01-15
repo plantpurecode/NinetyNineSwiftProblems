@@ -123,5 +123,14 @@ class TreeTests: XCTestCase {
 
         XCTAssertEqual(tree.leaves, List(2, 4, 6, 9, 12))
     }
+    
+    func testInternalNodes() {
+        let internalNodes = Tree("a", Tree("b"), Tree("c", Tree("d"), Tree("e"))).internalNodes
+        
+        XCTAssertEqual(internalNodes, List("a", "c"))
+        
+        let leafInternalNodes = Tree("a").internalNodes
+        XCTAssertNil(leafInternalNodes)
+    }
 }
 

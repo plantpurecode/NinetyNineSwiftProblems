@@ -105,6 +105,17 @@ extension Tree {
         return left.isMirror(of: right)
     }
     
+    var internalNodes: List<T>? {
+        guard isLeaf == false else {
+            return nil
+        }
+        
+        let successorNodes = [left, right].compactMap { $0 }.filter { !$0.isLeaf }
+        let prefix = successorNodes.count > 0 ? [value] : [T]()
+        
+        return List(prefix + successorNodes.map ({ $0.value }) + successorNodes.flatMap({ $0.internalNodes?.values ?? [] }))
+    }
+    
     func isMirror(of tree: Tree) -> Bool {
         // Are these both leaves?
         if isLeaf, tree.isLeaf {
