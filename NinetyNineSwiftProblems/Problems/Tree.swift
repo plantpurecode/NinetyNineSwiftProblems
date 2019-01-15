@@ -76,11 +76,11 @@ extension Tree {
     }
     
     var heightBalanced: Bool {
-        return heightDifferential <= 1
+        return _heightDifferential <= 1
     }
     
     var completelyBalanced: Bool {
-        return !(nodeCountDifferential > 1)
+        return !(_nodeCountDifferential > 1)
     }
 
     var symmetric: Bool {
@@ -122,11 +122,11 @@ extension Tree {
     
     // MARK: - Private
     
-    private var heightDifferential: Int {
+    private var _heightDifferential: Int {
         return abs(leftHeight - rightHeight)
     }
     
-    private var nodeCountDifferential: Int {
+    private var _nodeCountDifferential: Int {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
     
