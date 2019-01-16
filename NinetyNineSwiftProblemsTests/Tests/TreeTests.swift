@@ -167,6 +167,31 @@ class TreeTests: XCTestCase {
         XCTAssertEqual((test.right as! PositionedTree<String>).x, 4)
         XCTAssertEqual((test.right as! PositionedTree<String>).y, 2)
         XCTAssertEqual((test.right as! PositionedTree<String>).value, "d")
+        
+        XCTAssertNil(Tree("a").layoutBinaryTree())
+    }
+    
+    func testTreeLayout2() {
+        let test = Tree("a", Tree("b", nil, Tree("c")), Tree("d")).layoutBinaryTree2()!
+        
+        XCTAssertEqual(test.x, 3)
+        XCTAssertEqual(test.y, 1)
+        XCTAssertEqual(test.value, "a")
+        
+        XCTAssertEqual((test.left as! PositionedTree<String>).x, 1)
+        XCTAssertEqual((test.left as! PositionedTree<String>).y, 2)
+        XCTAssertEqual((test.left as! PositionedTree<String>).value, "b")
+        
+        XCTAssertNil((test.left as! PositionedTree<String>).left)
+        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).x, 2)
+        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).y, 3)
+        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).value, "c")
+        
+        XCTAssertEqual((test.right as! PositionedTree<String>).x, 5)
+        XCTAssertEqual((test.right as! PositionedTree<String>).y, 2)
+        XCTAssertEqual((test.right as! PositionedTree<String>).value, "d")
+        
+        XCTAssertNil(Tree("a").layoutBinaryTree2())
     }
 }
 

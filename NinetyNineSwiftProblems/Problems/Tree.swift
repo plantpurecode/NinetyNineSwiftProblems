@@ -133,14 +133,22 @@ extension Tree {
     // MARK: - Layout
     
     func layoutBinaryTree() -> PositionedTree<T>? {
+        guard isLeaf == false else {
+            return nil
+        }
+
         return _layoutBinaryTreeInternal(x: 1, depth: 1).0
     }
     
-    private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
-        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
-        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
+    func layoutBinaryTree2() -> PositionedTree<T>? {
+        guard isLeaf == false else {
+            return nil
+        }
         
-        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
+        let d = _depth
+        let x0 = (2..._leftmostDepth).map { 2 ^^ (d - $0) }.reduce(1, +)
+        
+        return _layoutBinaryTree2Internal(x: x0, depth: 1, exp: d - 2)
     }
     
     // MARK: -
@@ -185,6 +193,33 @@ extension Tree {
     }
     
     // MARK: - Private
+    
+    private var _depth: Int {
+        return max(left?._depth ?? 0, right?._depth ?? 0) + 1
+    }
+    
+    private var _leftmostDepth: Int {
+        return (left?._leftmostDepth ?? 0) + 1
+    }
+    
+    private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
+        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
+        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
+        
+        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
+    }
+
+    private func _layoutBinaryTree2Internal(x: Int, depth: Int, exp: Int) -> PositionedTree<T> {
+        return PositionedTree<T>(x: x,
+                                 y: depth,
+                                 value: value,
+                                 left?._layoutBinaryTree2Internal(x: x - (2 ^^ exp),
+                                                                  depth: depth + 1,
+                                                                  exp: exp - 1),
+                                 right?._layoutBinaryTree2Internal(x: x + (2 ^^ exp),
+                                                                   depth: depth + 1,
+                                                                   exp: exp - 1))
+    }
     
     private var _heightDifferential: Int {
         return abs(leftHeight - rightHeight)
