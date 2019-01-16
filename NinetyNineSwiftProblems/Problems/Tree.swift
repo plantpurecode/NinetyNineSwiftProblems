@@ -157,6 +157,15 @@ extension Tree {
         return _layoutBinaryTree2Internal(x: x0, depth: 1, exp: d - 2)
     }
     
+    func layoutBinaryTree3() -> PositionedTree<T>? {
+        guard isLeaf == false else {
+            return nil
+        }
+        
+        let x = (_bounds.map { $0.0 }.reduce(Int.max - 1, min) * -1) + 1
+        return _layoutBinaryTree3Internal(x: x, depth: 1)
+    }
+    
     // MARK: -
     
     func isMirror(of tree: Tree) -> Bool {
@@ -209,6 +218,49 @@ extension Tree {
         return (left?._leftmostDepth ?? 0) + 1
     }
     
+    private var _bounds: [(Int, Int)] {
+        func fullInnerBounds(lb: [(Int, Int)], rb: [(Int, Int)]) -> [(Int, Int)] {
+            let shift = zip(lb, rb).map {
+                (($0.0.1 - $0.1.0) / 2) + 1
+            }.reduce(0, max)
+            
+            return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, leftShorterDefault: nil, rightShorterDefault: nil).compactMap {
+                let tuple = $0
+                
+                if let l = tuple.0, let r = tuple.1 {
+                    return (l.0 - shift, r.1 + shift)
+                } else if let l = tuple.0 {
+                    return (l.0 - shift, l.1 - shift)
+                } else if let r = tuple.1 {
+                    return (r.0 + shift, r.1 + shift)
+                }
+                
+                return nil
+            }
+        }
+        
+        func lowerBounds() -> [(Int, Int)]? {
+            let lb = left?._bounds
+            let rb = right?._bounds
+            
+            if let lb = lb, let rb = rb {
+                return fullInnerBounds(lb: lb, rb: rb)
+            }
+            
+            if let lb = lb {
+                return lb.map { ($0.0 - 1, $0.1 - 1) }
+            }
+            
+            if let rb = rb {
+                return rb.map { ($0.0 + 1, $0.1 + 1) }
+            }
+
+            return nil
+        }
+        
+        return [(0, 0)] + (lowerBounds() ?? [])
+    }
+    
     private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
         let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
         let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
@@ -226,6 +278,18 @@ extension Tree {
                                  right?._layoutBinaryTree2Internal(x: x + (2 ^^ exp),
                                                                    depth: depth + 1,
                                                                    exp: exp - 1))
+    }
+    
+    private func _layoutBinaryTree3Internal(x: Int, depth: Int) -> PositionedTree<T> {
+        let bounds = _bounds
+        let (bl, br) = bounds.count > 2 ? bounds[1] : bounds[0]
+        let offset = bounds.count > 2 ? 0 : 1
+        
+        return PositionedTree<T>(x: x,
+                                 y: depth,
+                                 value: value,
+                                 left?._layoutBinaryTree3Internal(x: x + bl + offset, depth: depth + 1),
+                                 right?._layoutBinaryTree3Internal(x: x + br + offset, depth: depth + 1))
     }
     
     // MARK: Differentials
@@ -384,4 +448,15 @@ fileprivate func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> I
         let nodes = minimumNodesForBalancedTree(ofHeight: $0)
         return nodes <= nodeCount
     }).last ?? 0
+}
+
+func zipAll<T>(left: [T], right: [T], leftShorterDefault: T, rightShorterDefault: T) -> [(T, T)] {
+    let maxCount = max(left.count, right.count)
+    
+    var l = left, r = right
+    
+    l.pad(upTo: maxCount, with: leftShorterDefault)
+    r.pad(upTo: maxCount, with: rightShorterDefault)
+    
+    return zip(l, r).map { $0 }
 }
