@@ -25,6 +25,8 @@ class Tree<T> : CustomDebugStringConvertible {
 }
 
 extension Tree {
+    // MARK: - Class functions -
+    
     class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
         guard let result = _makeBalancedTrees(nodes: n, value: value) else {
             return nil
@@ -64,6 +66,8 @@ extension Tree {
         
         return generate(index: 1)
     }
+    
+    // MARK: - Computed Properties -
     
     var isLeaf: Bool {
         return [left, right].compactMap { $0 }.count == 0
@@ -130,7 +134,9 @@ extension Tree {
         return List(prefix + successorNodes.map ({ $0.value }) + successorNodes.flatMap({ $0.internalNodes?.values ?? [] }))
     }
     
-    // MARK: - Layout
+    
+    // MARK: - Functions -
+    // MARK: Layout
     
     func layoutBinaryTree() -> PositionedTree<T>? {
         guard isLeaf == false else {
@@ -192,7 +198,8 @@ extension Tree {
         }
     }
     
-    // MARK: - Private
+    // MARK: - Private -
+    // MARK: Layout
     
     private var _depth: Int {
         return max(left?._depth ?? 0, right?._depth ?? 0) + 1
@@ -221,6 +228,8 @@ extension Tree {
                                                                    exp: exp - 1))
     }
     
+    // MARK: Differentials
+    
     private var _heightDifferential: Int {
         return abs(leftHeight - rightHeight)
     }
@@ -228,6 +237,8 @@ extension Tree {
     private var _nodeCountDifferential: Int {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
+    
+    // MARK: Tree Builder Functions
     
     private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>]? {
         let range = minimumHeightForBalancedTree(withNodeCount: nodes)...maximumHeightForBalancedTree(withNodeCount: nodes)
