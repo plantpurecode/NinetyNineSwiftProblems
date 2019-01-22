@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tree<T> : CustomDebugStringConvertible {
+class Tree<T> : CustomStringConvertible, CustomDebugStringConvertible {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -17,6 +17,13 @@ class Tree<T> : CustomDebugStringConvertible {
         self.value = value
         self.left = left
         self.right = right
+    }
+    
+    var description: String {
+        let joinedChildDescriptions = [left?.description ?? "", right?.description ?? ""].joined(separator: ",")
+        let childValueDescription = isLeaf == false ? "(\(joinedChildDescriptions))" : ""
+        
+        return "\(value)\(childValueDescription)"
     }
     
     var debugDescription: String {
