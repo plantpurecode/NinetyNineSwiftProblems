@@ -23,44 +23,41 @@ class List<T> {
         value = first
         nextItem = List(Array(values.dropFirst()))
     }
-    
-    var last: List<T> {
-        var item = self
-        while let next = item.nextItem {
-            item = next
-        }
-        
-        return item
+
+    var last: T? {
+        return lastNode?.value
+    }
+
+    var lastNode: List<T>? {
+        return nextItem?.lastNode ?? self
     }
     
-    var penultimate: List<T> {
-        var item:List<T>? = self
-        while let i = item {
-            if i.nextItem?.nextItem == nil {
-                break
+    var penultimate: T? {
+        var current = self
+        
+        while let next = current.nextItem {
+            if next.nextItem == nil {
+                return current.value
             }
             
-            item = i.nextItem
+            current = next
         }
         
-        return item!
+        return nil
     }
     
     subscript(index: Int) -> List<T>? {
-        var count = 0
-        var item = Optional(self)
+        var node = self
         
-        while count < index {
-            item = item?.nextItem
-            
-            if item == nil {
+        for _ in 0..<index {
+            guard let next = node.nextItem else {
                 return nil
             }
             
-            count += 1
+            node = next
         }
         
-        return item
+        return node
     }
     
     var length: Int {
@@ -101,7 +98,7 @@ class List<T> {
     
     
     func append(_ list: List<T>) {
-        last.nextItem = list
+        lastNode?.nextItem = list
     }
     
     func insert(_ list: List<T>) {
@@ -162,8 +159,11 @@ class List<T> {
             for _ in 0..<times-1 {
                 newNext.append(List(n.value)!)
             }
+
+            if let next = next {
+                newNext.append(next)
+            }
             
-            newNext.last.nextItem = next
             n.nextItem = newNext
             node = next
         }

@@ -52,11 +52,11 @@ class ListTests : XCTestCase {
     }
 
     func testPenultimate() {
-        XCTAssertTrue(defaultList.penultimate.value == defaultValues[defaultValues.count - 2])
+        XCTAssertTrue(defaultList.penultimate == defaultValues[defaultValues.count - 2])
     }
     
     func testLast() {
-        XCTAssertTrue(defaultList.last.value == defaultValues.last!)
+        XCTAssertTrue(defaultList.last == defaultValues.last!)
     }
     
     func testValue() {
