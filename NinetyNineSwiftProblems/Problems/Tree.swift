@@ -35,7 +35,19 @@ extension Tree {
     // MARK: - Class functions -
     
     class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
-        guard let result = _makeBalancedTrees(nodes: n, value: value) else {
+        let result = _makeBalancedTrees(nodes: n, value: value)
+        
+        guard result.isEmpty == false else {
+            return nil
+        }
+        
+        return List(result)
+    }
+    
+    class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
+        let result = _makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric }
+        
+        guard result.isEmpty == false else {
             return nil
         }
         
@@ -346,33 +358,34 @@ extension Tree {
         }
     }
 
-    private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>]? {
-        let leaf = Tree(value)
-        
+    
+    private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
         switch n {
         case 0:
-            return nil
+            return []
         case 1:
-            return [leaf]
+            return [Tree(value)]
         case 2:
-            return [Tree(value, leaf), Tree(value, nil, leaf)]
-        default:
-            func generateSubtrees(leftCount: Int, rightCount: Int) -> [Tree<T>] {
-                var left = _makeBalancedTrees(nodes: leftCount, value: value) ?? [Tree<T>?]()
-                var right = _makeBalancedTrees(nodes: rightCount, value: value) ?? [Tree<T>?]()
-                
-                left.pad(upTo: right.count - left.count, with: leaf)
-                right.pad(upTo: left.count - right.count, with: leaf)
-                
-                return zip(left, right).map { Tree(value, $0, $1) }
-            }
+            return [Tree(value, nil, Tree(value)), Tree(value, Tree(value))]
+        case n where n % 2 == 1:
+            let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
             
-            if n.even {
-                return generateSubtrees(leftCount: (n / 2) - 1, rightCount: n / 2) +
-                    generateSubtrees(leftCount: n / 2, rightCount: (n / 2) - 1)
-            } else {
-                return generateSubtrees(leftCount: (n - 1) / 2, rightCount: (n - 1) / 2)
+            return subtrees.reduce([Tree<T>]()) { res, left in
+                return res + subtrees.map { right in
+                    return Tree(value, left, right)
+                }
             }
+        case n where n.even:
+            let lesser = _makeBalancedTrees(nodes: (n - 1) / 2, value: value)
+            let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
+
+            return lesser.reduce([Tree<T>]()) { res, less in
+                return res + greater.flatMap { great in
+                    return [Tree(value, less, great), Tree(value, great, less)]
+                }
+            }
+        default:
+            return []
         }
     }
 }

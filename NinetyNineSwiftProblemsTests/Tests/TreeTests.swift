@@ -45,6 +45,18 @@ class TreeTests: XCTestCase {
             XCTAssertEqual(trees.length, expected.length)
             XCTAssertTrue(trees.allSatisfy(expected.contains))
         }
+        
+        XCTAssertNil(Tree.makeBalancedTrees(nodes: 0, value: "x"))
+    }
+    
+    func testSymmetricBalancedTreeGeneration() {
+        let expected = List(
+            Tree("x", Tree("x", nil, Tree("x")), Tree("x", Tree("x"), nil)),
+            Tree("x", Tree("x", Tree("x"), nil), Tree("x", nil, Tree("x")))
+        )
+        
+        XCTAssertEqual(Tree.makeSymmetricBalancedTrees(nodes: 5, value: "x"), expected)
+        XCTAssertNil(Tree.makeSymmetricBalancedTrees(nodes: 0, value: "x"))
     }
     
     func testSymmetric() {
