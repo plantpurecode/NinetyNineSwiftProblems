@@ -243,7 +243,7 @@ extension Tree {
                 (($0.0.1 - $0.1.0) / 2) + 1
             }.reduce(0, max)
             
-            return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, leftShorterDefault: nil, rightShorterDefault: nil).compactMap {
+            return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, defaultValue: nil).compactMap {
                 let tuple = $0
                 
                 if let l = tuple.0, let r = tuple.1 {
@@ -468,6 +468,11 @@ fileprivate func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> I
         let nodes = minimumNodesForBalancedTree(ofHeight: $0)
         return nodes <= nodeCount
     }).last ?? 0
+}
+
+
+func zipAll<T>(left: [T], right: [T], defaultValue: T) -> [(T, T)] {
+    return zipAll(left: left, right: right, leftShorterDefault: defaultValue, rightShorterDefault: defaultValue)
 }
 
 func zipAll<T>(left: [T], right: [T], leftShorterDefault: T, rightShorterDefault: T) -> [(T, T)] {
