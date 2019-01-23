@@ -110,7 +110,7 @@
 			name = App;
 			sourceTree = "<group>";
 		};
-		5222F36B2187468F001C2B87 /* Resources */ = {
+		5222F36B2187468F001C2B87 /* _Resources */ = {
 			isa = PBXGroup;
 			children = (
 				52F8716C218744C400AA73D3 /* Assets.xcassets */,
@@ -118,7 +118,7 @@
 				52F87171218744C400AA73D3 /* Info.plist */,
 				52F87172218744C400AA73D3 /* NinetyNineSwiftProblems.entitlements */,
 			);
-			name = Resources;
+			name = _Resources;
 			sourceTree = "<group>";
 		};
 		526EA6F4218ADA7C0047835E /* Resources */ = {
@@ -177,7 +177,7 @@
 				526EA6F9218B00B90047835E /* Extensions */,
 				5222F36A21874683001C2B87 /* App */,
 				5222F35F2187461C001C2B87 /* Problems */,
-				5222F36B2187468F001C2B87 /* Resources */,
+				5222F36B2187468F001C2B87 /* _Resources */,
 			);
 			path = NinetyNineSwiftProblems;
 			sourceTree = "<group>";
@@ -386,7 +386,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -447,7 +447,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -516,7 +516,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;
@@ -539,7 +539,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;

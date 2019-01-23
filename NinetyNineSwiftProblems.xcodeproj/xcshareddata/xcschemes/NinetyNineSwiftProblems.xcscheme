@@ -52,6 +52,21 @@
          </BuildableReference>
       </CodeCoverageTargets>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "52F87176218744C400AA73D3"
+               BuildableName = "NinetyNineSwiftProblemsTests.xctest"
+               BlueprintName = "NinetyNineSwiftProblemsTests"
+               ReferencedContainer = "container:NinetyNineSwiftProblems.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ArithmeticTests/testPrimeGenerationRuntime()">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
