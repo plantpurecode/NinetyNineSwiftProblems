@@ -155,6 +155,21 @@ extension Tree {
     
     
     // MARK: - Functions -
+    
+    // MARK: Traversal
+    
+    func preOrder() -> List<T> {
+        return List(_preOrder())!
+    }
+
+    func inOrder() -> List<T> {
+        return List(_inOrder())!
+    }
+    
+    func postOrder() -> List<T> {
+        return List(_postOrder())!
+    }
+    
     // MARK: Layout
     
     func layoutBinaryTree() -> PositionedTree<T>? {
@@ -227,6 +242,19 @@ extension Tree {
     }
     
     // MARK: - Private -
+    
+    private func _preOrder() -> [T] {
+        return [value] + (left?._preOrder() ?? []) + (right?._preOrder() ?? [])
+    }
+    
+    private func _inOrder() -> [T] {
+        return (left?._inOrder() ?? []) + [value] + (right?._inOrder() ?? [])
+    }
+    
+    private func _postOrder() -> [T] {
+        return (left?._postOrder() ?? []) + (right?._postOrder() ?? []) + [value]
+    }
+    
     // MARK: Layout
     
     private var _depth: Int {

@@ -242,5 +242,23 @@ class TreeTests: XCTestCase {
         
         XCTAssertEqual(tree?.description, string)
     }
+    
+    func testPreOrderTraversal() {
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        
+        XCTAssertEqual(tree.preOrder(), List("a", "b", "d", "e", "c", "f", "g"))
+    }
+    
+    func testInOrderTraversal() {
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        
+        XCTAssertEqual(tree.inOrder(), List("d", "b", "e", "a", "c", "g", "f"))
+    }
+
+    func testPostOrderTraversal() {
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        
+        XCTAssertEqual(tree.postOrder(), List("d", "e", "b", "g", "f", "c", "a"))
+    }
 }
 
