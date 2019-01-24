@@ -149,6 +149,7 @@ class TreeTests: XCTestCase {
         let test = Tree("a", Tree("b"), Tree("c", Tree("d"), Tree("e"))).nodes(atLevel: 2)
         
         XCTAssertEqual(test, List("b", "c"))
+        XCTAssertNil(Tree("a").nodes(atLevel: 0))
         XCTAssertNil(Tree("a").nodes(atLevel: 2))
     }
     
