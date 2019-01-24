@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Tree<T> : CustomStringConvertible, CustomDebugStringConvertible {
+class Tree<T> : CustomStringConvertible {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -24,10 +24,6 @@ class Tree<T> : CustomStringConvertible, CustomDebugStringConvertible {
         let childValueDescription = isLeaf == false ? "(\(joinedChildDescriptions))" : ""
         
         return "\(value)\(childValueDescription)"
-    }
-    
-    var debugDescription: String {
-        return "(\(isLeaf ? "Leaf" : "Node") \(self.value)\(left != nil ? ", l: \(left!.debugDescription)" : "")\(right != nil ? ", r: " + right!.debugDescription : ""))"
     }
 }
 
@@ -505,10 +501,6 @@ class PositionedTree<T> : Tree<T> {
         self.x = x
         self.y = y
         super.init(value, left, right)
-    }
-    
-    override var debugDescription: String {
-        return "\(type(of: self))(x: \(x), y: \(y), value: \(value), \(left?.debugDescription ?? "nil"), \(right?.debugDescription ?? "nil")"
     }
 }
 
