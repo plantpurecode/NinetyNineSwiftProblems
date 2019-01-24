@@ -235,5 +235,12 @@ class TreeTests: XCTestCase {
         
         XCTAssertEqual(tree.description, "a(b(d,e),c(,f(g,)))")
     }
+    
+    func testTreeStringInitialization() {
+        let string = "a(b(d,e),c(,f(g,)))"
+        let tree = Tree(string: string)
+        
+        XCTAssertEqual(tree?.description, string)
+    }
 }
 

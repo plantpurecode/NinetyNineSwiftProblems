@@ -425,6 +425,50 @@ extension Tree : Equatable where T : Equatable {
     }
 }
 
+extension Tree where T == String {
+    // MARK: - Convenience Initializers -
+
+    convenience init?(string: String) {
+        guard string.count > 0 else {
+            return nil
+        }
+
+        func extractTreeString(_ s: String, start: Int, end: Character) -> (string: String, commaPosition: Int) {
+            func endOfString(position: Int, nesting: Int) -> Int {
+                let charAtThisPosition = s[s.index(s.startIndex, offsetBy: position)]
+                
+                func nestingOffset() -> Int {
+                    switch charAtThisPosition {
+                    case "(": return 1
+                    case ")": return -1
+                    default: return 0
+                    }
+                }
+
+                if charAtThisPosition == end, nesting == 0 {
+                    return position
+                }
+
+                return endOfString(position: position + 1, nesting: nesting + nestingOffset())
+            }
+
+            let strEnd = endOfString(position: start, nesting: 0)
+            let treeString = String(s[s.index(s.startIndex, offsetBy: start)..<s.index(s.startIndex, offsetBy: strEnd)])
+            return (treeString, strEnd)
+        }
+
+        switch string.count {
+        case 1:
+            self.init(String(string.first!))
+        default:
+            let (left, commaPosition) = extractTreeString(string, start: 2, end: ",")
+            let (right, _) = extractTreeString(string, start: commaPosition + 1, end: ")")
+
+            self.init(String(string.first!), Tree(string: left), Tree(string: right))
+        }
+    }
+}
+
 class PositionedTree<T> : Tree<T> {
     var x: Int
     var y: Int
