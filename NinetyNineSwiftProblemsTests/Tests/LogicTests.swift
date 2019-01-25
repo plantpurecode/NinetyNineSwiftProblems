@@ -92,8 +92,8 @@ class LogicTests: XCTestCase {
             let table = tuple.type.truthTable
             
             table.forEach { row in
-                let expectedResult = row.last!
-                let actualResult = tuple.operator(row.first!, row[1])
+                let actualResult = tuple.operator(row[0], row[1])
+                let expectedResult = row[2]
 
                 XCTAssertEqual(expectedResult, actualResult)
             }
