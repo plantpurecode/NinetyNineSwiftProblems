@@ -25,3 +25,12 @@ extension Optional where Wrapped : Numeric {
     }
 }
 
+extension Collection {
+    func allNil<T>() -> Bool where Element == Optional<T> {
+        return allSatisfy { $0 == nil }
+    }
+    
+    func allNotNil<T>() -> Bool where Element == Optional<T> {
+        return allSatisfy { $0 != nil }
+    }
+}

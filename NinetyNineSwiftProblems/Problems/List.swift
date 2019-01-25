@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: List Data Structure
+
 class List<T> {
     var value: T
     var nextItem: List<T>?
@@ -23,7 +25,11 @@ class List<T> {
         value = first
         nextItem = List(Array(values.dropFirst()))
     }
+}
 
+// MARK: - Computed Properties
+
+extension List {
     var last: T? {
         return lastNode?.value
     }
@@ -44,20 +50,6 @@ class List<T> {
         }
         
         return nil
-    }
-    
-    subscript(index: Int) -> List<T>? {
-        var node = self
-        
-        for _ in 0..<index {
-            guard let next = node.nextItem else {
-                return nil
-            }
-            
-            node = next
-        }
-        
-        return node
     }
     
     var length: Int {
@@ -89,8 +81,24 @@ class List<T> {
         copied.reverse()
         return copied
     }
-    
-// MARK: -
+}
+
+// MARK: - Functions
+
+extension List {
+    subscript(index: Int) -> List<T>? {
+        var node = self
+        
+        for _ in 0..<index {
+            guard let next = node.nextItem else {
+                return nil
+            }
+            
+            node = next
+        }
+        
+        return node
+    }
     
     func copy() -> List? {
         return List<T>(values)
@@ -318,6 +326,8 @@ class List<T> {
     }
 }
 
+// MARK: - Class Functions where T == Int
+
 extension List where T == Int {
     class func lotto(numbers: Int, _ maximum: Int) -> List {
         var values = Set<Int>()
@@ -336,6 +346,8 @@ extension List where T == Int {
         return List(values)!
     }
 }
+
+// MARK: - Flattening (T == Any)
 
 extension List where T == Any {
     var flattened:List<T> {
@@ -369,6 +381,8 @@ extension List where T == Any {
     }
 }
 
+// MARK: - Equatable
+
 extension List : Equatable where T : Equatable {
     static func == (lhs: List<T>, rhs: List<T>) -> Bool {
         return lhs.values == rhs.values
@@ -388,6 +402,35 @@ extension List : Equatable where T : Equatable {
 }
 
 extension List where T : Equatable {
+    var compressed: List<T> {
+        let list = List(values)!
+        list.compress()
+        return list
+    }
+    
+    var packed: List<List<T>> {
+        var node = Optional(self)
+        var outerList = [List<T>]()
+        
+        while let n = node {
+            var innerList = [T]()
+            var nn:List<T>? = n
+            
+            defer {
+                node = nn
+            }
+            
+            repeat {
+                innerList.append(n.value)
+                nn = nn?.nextItem
+            } while n.value == nn?.value
+            
+            outerList.append(List(innerList)!)
+        }
+        
+        return List<List<T>>(outerList)!
+    }
+    
     func isPalindrome() -> Bool {
         var cNode:List<T>? = reversed
         var csNode = Optional(self)
@@ -419,35 +462,8 @@ extension List where T : Equatable {
             } while node?.value == value
         }
     }
-    
-    var compressed: List<T> {
-        let list = List(values)!
-        list.compress()
-        return list
-    }
-    
-    var packed: List<List<T>> {
-        var node = Optional(self)
-        var outerList = [List<T>]()
-        
-        while let n = node {
-            var innerList = [T]()
-            var nn:List<T>? = n
-            
-            defer {
-                node = nn
-            }
-            
-            repeat {
-                innerList.append(n.value)
-                nn = nn?.nextItem
-            } while n.value == nn?.value
-            
-            outerList.append(List(innerList)!)
-        }
-        
-        return List<List<T>>(outerList)!
-    }
+
+    // MARK: Run-length encoding
     
     func encode() -> List<(Int, T)> {
         var node = Optional(self)
@@ -503,7 +519,7 @@ extension List where T : Equatable {
 }
 
 extension List where T == (Int, String) {
-    // Decode a run-length encoded linked list
+    // MARK: Run-length decoding
     func decode() -> List<String> {
         var node = Optional(self)
         var list = [String]()
@@ -523,6 +539,8 @@ extension List where T == (Int, String) {
 }
 
 extension List {
+    // MARK: Combinatorics
+    
     func randomPermute() -> List {
         let perms = values.permutations()
         return List<T>(perms.randomElement()!)!
@@ -564,6 +582,8 @@ extension List {
         
         return list
     }
+    
+    // MARK: Grouping
     
     func group3() -> List<List<List<T>>>? {
         guard length == 9 else {
@@ -622,9 +642,9 @@ extension List {
 }
 
 extension List where T == List<Any> {
+    // MARK: Sorting
+    
     func lsort() -> List<List<Any>> {
-        // TODO: Do this without cheating? ;)
-        
         return List(values.sorted { $0.length < $1.length })!
     }
     
@@ -662,6 +682,8 @@ extension List where T == List<Any> {
     }
 }
 
+// MARK: - Sequence
+
 extension List : Sequence {
     struct ListIterator : IteratorProtocol {
         typealias Element = T
@@ -684,6 +706,8 @@ extension List : Sequence {
         return ListIterator(self)
     }
 }
+
+// MARK: - CustomStringConvertible
 
 extension List : CustomStringConvertible {
     public var description: String {
