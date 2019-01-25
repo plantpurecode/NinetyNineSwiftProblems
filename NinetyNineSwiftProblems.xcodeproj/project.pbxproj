@@ -17,11 +17,11 @@
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
+		52B3AE9621FA9DD900506491 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B3AE9121FA9DD900506491 /* AppDelegate.swift */; };
+		52B3AE9821FA9DD900506491 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52B3AE9421FA9DD900506491 /* Assets.xcassets */; };
+		52B3AE9921FA9E2D00506491 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52B3AE8F21FA9DD900506491 /* MainMenu.xib */; };
 		52CAC86921BC25BC0066F57A /* Logic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CAC86821BC25BC0066F57A /* Logic.swift */; };
 		52CAC86B21BC25D90066F57A /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52CAC86A21BC25D90066F57A /* LogicTests.swift */; };
-		52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F8716A218744C300AA73D3 /* AppDelegate.swift */; };
-		52F8716D218744C400AA73D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716C218744C400AA73D3 /* Assets.xcassets */; };
-		52F87170218744C400AA73D3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52F8716E218744C400AA73D3 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,14 +60,14 @@
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
+		52B3AE9021FA9DD900506491 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
+		52B3AE9121FA9DD900506491 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = HostApp/AppDelegate.swift; sourceTree = "<group>"; };
+		52B3AE9221FA9DD900506491 /* NinetyNineSwiftProblems.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = NinetyNineSwiftProblems.entitlements; path = HostApp/NinetyNineSwiftProblems.entitlements; sourceTree = "<group>"; };
+		52B3AE9321FA9DD900506491 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = HostApp/Info.plist; sourceTree = "<group>"; };
+		52B3AE9421FA9DD900506491 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = HostApp/Assets.xcassets; sourceTree = "<group>"; };
 		52CAC86821BC25BC0066F57A /* Logic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logic.swift; sourceTree = "<group>"; };
 		52CAC86A21BC25D90066F57A /* LogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogicTests.swift; sourceTree = "<group>"; };
 		52F87167218744C300AA73D3 /* NinetyNineSwiftProblems.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NinetyNineSwiftProblems.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		52F8716A218744C300AA73D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		52F8716C218744C400AA73D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		52F8716F218744C400AA73D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		52F87171218744C400AA73D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		52F87172218744C400AA73D3 /* NinetyNineSwiftProblems.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NinetyNineSwiftProblems.entitlements; sourceTree = "<group>"; };
 		52F87177218744C400AA73D3 /* NinetyNineSwiftProblemsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinetyNineSwiftProblemsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52F8717D218744C400AA73D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8BE9CD5F43B041798F16F629 /* Pods-NinetyNineSwiftProblems.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinetyNineSwiftProblems.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinetyNineSwiftProblems/Pods-NinetyNineSwiftProblems.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,23 +102,16 @@
 			path = Problems;
 			sourceTree = "<group>";
 		};
-		5222F36A21874683001C2B87 /* App */ = {
+		5222F36A21874683001C2B87 /* HostApp */ = {
 			isa = PBXGroup;
 			children = (
-				52F8716A218744C300AA73D3 /* AppDelegate.swift */,
+				52B3AE9121FA9DD900506491 /* AppDelegate.swift */,
+				52B3AE9421FA9DD900506491 /* Assets.xcassets */,
+				52B3AE8E21FA9DD900506491 /* Base.lproj */,
+				52B3AE9321FA9DD900506491 /* Info.plist */,
+				52B3AE9221FA9DD900506491 /* NinetyNineSwiftProblems.entitlements */,
 			);
-			name = App;
-			sourceTree = "<group>";
-		};
-		5222F36B2187468F001C2B87 /* _Resources */ = {
-			isa = PBXGroup;
-			children = (
-				52F8716C218744C400AA73D3 /* Assets.xcassets */,
-				52F8716E218744C400AA73D3 /* MainMenu.xib */,
-				52F87171218744C400AA73D3 /* Info.plist */,
-				52F87172218744C400AA73D3 /* NinetyNineSwiftProblems.entitlements */,
-			);
-			name = _Resources;
+			name = HostApp;
 			sourceTree = "<group>";
 		};
 		526EA6F4218ADA7C0047835E /* Resources */ = {
@@ -151,6 +144,15 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		52B3AE8E21FA9DD900506491 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				52B3AE8F21FA9DD900506491 /* MainMenu.xib */,
+			);
+			name = Base.lproj;
+			path = HostApp/Base.lproj;
+			sourceTree = "<group>";
+		};
 		52F8715E218744C200AA73D3 = {
 			isa = PBXGroup;
 			children = (
@@ -175,9 +177,8 @@
 			isa = PBXGroup;
 			children = (
 				526EA6F9218B00B90047835E /* Extensions */,
-				5222F36A21874683001C2B87 /* App */,
 				5222F35F2187461C001C2B87 /* Problems */,
-				5222F36B2187468F001C2B87 /* _Resources */,
+				5222F36A21874683001C2B87 /* HostApp */,
 			);
 			path = NinetyNineSwiftProblems;
 			sourceTree = "<group>";
@@ -290,8 +291,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				52F8716D218744C400AA73D3 /* Assets.xcassets in Resources */,
-				52F87170218744C400AA73D3 /* MainMenu.xib in Resources */,
+				52B3AE9921FA9E2D00506491 /* MainMenu.xib in Resources */,
+				52B3AE9821FA9DD900506491 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,9 +313,9 @@
 				5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */,
 				52158CFB21C4001400B4980E /* Tree.swift in Sources */,
 				5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */,
+				52B3AE9621FA9DD900506491 /* AppDelegate.swift in Sources */,
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
 				52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */,
-				52F8716B218744C300AA73D3 /* AppDelegate.swift in Sources */,
 				526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */,
 				52CAC86921BC25BC0066F57A /* Logic.swift in Sources */,
 				5222F3632187461C001C2B87 /* List.swift in Sources */,
@@ -343,10 +344,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		52F8716E218744C400AA73D3 /* MainMenu.xib */ = {
+		52B3AE8F21FA9DD900506491 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				52F8716F218744C400AA73D3 /* Base */,
+				52B3AE9021FA9DD900506491 /* Base */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
@@ -473,12 +474,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/NinetyNineSwiftProblems.entitlements;
+				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/HostApp/NinetyNineSwiftProblems.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;
-				INFOPLIST_FILE = NinetyNineSwiftProblems/Info.plist;
+				INFOPLIST_FILE = NinetyNineSwiftProblems/HostApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -494,12 +495,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/NinetyNineSwiftProblems.entitlements;
+				CODE_SIGN_ENTITLEMENTS = NinetyNineSwiftProblems/HostApp/NinetyNineSwiftProblems.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 7472HG85WA;
-				INFOPLIST_FILE = NinetyNineSwiftProblems/Info.plist;
+				INFOPLIST_FILE = NinetyNineSwiftProblems/HostApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
