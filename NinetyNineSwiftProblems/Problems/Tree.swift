@@ -8,7 +8,9 @@
 
 import Foundation
 
-class Tree<T> : CustomStringConvertible {
+// MARK: Tree Data Structure -
+
+class Tree<T> {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
@@ -18,7 +20,11 @@ class Tree<T> : CustomStringConvertible {
         self.left = left
         self.right = right
     }
-    
+}
+
+// MARK: - CustomStringConvertible Conformance
+
+extension Tree : CustomStringConvertible {
     var description: String {
         let joinedChildDescriptions = [left?.description ?? "", right?.description ?? ""].joined(separator: ",")
         let childValueDescription = isLeaf == false ? "(\(joinedChildDescriptions))" : ""
@@ -27,9 +33,9 @@ class Tree<T> : CustomStringConvertible {
     }
 }
 
+// MARK: - Tree Factories
+
 extension Tree {
-    // MARK: - Class functions -
-    
     class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
         let result = _makeBalancedTrees(nodes: n, value: value)
         
@@ -81,9 +87,11 @@ extension Tree {
         
         return generate(index: 1)
     }
-    
-    // MARK: - Computed Properties -
-    
+}
+
+// MARK: - Computed Properties
+
+extension Tree {
     var isLeaf: Bool {
         return [left, right].compactMap { $0 }.count == 0
     }
@@ -148,10 +156,11 @@ extension Tree {
         
         return List(prefix + successorNodes.map ({ $0.value }) + successorNodes.flatMap({ $0.internalNodes?.values ?? [] }))
     }
-    
-    
-    // MARK: - Functions -
-    
+}
+
+// MARK: - Functions
+
+extension Tree {
     // MARK: Traversal
     
     func preOrder() -> List<T> {
@@ -236,183 +245,9 @@ extension Tree {
             return List(leftNodes + rightNodes)
         }
     }
-    
-    // MARK: - Private -
-    
-    private func _preOrder() -> [T] {
-        return [value] + (left?._preOrder() ?? []) + (right?._preOrder() ?? [])
-    }
-    
-    private func _inOrder() -> [T] {
-        return (left?._inOrder() ?? []) + [value] + (right?._inOrder() ?? [])
-    }
-    
-    private func _postOrder() -> [T] {
-        return (left?._postOrder() ?? []) + (right?._postOrder() ?? []) + [value]
-    }
-    
-    // MARK: Layout
-    
-    private var _depth: Int {
-        return max(left?._depth ?? 0, right?._depth ?? 0) + 1
-    }
-    
-    private var _leftmostDepth: Int {
-        return (left?._leftmostDepth ?? 0) + 1
-    }
-    
-    private var _bounds: [(Int, Int)] {
-        func fullInnerBounds(lb: [(Int, Int)], rb: [(Int, Int)]) -> [(Int, Int)] {
-            let shift = zip(lb, rb).map {
-                (($0.0.1 - $0.1.0) / 2) + 1
-            }.reduce(0, max)
-            
-            return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, defaultValue: nil).compactMap {
-                let tuple = $0
-                
-                if let l = tuple.0, let r = tuple.1 {
-                    return (l.0 - shift, r.1 + shift)
-                } else if let l = tuple.0 {
-                    return (l.0 - shift, l.1 - shift)
-                } else if let r = tuple.1 {
-                    return (r.0 + shift, r.1 + shift)
-                }
-                
-                return nil
-            }
-        }
-        
-        func lowerBounds() -> [(Int, Int)]? {
-            let lb = left?._bounds
-            let rb = right?._bounds
-            
-            if let lb = lb, let rb = rb {
-                return fullInnerBounds(lb: lb, rb: rb)
-            }
-            
-            if let lb = lb {
-                return lb.map { ($0.0 - 1, $0.1 - 1) }
-            }
-            
-            if let rb = rb {
-                return rb.map { ($0.0 + 1, $0.1 + 1) }
-            }
-
-            return nil
-        }
-        
-        return [(0, 0)] + (lowerBounds() ?? [])
-    }
-    
-    private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
-        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
-        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
-        
-        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
-    }
-
-    private func _layoutBinaryTree2Internal(x: Int, depth: Int, exp: Int) -> PositionedTree<T> {
-        return PositionedTree<T>(x: x,
-                                 y: depth,
-                                 value: value,
-                                 left?._layoutBinaryTree2Internal(x: x - (2 ^^ exp),
-                                                                  depth: depth + 1,
-                                                                  exp: exp - 1),
-                                 right?._layoutBinaryTree2Internal(x: x + (2 ^^ exp),
-                                                                   depth: depth + 1,
-                                                                   exp: exp - 1))
-    }
-    
-    private func _layoutBinaryTree3Internal(x: Int, depth: Int) -> PositionedTree<T> {
-        let bounds = _bounds
-        let (bl, br) = bounds.count > 2 ? bounds[1] : bounds[0]
-        let offset = bounds.count > 2 ? 0 : 1
-        
-        return PositionedTree<T>(x: x,
-                                 y: depth,
-                                 value: value,
-                                 left?._layoutBinaryTree3Internal(x: x + bl + offset, depth: depth + 1),
-                                 right?._layoutBinaryTree3Internal(x: x + br + offset, depth: depth + 1))
-    }
-    
-    // MARK: Differentials
-    
-    private var _heightDifferential: Int {
-        return abs(leftHeight - rightHeight)
-    }
-    
-    private var _nodeCountDifferential: Int {
-        return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
-    }
-    
-    // MARK: Tree Builder Functions
-    
-    private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>]? {
-        let range = minimumHeightForBalancedTree(withNodeCount: nodes)...maximumHeightForBalancedTree(withNodeCount: nodes)
-        
-        guard range.count > 0 else {
-            return nil
-        }
-        
-        return range
-            .compactMap { _makeHeightBalancedTrees(height: $0, value: value) }
-            .flatMap { $0 }
-            .filter { $0.nodeCount == nodes }
-    }
-    
-    private class func _makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>]? {
-        switch height {
-        case height where height < 1:
-            return nil
-        case 1:
-            return [Tree(value)]
-        default:
-            let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)!
-            let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value) ?? Array(repeating: nil, count: maxHeightSubtree.count / 2)
-            
-            return maxHeightSubtree.flatMap { l in
-                return maxHeightSubtree.map { r in
-                    Tree(value, l, r)
-                }
-            } + maxHeightSubtree.flatMap { full in
-                minHeightSubtree.flatMap { short in
-                    [Tree(value, full, short), Tree(value, short, full)]
-                }
-            }
-        }
-    }
-
-    
-    private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
-        switch n {
-        case 0:
-            return []
-        case 1:
-            return [Tree(value)]
-        case 2:
-            return [Tree(value, nil, Tree(value)), Tree(value, Tree(value))]
-        case n where n % 2 == 1:
-            let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
-            
-            return subtrees.reduce([Tree<T>]()) { res, left in
-                return res + subtrees.map { right in
-                    return Tree(value, left, right)
-                }
-            }
-        case n where n.even:
-            let lesser = _makeBalancedTrees(nodes: (n - 1) / 2, value: value)
-            let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
-
-            return lesser.reduce([Tree<T>]()) { res, less in
-                return res + greater.flatMap { great in
-                    return [Tree(value, less, great), Tree(value, great, less)]
-                }
-            }
-        default:
-            return []
-        }
-    }
 }
+
+// MARK: - Comparable
 
 extension Tree where T : Comparable {
     convenience init(list: List<T>!) {
@@ -443,15 +278,17 @@ extension Tree where T : Comparable {
     }
 }
 
+// MARK: - Equatable
+
 extension Tree : Equatable where T : Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
         return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
     }
 }
 
-extension Tree where T == String {
-    // MARK: - Convenience Initializers -
+// MARK: - String-based Tree Initialization
 
+extension Tree where T == String {
     convenience init?(string: String) {
         guard string.count > 0 else {
             return nil
@@ -493,6 +330,8 @@ extension Tree where T == String {
     }
 }
 
+// MARK: - Layout-Specific Tree Subclass
+
 class PositionedTree<T> : Tree<T> {
     var x: Int
     var y: Int
@@ -503,6 +342,188 @@ class PositionedTree<T> : Tree<T> {
         super.init(value, left, right)
     }
 }
+
+// MARK: - Private
+
+extension Tree {
+    // MARK: Traversal
+    
+    private func _preOrder() -> [T] {
+        return [value] + (left?._preOrder() ?? []) + (right?._preOrder() ?? [])
+    }
+    
+    private func _inOrder() -> [T] {
+        return (left?._inOrder() ?? []) + [value] + (right?._inOrder() ?? [])
+    }
+    
+    private func _postOrder() -> [T] {
+        return (left?._postOrder() ?? []) + (right?._postOrder() ?? []) + [value]
+    }
+    
+    // MARK: Layout
+    
+    private var _depth: Int {
+        return max(left?._depth ?? 0, right?._depth ?? 0) + 1
+    }
+    
+    private var _leftmostDepth: Int {
+        return (left?._leftmostDepth ?? 0) + 1
+    }
+    
+    private var _bounds: [(Int, Int)] {
+        func fullInnerBounds(lb: [(Int, Int)], rb: [(Int, Int)]) -> [(Int, Int)] {
+            let shift = zip(lb, rb).map {
+                (($0.0.1 - $0.1.0) / 2) + 1
+            }.reduce(0, max)
+            
+            return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, defaultValue: nil).compactMap {
+                let tuple = $0
+                
+                if let l = tuple.0, let r = tuple.1 {
+                    return (l.0 - shift, r.1 + shift)
+                } else if let l = tuple.0 {
+                    return (l.0 - shift, l.1 - shift)
+                } else if let r = tuple.1 {
+                    return (r.0 + shift, r.1 + shift)
+                }
+
+                return nil
+            }
+        }
+        
+        func lowerBounds() -> [(Int, Int)]? {
+            let lb = left?._bounds
+            let rb = right?._bounds
+
+            if let lb = lb, let rb = rb {
+                return fullInnerBounds(lb: lb, rb: rb)
+            }
+
+            if let lb = lb {
+                return lb.map { ($0.0 - 1, $0.1 - 1) }
+            }
+
+            if let rb = rb {
+                return rb.map { ($0.0 + 1, $0.1 + 1) }
+            }
+
+            return nil
+        }
+        
+        return [(0, 0)] + (lowerBounds() ?? [])
+    }
+
+    private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
+        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
+        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
+        
+        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
+    }
+
+    private func _layoutBinaryTree2Internal(x: Int, depth: Int, exp: Int) -> PositionedTree<T> {
+        return PositionedTree<T>(x: x,
+                                 y: depth,
+                                 value: value,
+                                 left?._layoutBinaryTree2Internal(x: x - (2 ^^ exp),
+                                                                  depth: depth + 1,
+                                                                  exp: exp - 1),
+                                 right?._layoutBinaryTree2Internal(x: x + (2 ^^ exp),
+                                                                   depth: depth + 1,
+                                                                   exp: exp - 1))
+    }
+
+    private func _layoutBinaryTree3Internal(x: Int, depth: Int) -> PositionedTree<T> {
+        let bounds = _bounds
+        let (bl, br) = bounds.count > 2 ? bounds[1] : bounds[0]
+        let offset = bounds.count > 2 ? 0 : 1
+        
+        return PositionedTree<T>(x: x,
+                                 y: depth,
+                                 value: value,
+                                 left?._layoutBinaryTree3Internal(x: x + bl + offset, depth: depth + 1),
+                                 right?._layoutBinaryTree3Internal(x: x + br + offset, depth: depth + 1))
+    }
+
+    // MARK: Differentials
+
+    private var _heightDifferential: Int {
+        return abs(leftHeight - rightHeight)
+    }
+
+    private var _nodeCountDifferential: Int {
+        return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
+    }
+
+    // MARK: Tree Builder Functions
+
+    private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>]? {
+        let range = minimumHeightForBalancedTree(withNodeCount: nodes)...maximumHeightForBalancedTree(withNodeCount: nodes)
+        
+        guard range.count > 0 else {
+            return nil
+        }
+        
+        return range
+            .compactMap { _makeHeightBalancedTrees(height: $0, value: value) }
+            .flatMap { $0 }
+            .filter { $0.nodeCount == nodes }
+    }
+
+    private class func _makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>]? {
+        switch height {
+        case height where height < 1:
+            return nil
+        case 1:
+            return [Tree(value)]
+        default:
+            let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)!
+            let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value) ?? Array(repeating: nil, count: maxHeightSubtree.count / 2)
+            
+            return maxHeightSubtree.flatMap { l in
+                return maxHeightSubtree.map { r in
+                    Tree(value, l, r)
+                }
+            } + maxHeightSubtree.flatMap { full in
+                return minHeightSubtree.flatMap { short in
+                    [Tree(value, full, short), Tree(value, short, full)]
+                }
+            }
+        }
+    }
+
+    private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
+        switch n {
+        case 0:
+            return []
+        case 1:
+            return [Tree(value)]
+        case 2:
+            return [Tree(value, nil, Tree(value)), Tree(value, Tree(value))]
+        case n where n % 2 == 1:
+            let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
+            
+            return subtrees.reduce([Tree<T>]()) { res, left in
+                return res + subtrees.map { right in
+                    return Tree(value, left, right)
+                }
+            }
+        case n where n.even:
+            let lesser = _makeBalancedTrees(nodes: (n - 1) / 2, value: value)
+            let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
+
+            return lesser.reduce([Tree<T>]()) { res, less in
+                return res + greater.flatMap { great in
+                    return [Tree(value, less, great), Tree(value, great, less)]
+                }
+            }
+        default:
+            return []
+        }
+    }
+}
+
+
+// MARK: - Utility Functions
 
 fileprivate func minimumNodesForBalancedTree(ofHeight height: Int) -> Int {
     switch height {
