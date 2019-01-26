@@ -330,6 +330,18 @@ extension Tree where T == String {
     }
 }
 
+// MARK: - Traversal Based Tree Initialization
+
+extension Tree where T : Comparable {
+    convenience init?(preOrder po: List<T>, inOrder io: List<T>) {
+        guard let tree = Tree<T>._makeTraversalBasedTree(preOrder: po.values, inOrder: io.values, preStart: 0, preEnd: po.length - 1, inStart: 0, inEnd: io.length - 1) else {
+            return nil
+        }
+
+        self.init(tree.value, tree.left, tree.right)
+    }
+}
+
 // MARK: - Layout-Specific Tree Subclass
 
 class PositionedTree<T> : Tree<T> {
@@ -454,7 +466,7 @@ extension Tree {
         return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
 
-    // MARK: Tree Builder Functions
+    // MARK: - Tree Builder Functions
 
     private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>]? {
         let range = minimumHeightForBalancedTree(withNodeCount: nodes)...maximumHeightForBalancedTree(withNodeCount: nodes)
@@ -519,6 +531,24 @@ extension Tree {
         default:
             return []
         }
+    }
+}
+
+extension Tree where T : Comparable {
+    private class func _makeTraversalBasedTree(preOrder: [T], inOrder:[T], preStart: Int, preEnd: Int, inStart: Int, inEnd: Int) -> Tree<T>? {
+        guard preStart <= preEnd, inStart <= inEnd else {
+            return nil
+        }
+
+        let preOrderValue = preOrder[preStart]
+        let indexOfPreOrderElementInInOrder = inOrder.dropFirst(inStart).firstIndex(where: {
+            return $0 == preOrderValue
+        }) ?? 0
+
+        let left = _makeTraversalBasedTree(preOrder: preOrder, inOrder: inOrder, preStart: preStart + 1, preEnd: preStart + (indexOfPreOrderElementInInOrder - inStart), inStart: inStart, inEnd: indexOfPreOrderElementInInOrder - 1)
+        let right = _makeTraversalBasedTree(preOrder: preOrder, inOrder: inOrder, preStart: preStart + (indexOfPreOrderElementInInOrder - inStart) + 1, preEnd: preEnd, inStart: indexOfPreOrderElementInInOrder + 1, inEnd: inEnd)
+
+        return Tree(preOrderValue, left, right)
     }
 }
 

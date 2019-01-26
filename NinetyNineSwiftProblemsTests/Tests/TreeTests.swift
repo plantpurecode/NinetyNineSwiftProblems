@@ -264,5 +264,16 @@ class TreeTests: XCTestCase {
         XCTAssertEqual(tree.postOrder(), List("d", "e", "b", "g", "f", "c", "a"))
         XCTAssertEqual(Tree("a").postOrder(), List("a"))
     }
-}
+    
+    func testPreInOrderTreeInitialization() {
+        let tree = Tree(
+            preOrder: List("a", "b", "d", "e", "c", "f", "g")!,
+            inOrder: List("d", "b", "e", "a", "c", "g", "f")!
+        )!
 
+        XCTAssertEqual(tree.description, "a(b(d,e),c(,f(g,)))")
+
+        let treeConstructedFromDuplicateValues = Tree(preOrder: List("a", "b", "a")!, inOrder: List("b", "a", "a")!)!
+        XCTAssertEqual(treeConstructedFromDuplicateValues.description, "a(b,a)")
+    }
+}
