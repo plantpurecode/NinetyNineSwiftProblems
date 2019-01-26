@@ -65,6 +65,9 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ArithmeticTests/testGoldbachCompositions()">
+               </Test>
+               <Test
                   Identifier = "ArithmeticTests/testPrimeGenerationRuntime()">
                </Test>
             </SkippedTests>
