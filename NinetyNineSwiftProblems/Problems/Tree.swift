@@ -541,9 +541,11 @@ extension Tree where T : Comparable {
         }
 
         let preOrderValue = preOrder[preStart]
-        let indexOfPreOrderElementInInOrder = inOrder.dropFirst(inStart).firstIndex(where: {
+        guard let indexOfPreOrderElementInInOrder = inOrder.dropFirst(inStart).firstIndex(where: {
             return $0 == preOrderValue
-        }) ?? 0
+        }) else {
+            return nil
+        }
 
         let left = _makeTraversalBasedTree(preOrder: preOrder, inOrder: inOrder, preStart: preStart + 1, preEnd: preStart + (indexOfPreOrderElementInInOrder - inStart), inStart: inStart, inEnd: indexOfPreOrderElementInInOrder - 1)
         let right = _makeTraversalBasedTree(preOrder: preOrder, inOrder: inOrder, preStart: preStart + (indexOfPreOrderElementInInOrder - inStart) + 1, preEnd: preEnd, inStart: indexOfPreOrderElementInInOrder + 1, inEnd: inEnd)

@@ -275,5 +275,7 @@ class TreeTests: XCTestCase {
 
         let treeConstructedFromDuplicateValues = Tree(preOrder: List("a", "b", "a")!, inOrder: List("b", "a", "a")!)!
         XCTAssertEqual(treeConstructedFromDuplicateValues.description, "a(b,a)")
+        
+        XCTAssertNil(Tree(preOrder: List("k")!, inOrder: List("a")!))
     }
 }
