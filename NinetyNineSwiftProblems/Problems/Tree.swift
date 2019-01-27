@@ -667,19 +667,3 @@ fileprivate func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> I
         return nodes <= nodeCount
     }).last ?? 0
 }
-
-
-func zipAll<T>(left: [T], right: [T], defaultValue: T) -> [(T, T)] {
-    return zipAll(left: left, right: right, leftShorterDefault: defaultValue, rightShorterDefault: defaultValue)
-}
-
-func zipAll<T>(left: [T], right: [T], leftShorterDefault: T, rightShorterDefault: T) -> [(T, T)] {
-    let maxCount = max(left.count, right.count)
-    
-    var l = left, r = right
-    
-    l.pad(upTo: maxCount, with: leftShorterDefault)
-    r.pad(upTo: maxCount, with: rightShorterDefault)
-    
-    return zip(l, r).map { $0 }
-}

@@ -14,6 +14,7 @@
 		52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */; };
 		5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959921C5D876002B5932 /* OptionalExtensions.swift */; };
 		5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959B21C98A78002B5932 /* IntExtensions.swift */; };
+		5261F87D21FE53E800224B61 /* Zipping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5261F87C21FE53E800224B61 /* Zipping.swift */; };
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
@@ -57,6 +58,7 @@
 		52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
 		5234959921C5D876002B5932 /* OptionalExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalExtensions.swift; sourceTree = "<group>"; };
 		5234959B21C98A78002B5932 /* IntExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntExtensions.swift; sourceTree = "<group>"; };
+		5261F87C21FE53E800224B61 /* Zipping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zipping.swift; sourceTree = "<group>"; };
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				52272CAA21BB6684009FFB72 /* ArrayExtensions.swift */,
 				5234959921C5D876002B5932 /* OptionalExtensions.swift */,
 				5234959B21C98A78002B5932 /* IntExtensions.swift */,
+				5261F87C21FE53E800224B61 /* Zipping.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */,
 				52B3AE9621FA9DD900506491 /* AppDelegate.swift in Sources */,
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
+				5261F87D21FE53E800224B61 /* Zipping.swift in Sources */,
 				52272CAB21BB6684009FFB72 /* ArrayExtensions.swift in Sources */,
 				526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */,
 				52CAC86921BC25BC0066F57A /* Logic.swift in Sources */,
