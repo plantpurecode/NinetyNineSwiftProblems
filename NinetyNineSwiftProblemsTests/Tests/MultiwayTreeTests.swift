@@ -12,9 +12,9 @@ import XCTest
 
 class MultiwayTreeTests: XCTestCase {
     func testInitialization() {
-        let mtree = MTree("x", List([MTree("y")]))
+        let mtree = MTree("x", List(MTree("y")))
         XCTAssertEqual(mtree.value, "x")
-        XCTAssertEqual(mtree.children?[0]?.value.value, "y")
+        XCTAssertEqual(mtree.children?.value.value, "y")
     }
 
     func testNodeCount() {
