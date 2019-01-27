@@ -352,6 +352,32 @@ extension Tree where T : CustomStringConvertible {
     }
 }
 
+extension Tree where T == Character {
+    convenience init?(dotString: String) {
+        guard dotString.count > 0 else {
+            return nil
+        }
+
+        func buildTree(atPosition position: Int) -> (Tree<T>?, Int) {
+            let character = dotString[dotString.index(dotString.startIndex, offsetBy: position)]
+            guard character != "." else {
+                return (nil, position + 1)
+            }
+
+            let (left, leftPosition) = buildTree(atPosition: position + 1)
+            let (right, rightPosition) = buildTree(atPosition: leftPosition)
+
+            return (Tree(character, left, right), rightPosition)
+        }
+
+        guard let tree = buildTree(atPosition: 0).0 else {
+            return nil
+        }
+
+        self.init(tree.value, tree.left, tree.right)
+    }
+}
+
 // MARK: - Layout-Specific Tree Subclass
 
 class PositionedTree<T> : Tree<T> {

@@ -284,4 +284,15 @@ class TreeTests: XCTestCase {
         
         XCTAssertEqual(dotString, "abd..e..c.fg...")
     }
+    
+    func testDotStringInitialization() {
+        let dotString = "abd..e..c.fg..."
+        let characterTree = Tree(dotString: dotString)!
+
+        XCTAssertEqual(characterTree.dotString, dotString)
+
+        for invalidString in ["", ".", "..", "..."] {
+            XCTAssertNil(Tree(dotString: invalidString))
+        }
+    }
 }
