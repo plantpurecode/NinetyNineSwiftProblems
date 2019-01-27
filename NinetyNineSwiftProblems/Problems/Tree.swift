@@ -170,7 +170,6 @@ extension Tree {
     var postOrder: List<T> {
         return List(_postOrder)!
     }
-
 }
 
 // MARK: - Functions
@@ -340,6 +339,16 @@ extension Tree where T : Comparable {
         }
 
         self.init(tree.value, tree.left, tree.right)
+    }
+}
+
+// MARK: - Dotstring Support
+
+extension Tree where T : CustomStringConvertible {
+    var dotString: String {
+        return [value.description, left?.dotString, right?.dotString].map {
+            $0 == nil ? "." : $0!
+        }.joined()
     }
 }
 

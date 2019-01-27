@@ -278,4 +278,10 @@ class TreeTests: XCTestCase {
         
         XCTAssertNil(Tree(preOrder: List("k")!, inOrder: List("a")!))
     }
+    
+    func testDotStringGeneration() {
+        let dotString = Tree(string: "a(b(d,e),c(,f(g,)))")!.dotString
+        
+        XCTAssertEqual(dotString, "abd..e..c.fg...")
+    }
 }
