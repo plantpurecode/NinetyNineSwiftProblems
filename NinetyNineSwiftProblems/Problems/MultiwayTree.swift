@@ -17,3 +17,12 @@ class MTree<T> {
         self.children = children
     }
 }
+
+// MARK: - Computed Properties
+extension MTree {
+    var nodeCount: Int {
+        return 1 + (children?.values ?? [MTree<T>]()).reduce(0) { res, child in
+            return res + child.nodeCount
+        }
+    }
+}

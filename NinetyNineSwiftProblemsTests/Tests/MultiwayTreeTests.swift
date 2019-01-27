@@ -16,4 +16,10 @@ class MultiwayTreeTests: XCTestCase {
         XCTAssertEqual(mtree.value, "x")
         XCTAssertEqual(mtree.children?[0]?.value.value, "y")
     }
+
+    func testNodeCount() {
+        let test = MTree("a", List(MTree("b", List(MTree("c")))))
+
+        XCTAssertEqual(test.nodeCount, 3)
+    }
 }
