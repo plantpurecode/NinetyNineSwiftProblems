@@ -296,3 +296,45 @@ class TreeTests: XCTestCase {
         }
     }
 }
+
+class TreeSequenceTests : XCTestCase {
+    let tree = Tree(string: "a(b,c)")!
+    let inOrder = ["b", "a", "c"]
+    
+    func testContains() {
+        inOrder.forEach {
+            XCTAssertTrue(tree.contains($0))
+        }
+    }
+    
+    func testDropFirst() {
+        XCTAssertEqual(Array(tree.dropFirst()), ["a", "c"])
+    }
+    
+    func testDropLast() {
+        XCTAssertEqual(Array(tree.dropLast()), ["b", "a"])
+    }
+    
+    func testElementsEqual() {
+        XCTAssertTrue(tree.elementsEqual(inOrder))
+    }
+    
+    func testEnumerated() {
+        XCTAssertEqual(inOrder,
+                       tree.enumerated().map { $0.element })
+    }
+
+    func testFilter() {
+        XCTAssertEqual(tree.filter { $0 != "a" }, ["b", "c"])
+    }
+    
+    func testPreOrder() {
+        let iterator = tree.makeIterator(ofKind: .preOrder)
+        XCTAssertEqual(iterator.elements, tree.preOrder)
+    }
+    
+    func testPostOrder() {
+        let iterator = tree.makeIterator(ofKind: .postOrder)
+        XCTAssertEqual(iterator.elements, tree.postOrder)
+    }
+}

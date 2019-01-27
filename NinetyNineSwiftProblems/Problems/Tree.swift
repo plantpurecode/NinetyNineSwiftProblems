@@ -378,6 +378,51 @@ extension Tree where T == Character {
     }
 }
 
+// MARK: - Sequence Conformance
+
+extension Tree : Sequence {
+    struct TreeIterator : IteratorProtocol {
+        typealias Element = T
+
+        enum Kind {
+            case preOrder
+            case inOrder
+            case postOrder
+        }
+
+        let elements: List<T>!
+
+        init(_ tree: Tree, kind: Kind = .inOrder) {
+            switch kind {
+            case .preOrder:
+                elements = tree.preOrder
+            case .inOrder:
+                elements = tree.inOrder
+            case .postOrder:
+                elements = tree.postOrder
+            }
+        }
+
+        var index = 0
+        mutating func next() -> T? {
+            guard let next = elements[index]?.value else {
+                return nil
+            }
+
+            index += 1
+            return next
+        }
+    }
+
+    func makeIterator() -> TreeIterator {
+        return TreeIterator(self)
+    }
+
+    func makeIterator(ofKind kind: TreeIterator.Kind) -> TreeIterator {
+        return TreeIterator(self, kind: kind)
+    }
+}
+
 // MARK: - Layout-Specific Tree Subclass
 
 class PositionedTree<T> : Tree<T> {

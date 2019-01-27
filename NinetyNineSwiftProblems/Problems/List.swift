@@ -682,7 +682,7 @@ extension List where T == List<Any> {
     }
 }
 
-// MARK: - Sequence
+// MARK: - Sequence Conformance
 
 extension List : Sequence {
     struct ListIterator : IteratorProtocol {
