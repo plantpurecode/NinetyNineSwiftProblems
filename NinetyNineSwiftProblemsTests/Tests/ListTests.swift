@@ -53,6 +53,7 @@ class ListTests : XCTestCase {
 
     func testPenultimate() {
         XCTAssertTrue(defaultList.penultimate == defaultValues[defaultValues.count - 2])
+        XCTAssertNil(List(1)!.penultimate)
     }
     
     func testLast() {
