@@ -76,9 +76,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "52F87166218744C300AA73D3"
-            BuildableName = "NinetyNineSwiftProblems.app"
-            BlueprintName = "NinetyNineSwiftProblems"
+            BlueprintIdentifier = "52F87176218744C400AA73D3"
+            BuildableName = "NinetyNineSwiftProblemsTests.xctest"
+            BlueprintName = "NinetyNineSwiftProblemsTests"
             ReferencedContainer = "container:NinetyNineSwiftProblems.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
