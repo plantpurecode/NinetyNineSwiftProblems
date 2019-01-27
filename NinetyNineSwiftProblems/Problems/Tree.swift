@@ -318,15 +318,15 @@ extension Tree where T == String {
             return (treeString, strEnd)
         }
 
-        switch string.count {
-        case 1:
+        guard string.count > 1 else {
             self.init(String(string.first!))
-        default:
-            let (left, commaPosition) = extractTreeString(string, start: 2, end: ",")
-            let (right, _) = extractTreeString(string, start: commaPosition + 1, end: ")")
-
-            self.init(String(string.first!), Tree(string: left), Tree(string: right))
+            return
         }
+        
+        let (left, commaPosition) = extractTreeString(string, start: 2, end: ",")
+        let (right, _) = extractTreeString(string, start: commaPosition + 1, end: ")")
+
+        self.init(String(string.first!), Tree(string: left), Tree(string: right))
     }
 }
 
