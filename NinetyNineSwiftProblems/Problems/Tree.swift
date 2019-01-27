@@ -115,7 +115,7 @@ extension Tree {
     }
     
     var height: Int {
-        return 1 + max(leftHeight, rightHeight)
+        return 1 + Swift.max(leftHeight, rightHeight)
     }
     
     var leftHeight: Int {
@@ -201,7 +201,7 @@ extension Tree {
             return nil
         }
         
-        let x = (_bounds.map { $0.0 }.reduce(Int.max - 1, min) * -1) + 1
+        let x = (_bounds.map { $0.0 }.reduce(Int.max - 1, Swift.min) * -1) + 1
         return _layoutBinaryTree3Internal(x: x, depth: 1)
     }
     
@@ -411,7 +411,7 @@ extension Tree {
     // MARK: Layout
     
     private var _depth: Int {
-        return max(left?._depth ?? 0, right?._depth ?? 0) + 1
+        return Swift.max(left?._depth ?? 0, right?._depth ?? 0) + 1
     }
     
     private var _leftmostDepth: Int {
@@ -422,7 +422,7 @@ extension Tree {
         func fullInnerBounds(lb: [(Int, Int)], rb: [(Int, Int)]) -> [(Int, Int)] {
             let shift = zip(lb, rb).map {
                 (($0.0.1 - $0.1.0) / 2) + 1
-            }.reduce(0, max)
+            }.reduce(0, Swift.max)
             
             return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, defaultValue: nil).compactMap {
                 let tuple = $0
