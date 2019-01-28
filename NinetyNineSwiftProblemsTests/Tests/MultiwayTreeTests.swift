@@ -17,9 +17,26 @@ class MultiwayTreeTests: XCTestCase {
         XCTAssertEqual(mtree.children?.value.value, "y")
     }
 
+    func testStringBasedInitialization() {
+        let mtree = MTree(string: "afg^^c^bd^e^^^")
+        let testMtree = MTree("a", List(MTree("f", List(MTree("g"))), MTree("c"), MTree("b", List(MTree("d"), MTree("e")))))
+
+        XCTAssertEqual(mtree, testMtree)
+        XCTAssertEqual(MTree(string: "a"), MTree("a"))
+
+        XCTAssertNil(MTree(string: ""))
+    }
+
     func testNodeCount() {
         let test = MTree("a", List(MTree("b", List(MTree("c")))))
 
         XCTAssertEqual(test.nodeCount, 3)
+    }
+
+    func testDescription() {
+        let description = "afg^^c^bd^e^^^"
+
+        XCTAssertEqual(MTree(string: description)!.description, description)
+        XCTAssertEqual(MTree("a").description, "a")
     }
 }
