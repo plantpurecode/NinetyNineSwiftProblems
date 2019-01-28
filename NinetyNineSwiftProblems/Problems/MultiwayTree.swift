@@ -25,6 +25,12 @@ extension MTree {
             return res + child.nodeCount
         }
     }
+
+    var internalPathLength: Int {
+        return (children?.values ?? []).reduce(0) { res, node in
+            return res + node.internalPathLength + node.nodeCount
+        }
+    }
 }
 
 // MARK: - Construct an MTree from a string
