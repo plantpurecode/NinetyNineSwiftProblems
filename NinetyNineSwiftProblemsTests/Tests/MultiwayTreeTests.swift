@@ -46,4 +46,10 @@ class MultiwayTreeTests: XCTestCase {
         XCTAssertEqual(mtree.internalPathLength, 9)
         XCTAssertEqual(MTree("a").internalPathLength, 0)
     }
+
+    func testPostOrder() {
+        let mtree = MTree(string: "afg^^c^bd^e^^^")!
+
+        XCTAssertEqual(mtree.postOrder, List("g", "f", "c", "d", "e", "b", "a"))
+    }
 }

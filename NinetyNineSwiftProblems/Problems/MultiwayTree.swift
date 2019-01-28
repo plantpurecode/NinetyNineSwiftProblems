@@ -31,6 +31,10 @@ extension MTree {
             return res + node.internalPathLength + node.nodeCount
         }
     }
+
+    var postOrder: List<T> {
+        return List((children?.values ?? []).flatMap { $0.postOrder.values } + [value])!
+    }
 }
 
 // MARK: - Construct an MTree from a string
