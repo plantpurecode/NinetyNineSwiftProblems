@@ -92,6 +92,81 @@ extension MTree where T : CustomStringConvertible {
     }
 }
 
+extension MTree where T == String {
+    convenience init?(fromLispyRepresentation lispyRepresentation: String) {
+        guard lispyRepresentation.count > 0 else {
+            return nil
+        }
+
+        func nestingOffset(for character: Character) -> Int {
+            switch character {
+            case "(": return 1
+            case ")": return -1
+            default: return 0
+            }
+        }
+
+        func nextSpace(at position: Int, nestingLevel nesting: Int) -> Int? {
+            guard position < lispyRepresentation.count else {
+                return nil
+            }
+
+            let character = lispyRepresentation.character(atIndex: position)
+            switch character {
+            case " " where nesting == 0, ")" where nesting == 0:
+                return position
+            default:
+                return nextSpace(at: position + 1, nestingLevel: nesting + nestingOffset(for: character))
+            }
+        }
+
+        func nextNonSpace(at position: Int) -> Int? {
+            guard position < lispyRepresentation.count else {
+                return nil
+            }
+
+            let character = lispyRepresentation.character(atIndex: position)
+            guard character != " " else {
+                return nextNonSpace(at: position + 1)
+            }
+
+            return position
+        }
+
+        func substrings(at position: Int) -> [String] {
+            let character = lispyRepresentation.character(atIndex: position)
+            if position > lispyRepresentation.count || character == ")" {
+                return []
+            }
+
+            guard let endPosition = nextSpace(at: position, nestingLevel: 0) else {
+                return []
+            }
+
+            let startIndex = lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: position)
+            let endIndex = lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: endPosition)
+            let substring = String(lispyRepresentation[startIndex..<endIndex])
+            let nextNonSpaceIndex = nextNonSpace(at: endPosition)
+            let endCharacter = lispyRepresentation.character(atIndex: endPosition)
+
+            return [substring] + ((endCharacter != ")" && nextNonSpaceIndex != nil) ? substrings(at: nextNonSpaceIndex!) : [])
+        }
+
+        guard lispyRepresentation.character(atIndex: 0) == "(" else {
+            self.init(String(lispyRepresentation.character(atIndex: 0)))
+            return
+        }
+
+        guard let nextSpaceIndex = nextSpace(at: 1, nestingLevel: 0), let nextNonSpaaceIndex = nextNonSpace(at: nextSpaceIndex) else {
+            return nil
+        }
+
+        let value = lispyRepresentation[lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: 1)..<lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: nextSpaceIndex)]
+        self.init(String(value), List(substrings(at: nextNonSpaaceIndex).compactMap { MTree(fromLispyRepresentation:$0) }))
+
+    }
+}
+
 // MARK: - CustomStringConvertible Conformance
 
 extension MTree : CustomStringConvertible where T : CustomStringConvertible {
@@ -113,5 +188,11 @@ extension MTree : CustomStringConvertible where T : CustomStringConvertible {
 extension MTree : Equatable where T : Equatable, T : CustomStringConvertible {
     static func ==(tree: MTree, otherTree: MTree) -> Bool {
         return tree.description == otherTree.description
+    }
+}
+
+extension String {
+    func character(atIndex index: Int) -> Character {
+        return self[self.index(startIndex, offsetBy: index)]
     }
 }

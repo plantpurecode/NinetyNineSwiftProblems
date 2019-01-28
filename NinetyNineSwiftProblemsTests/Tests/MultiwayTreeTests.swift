@@ -59,4 +59,15 @@ class MultiwayTreeTests: XCTestCase {
         XCTAssertEqual(mtree.lispyRepresentation, "(a (b c))")
         XCTAssertEqual(MTree("a").lispyRepresentation, "a")
     }
+
+    func testLispyRepresentationInitialization() {
+        let lispyRepresentation = "(a (b c))"
+        let mtree = MTree(fromLispyRepresentation: lispyRepresentation)!
+
+        XCTAssertEqual(mtree, MTree("a", List(MTree("b", List(MTree("c"))))))
+        XCTAssertEqual(mtree.lispyRepresentation, "(a (b c))")
+        XCTAssertEqual(MTree(fromLispyRepresentation: "a")?.lispyRepresentation, "a")
+
+        XCTAssertNil(MTree.init(fromLispyRepresentation: ""))
+    }
 }
