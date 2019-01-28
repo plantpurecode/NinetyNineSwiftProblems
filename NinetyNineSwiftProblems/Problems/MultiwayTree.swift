@@ -74,6 +74,24 @@ extension MTree where T == String {
     }
 }
 
+// MARK: - Lisp-y String Representations
+
+extension MTree where T : CustomStringConvertible {
+    var lispyRepresentation: String {
+        guard let children = children else {
+            return value.description
+        }
+
+        return [
+            "(",
+            value.description,
+            " ",
+            children.map { $0.lispyRepresentation }.joined(separator: " "),
+            ")"
+        ].joined()
+    }
+}
+
 // MARK: - CustomStringConvertible Conformance
 
 extension MTree : CustomStringConvertible where T : CustomStringConvertible {
