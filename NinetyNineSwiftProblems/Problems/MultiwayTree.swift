@@ -51,8 +51,7 @@ extension MTree where T == String {
             }
 
             func nextNestingOffset() -> Int {
-                let characterAtPosition = string.suffix(from: string.index(string.startIndex, offsetBy: position)).prefix(1)
-                return characterAtPosition == "^" ? -1 : 1
+                return string.character(atIndex: position) == "^" ? -1 : 1
             }
 
             return nextPosition(fromPosition: position + 1, atNestingLevel: nesting + nextNestingOffset())
@@ -64,9 +63,9 @@ extension MTree where T == String {
             }
 
             let endPosition = nextPosition(fromPosition: position + 1, atNestingLevel: 1)
-            let substring = String(string[string.index(string.startIndex, offsetBy: position)..<string.index(string.startIndex, offsetBy: endPosition - 1)])
+            let arrayOfOneSubstring = string.substring(in: position..<endPosition - 1).flatMap { [$0] } ?? []
 
-            return [substring] + extractChildren(atPosition: endPosition)
+            return arrayOfOneSubstring + extractChildren(atPosition: endPosition)
         }
 
         let children = extractChildren(atPosition: 1).compactMap { MTree(string: $0) }
@@ -98,22 +97,23 @@ extension MTree where T == String {
             return nil
         }
 
-        func nestingOffset(for character: Character) -> Int {
-            switch character {
-            case "(": return 1
-            case ")": return -1
-            default: return 0
+        func nextSpace(at position: Int, nestingLevel nesting: Int = 0) -> Int? {
+            func nestingOffset(for character: Character) -> Int {
+                switch character {
+                case "(": return 1
+                case ")": return -1
+                default: return 0
+                }
             }
-        }
 
-        func nextSpace(at position: Int, nestingLevel nesting: Int) -> Int? {
-            guard position < lispyRepresentation.count else {
+            guard position < lispyRepresentation.count,
+                let character = lispyRepresentation.character(atIndex: position) else {
                 return nil
             }
 
-            let character = lispyRepresentation.character(atIndex: position)
             switch character {
-            case " " where nesting == 0, ")" where nesting == 0:
+            case " " where nesting == 0,
+                 ")" where nesting == 0:
                 return position
             default:
                 return nextSpace(at: position + 1, nestingLevel: nesting + nestingOffset(for: character))
@@ -121,49 +121,42 @@ extension MTree where T == String {
         }
 
         func nextNonSpace(at position: Int) -> Int? {
-            guard position < lispyRepresentation.count else {
-                return nil
-            }
-
-            let character = lispyRepresentation.character(atIndex: position)
-            guard character != " " else {
-                return nextNonSpace(at: position + 1)
-            }
-
-            return position
+            return lispyRepresentation.scan(for: { $0 != " " }, fromIndex: position)
         }
 
         func substrings(at position: Int) -> [String] {
             let character = lispyRepresentation.character(atIndex: position)
-            if position > lispyRepresentation.count || character == ")" {
+
+            guard position < lispyRepresentation.count,
+                character !=  ")",
+                let endPosition = nextSpace(at: position),
+                let substring = lispyRepresentation.substring(in: position..<endPosition) else {
                 return []
             }
 
-            guard let endPosition = nextSpace(at: position, nestingLevel: 0) else {
-                return []
+            var additionalSubstrings = [String]()
+            if let nextNonSpaceIndex = nextNonSpace(at: endPosition),
+                let endCharacter = lispyRepresentation.character(atIndex: endPosition),
+                endCharacter != ")" {
+                additionalSubstrings = substrings(at: nextNonSpaceIndex)
             }
 
-            let startIndex = lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: position)
-            let endIndex = lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: endPosition)
-            let substring = String(lispyRepresentation[startIndex..<endIndex])
-            let nextNonSpaceIndex = nextNonSpace(at: endPosition)
-            let endCharacter = lispyRepresentation.character(atIndex: endPosition)
-
-            return [substring] + ((endCharacter != ")" && nextNonSpaceIndex != nil) ? substrings(at: nextNonSpaceIndex!) : [])
+            return [substring] + additionalSubstrings
         }
 
         guard lispyRepresentation.character(atIndex: 0) == "(" else {
-            self.init(String(lispyRepresentation.character(atIndex: 0)))
+            self.init(String(lispyRepresentation.prefix(1)))
             return
         }
 
-        guard let nextSpaceIndex = nextSpace(at: 1, nestingLevel: 0), let nextNonSpaaceIndex = nextNonSpace(at: nextSpaceIndex) else {
+        guard
+            let nextSpaceIndex = nextSpace(at: 1),
+            let nextNonSpaceIndex = nextNonSpace(at: nextSpaceIndex),
+            let value = lispyRepresentation.substring(in: 1..<nextSpaceIndex) else {
             return nil
         }
 
-        let value = lispyRepresentation[lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: 1)..<lispyRepresentation.index(lispyRepresentation.startIndex, offsetBy: nextSpaceIndex)]
-        self.init(String(value), List(substrings(at: nextNonSpaaceIndex).compactMap { MTree(fromLispyRepresentation:$0) }))
-
+        self.init(String(value), List(substrings(at: nextNonSpaceIndex).compactMap { MTree(fromLispyRepresentation:$0) }))
     }
 }
 
@@ -188,11 +181,5 @@ extension MTree : CustomStringConvertible where T : CustomStringConvertible {
 extension MTree : Equatable where T : Equatable, T : CustomStringConvertible {
     static func ==(tree: MTree, otherTree: MTree) -> Bool {
         return tree.description == otherTree.description
-    }
-}
-
-extension String {
-    func character(atIndex index: Int) -> Character {
-        return self[self.index(startIndex, offsetBy: index)]
     }
 }
