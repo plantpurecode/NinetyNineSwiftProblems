@@ -47,13 +47,7 @@ extension Tree {
     }
     
     class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
-        let result = _makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric }
-        
-        guard result.isEmpty == false else {
-            return nil
-        }
-        
-        return List(result)
+        return List(_makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric })
     }
     
     class func makeHeightBalancedTrees(height: Int, value: T) -> List<Tree<T>>? {
