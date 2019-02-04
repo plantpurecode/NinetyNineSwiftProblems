@@ -21,7 +21,7 @@ class MTree<T> {
 // MARK: - Computed Properties
 extension MTree {
     var nodeCount: Int {
-        return (children?.values ?? [MTree<T>]()).reduce(1) { res, child in
+        return (children?.values ?? []).reduce(1) { res, child in
             return res + child.nodeCount
         }
     }
