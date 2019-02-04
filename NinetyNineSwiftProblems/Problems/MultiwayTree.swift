@@ -144,7 +144,13 @@ extension MTree where T == String {
             return [substring] + additionalSubstrings
         }
 
-        guard lispyRepresentation.character(atIndex: 0) == "(" else {
+        let firstChar = lispyRepresentation.character(atIndex: 0)
+
+        guard firstChar == "(" else {
+            guard firstChar != " " else {
+                return nil
+            }
+
             self.init(String(lispyRepresentation.prefix(1)))
             return
         }
@@ -152,7 +158,8 @@ extension MTree where T == String {
         guard
             let nextSpaceIndex = nextSpace(at: 1),
             let nextNonSpaceIndex = nextNonSpace(at: nextSpaceIndex),
-            let value = lispyRepresentation.substring(in: 1..<nextSpaceIndex) else {
+            let value = lispyRepresentation.substring(in: 1..<nextSpaceIndex)?.trimmingCharacters(in: .whitespaces),
+            value.count > 0 else {
             return nil
         }
 
