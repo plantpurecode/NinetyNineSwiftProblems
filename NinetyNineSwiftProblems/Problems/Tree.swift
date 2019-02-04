@@ -595,7 +595,7 @@ extension Tree {
         case n where n % 2 == 1:
             let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
             
-            return subtrees.reduce([Tree<T>]()) { res, left in
+            return subtrees.reduce([]) { res, left in
                 return res + subtrees.map { right in
                     return Tree(value, left, right)
                 }
@@ -604,7 +604,7 @@ extension Tree {
             let lesser = _makeBalancedTrees(nodes: (n - 1) / 2, value: value)
             let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
 
-            return lesser.reduce([Tree<T>]()) { res, less in
+            return lesser.reduce([]) { res, less in
                 return res + greater.flatMap { great in
                     return [Tree(value, less, great), Tree(value, great, less)]
                 }
