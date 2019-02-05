@@ -342,13 +342,12 @@ extension Tree where T : CustomStringConvertible {
 
 extension Tree where T == Character {
     convenience init?(dotString: String) {
-        guard dotString.count > 0 else {
+        guard dotString.trimmingCharacters(in: .whitespaces).count > 0 else {
             return nil
         }
 
         func buildTree(atPosition position: Int) -> (Tree<T>?, Int) {
-            let character = dotString[dotString.index(dotString.startIndex, offsetBy: position)]
-            guard character != "." else {
+            guard let character = dotString.character(atIndex: position), character != "." else {
                 return (nil, position + 1)
             }
 

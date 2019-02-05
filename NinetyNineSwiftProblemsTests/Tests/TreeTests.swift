@@ -237,6 +237,9 @@ class TreeTests: XCTestCase {
         let tree = Tree("a", Tree("b", Tree("d"), Tree("e")), Tree("c", nil, Tree("f", Tree("g"), nil)))
         
         XCTAssertEqual(tree.description, "a(b(d,e),c(,f(g,)))")
+        XCTAssertEqual(Tree("a").description, "a")
+        XCTAssertEqual(Tree("a", Tree("b")).description, "a(b,)")
+        XCTAssertEqual(Tree("a", Tree("b"), Tree("c")).description, "a(b,c)")
     }
     
     func testTreeStringInitialization() {
@@ -293,7 +296,7 @@ class TreeTests: XCTestCase {
 
         XCTAssertEqual(characterTree.dotString, dotString)
 
-        for invalidString in ["", ".", "..", "..."] {
+        for invalidString in ["", " ", ".", "..", "..."] {
             XCTAssertNil(Tree(dotString: invalidString))
         }
     }
