@@ -494,10 +494,10 @@ extension Tree {
     }
 
     private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
-        let (_left, myX) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
-        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: myX + 1, depth: depth + 1) ?? (nil, x + 1)
+        let (_left, _x) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
+        let (_right, nextX) = right?._layoutBinaryTreeInternal(x: _x + 1, depth: depth + 1) ?? (nil, x + 1)
         
-        return (PositionedTree(x: myX, y: depth, value: value, _left, _right), nextX)
+        return (PositionedTree(x: _x, y: depth, value: value, _left, _right), nextX)
     }
 
     private func _layoutBinaryTree2Internal(x: Int, depth: Int, exp: Int) -> PositionedTree<T> {
