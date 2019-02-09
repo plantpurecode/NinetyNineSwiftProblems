@@ -181,9 +181,9 @@ func gray(_ number: Int) -> List<String>? {
     }
     
     let n = 1 << number
-    return List((0..<n).reduce([String]()) { codes, current in
+    return (0..<n).reduce([String]()) { codes, current in
         let x = current ^ (current >> 1)
         
         return codes + [toBinary(number: x, ofLength: number)]
-    })!
+    }.toList()!
 }

@@ -101,7 +101,7 @@ extension List {
     }
     
     func copy() -> List? {
-        return List<T>(values)
+        return values.toList()
     }
     
     
@@ -150,7 +150,7 @@ extension List {
             node = n.nextItem
         }
         
-        return List(values)
+        return values.toList()
     }
     
     func duplicate(times: Int = 1) {
@@ -322,7 +322,7 @@ extension List {
             }
         }
         
-        return List(vals)!
+        return vals.toList()!
     }
 }
 
@@ -336,14 +336,13 @@ extension List where T == Int {
             values.insert(random)
         }
         
-        return List(Array(values))!
+        return values.toList()!
     }
     
     class func range(from: Int, _ to: Int) -> List {
         precondition(from < to)
         
-        let values = Array(from...to)
-        return List(values)!
+        return Array(from...to).toList()!
     }
 }
 
@@ -351,7 +350,7 @@ extension List where T == Int {
 
 extension List where T == Any {
     var flattened:List<T> {
-        let list = List<T>(values)!
+        let list = copy()!
         list.flatten()
         return list
     }
@@ -403,7 +402,7 @@ extension List : Equatable where T : Equatable {
 
 extension List where T : Equatable {
     var compressed: List<T> {
-        let list = List(values)!
+        let list = copy()!
         list.compress()
         return list
     }
@@ -436,7 +435,7 @@ extension List where T : Equatable {
         var csNode = Optional(self)
         
         while let node = cNode, let snode = csNode {
-            if node.value != snode.value {
+            guard node.value == snode.value else {
                 return false
             }
             
@@ -470,7 +469,7 @@ extension List where T : Equatable {
         var outerList = [(Int, T)]()
         
         while let n = node {
-            var nn:List<T>? = n
+            var nn = Optional(n)
             var count = 0
             
             defer {
@@ -514,7 +513,7 @@ extension List where T : Equatable {
             }
         }
         
-        return List<Any>(outerList)!
+        return outerList.toList()!
     }
 }
 
@@ -534,7 +533,7 @@ extension List where T == (Int, String) {
             node = n.nextItem
         }
         
-        return List<String>(list)!
+        return list.toList()!
     }
 }
 
@@ -560,8 +559,7 @@ extension List {
         }
         
         let combos = vals.combinations(taking: count, repeating: false)
-        let list = List<List<T>>(combos.map { List($0)! })!
-        return list
+        return combos.map { List($0)! }.toList()!
     }
     
     func permutations(_ group: Int = 0) -> List<List<T>>? {
@@ -578,9 +576,7 @@ extension List {
         }
         
         let perms = vals.permutations(taking: count, repeating: false)
-        let list = List<List<T>>(perms.map { List($0)! })!
-        
-        return list
+        return perms.map { List($0)! }.toList()
     }
     
     // MARK: Grouping
@@ -590,7 +586,7 @@ extension List {
             return nil
         }
         
-        return group(groups: List<Int>([2,3,4])!)
+        return group(groups: [2,3,4].toList()!)
     }
     
     func group(groups: List<Int>) -> List<List<List<T>>>? {
@@ -633,11 +629,9 @@ extension List {
             finalList.append(row)
         }
         
-        let mappedList = finalList.compactMap {
-            List<List<T>>($0.compactMap({ List<T>($0) }))
-        }
-        
-        return List<List<List<T>>>(mappedList)!
+        return finalList.compactMap {
+            $0.compactMap { List<T>($0) }.toList()!
+        }.toList()
     }
 }
 
@@ -678,7 +672,7 @@ extension List where T == List<Any> {
             result.append(contentsOf: tuple.value.1)
         }
         
-        return List<List<Any>>(results)!
+        return results.toList()!
     }
 }
 
@@ -720,5 +714,11 @@ extension List : CustomStringConvertible {
         }
         
         return "[" + buffer.joined(separator: ", ") + "]"
+    }
+}
+
+extension Sequence {
+    func toList() -> List<Element>? {
+        return List(map { $0 })
     }
 }

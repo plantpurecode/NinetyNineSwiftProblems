@@ -93,9 +93,9 @@ extension Tree {
             return List(value)!
         }
         
-        return List([left, right].compactMap { $0 }.reduce([T](), {
+        return [left, right].compactMap { $0 }.reduce([T]()) {
             return $0 + $1.leaves.values
-        }))!
+        }.toList()!
     }
     
     var nodeCount: Int {
@@ -141,8 +141,11 @@ extension Tree {
         
         let successorNodes = [left, right].compactMap { $0 }.filter { !$0.isLeaf }
         let prefix = successorNodes.count > 0 ? [value] : [T]()
-        
-        return List(prefix + successorNodes.map ({ $0.value }) + successorNodes.flatMap({ $0.internalNodes?.values ?? [] }))
+        let internalNodes = prefix +
+            successorNodes.map ({ $0.value }) +
+            successorNodes.flatMap({ $0.internalNodes?.values ?? [] })
+
+        return internalNodes.toList()
     }
     
     // MARK: Traversal
