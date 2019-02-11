@@ -43,41 +43,86 @@ class Graph<T, U> {
 }
 
 extension Graph where U == Int, T : Hashable {
-    convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
-        self.init()
+    private struct GraphInitializationHelper {
+        enum EdgeGenerationMode {
+            case enforcingSymmetry
+            case normal
 
-        nodes = n.map { Node(value: $0) }.toList()
-
-        let nodesKeyedByValues = nodes!.reduce([T:Node]()) { (res, node) -> [T:Node] in
-            var r = res
-            r[node.value] = node
-            return r
+            init(direction: Graph.Direction) {
+                switch direction {
+                case .Directed: self = .normal
+                case .Indirected: self = .enforcingSymmetry
+                }
+            }
         }
 
-        func node(forValue value: T) -> Node? {
-            return nodesKeyedByValues[value]
-        }
+        // For fast access to nodes through their underlying value
+        private let _nodeCache: [T: Node]
 
         // To track the edges we've already added to prevent against duplicates
-        var allEdges = Set<String>()
+        private var _allEdges = Set<String>()
 
-        edges = e.compactMap {
-            guard let from = node(forValue: $0.0), let to = node(forValue: $0.1) else {
+        private let _edgeGenerationMode: EdgeGenerationMode
+
+        init(graph: Graph<T, U>, nodes: List<T>) {
+            graph.nodes = nodes.map { Node(value: $0) }.toList()
+
+            _edgeGenerationMode = EdgeGenerationMode(direction: type(of: graph).direction)
+            _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
+        }
+
+        mutating func generateEdge(`for` nodePair: (T, T)) -> Edge? {
+            guard let from = _node(forValue: nodePair.0), let to = _node(forValue: nodePair.1) else {
                 return nil
             }
 
             let nodeValues = [from, to].map { "\($0.value)" }
             var edgeStrings = [nodeValues.joined(separator: "-")]
-            if type(of: self).direction == .Indirected {
+
+            if case EdgeGenerationMode.enforcingSymmetry = _edgeGenerationMode {
                 edgeStrings.append(nodeValues.reversed().joined(separator: "-"))
             }
 
-            guard edgeStrings.allSatisfy({ allEdges.contains($0) == false }) else {
+            guard edgeStrings.allSatisfy({ _allEdges.contains($0) == false }) else {
                 return nil
             }
 
-            edgeStrings.forEach { allEdges.insert($0) }
+            edgeStrings.forEach { _allEdges.insert($0) }
             return Edge(from: from, to: to, value: 0)
+        }
+
+        private func _node(forValue value: T) -> Node? {
+            return _nodeCache[value]
+        }
+
+        private static func _generateNodeCache(_ nodes: [Node]) -> [T : Node] {
+            return nodes.reduce([T:Node]()) { (res, node) -> [T:Node] in
+                var r = res
+                r[node.value] = node
+                return r
+            }
+        }
+    }
+
+    convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
+        self.init()
+
+        var helper = GraphInitializationHelper(graph: self, nodes: n)
+        edges = e.compactMap { helper.generateEdge(for: $0) }.toList()
+    }
+
+    convenience init(adjacentList list: List<(T, List<T>?)>) {
+        self.init()
+
+        var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
+
+        // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
+        edges = list.values.flatMap { tuple -> [Edge] in
+            let (nodeValue, adjacentNodeValues) = tuple
+
+            return adjacentNodeValues?.values.compactMap {
+                return helper.generateEdge(for: (nodeValue, $0))
+            } ?? []
         }.toList()
     }
 }
