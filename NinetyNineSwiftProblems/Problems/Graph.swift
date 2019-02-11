@@ -20,12 +20,12 @@ class Graph<T, U> {
     class Edge {
         let from: Node
         let to: Node
-        let value: U
+        let label: U
 
-        init(from: Node, to: Node, value: U) {
+        init(from: Node, to: Node, label: U) {
             self.from = from
             self.to = to
-            self.value = value
+            self.label = label
         }
     }
 
@@ -71,7 +71,7 @@ extension Graph where U == Int, T : Hashable {
             _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
         }
 
-        mutating func generateEdge(`for` nodePair: (T, T)) -> Edge? {
+        mutating func generateEdge(`for` nodePair: (T, T), label: U = 0) -> Edge? {
             guard let from = _node(forValue: nodePair.0), let to = _node(forValue: nodePair.1) else {
                 return nil
             }
@@ -88,7 +88,7 @@ extension Graph where U == Int, T : Hashable {
             }
 
             edgeStrings.forEach { _allEdges.insert($0) }
-            return Edge(from: from, to: to, value: 0)
+            return Edge(from: from, to: to, label: label)
         }
 
         private func _node(forValue value: T) -> Node? {
@@ -105,23 +105,31 @@ extension Graph where U == Int, T : Hashable {
     }
 
     convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
+        self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, 0) }.toList()!)
+    }
+
+    convenience init(nodes n: List<T>, labeledEdges: List<(T, T, U)>) {
         self.init()
 
         var helper = GraphInitializationHelper(graph: self, nodes: n)
-        edges = e.compactMap { helper.generateEdge(for: $0) }.toList()
+        edges = labeledEdges.compactMap { helper.generateEdge(for: ($0.0, $0.1), label: $0.2) }.toList()
     }
 
     convenience init(adjacentList list: List<(T, List<T>?)>) {
+        self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, 0) }.toList()) }.toList()!)
+    }
+
+    convenience init(adjacentLabeledList list: List<(T, List<(T, U)>?)>) {
         self.init()
 
         var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
 
         // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
         edges = list.values.flatMap { tuple -> [Edge] in
-            let (nodeValue, adjacentNodeValues) = tuple
+            let (nodeValue, adjacentNodeValueTuples) = tuple
 
-            return adjacentNodeValues?.values.compactMap {
-                return helper.generateEdge(for: (nodeValue, $0))
+            return adjacentNodeValueTuples?.values.compactMap {
+                return helper.generateEdge(for: (nodeValue, $0.0), label: $0.1)
             } ?? []
         }.toList()
     }
@@ -139,6 +147,6 @@ extension Graph.Node where T : CustomStringConvertible {
 
 extension Graph.Edge where T : CustomStringConvertible, U : CustomStringConvertible {
     var description: String {
-        return "Graph.Edge(from: \(from.description)), to: \(to.description), value: \(value))"
+        return "Graph.Edge(from: \(from.description)), to: \(to.description), value: \(label))"
     }
 }
