@@ -10,12 +10,12 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphEdge {
+struct TestGraphEdge<T> {
     let from: String
     let to: String
-    let label: Int
+    let label: T
 
-    init(from: String, to: String, label: Int = 0) {
+    init(from: String, to: String, label: T) {
         self.from = from
         self.to = to
         self.label = label
@@ -23,7 +23,7 @@ struct TestGraphEdge {
 }
 
 class GraphTests : XCTestCase {
-    private func _testGraph(_ graph: Graph<String, Int>, nodes: [String], edges: [TestGraphEdge]) {
+    private func _testGraph<T : Equatable>(_ graph: Graph<String, T>, nodes: [String], edges: [TestGraphEdge<T>]) {
         let nodeValues = graph.nodes!.values.map { $0.value }
         let edgeDataTuples = graph.edges!.map({ (from: $0.from.value, to: $0.to.value, value: $0.label) })
 
@@ -48,11 +48,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphEdge(from: "b", to: "c", label: 0),
+                    TestGraphEdge(from: "b", to: "f", label: 0),
+                    TestGraphEdge(from: "c", to: "f", label: 0),
+                    TestGraphEdge(from: "f", to: "k", label: 0),
+                    TestGraphEdge(from: "g", to: "h", label: 0)
             ]
         )
     }
@@ -93,13 +93,13 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "c", to: "b"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphEdge(from: "b", to: "c", label: 0),
+                    TestGraphEdge(from: "c", to: "b", label: 0),
+                    TestGraphEdge(from: "f", to: "b", label: 0),
+                    TestGraphEdge(from: "b", to: "f", label: 0),
+                    TestGraphEdge(from: "c", to: "f", label: 0),
+                    TestGraphEdge(from: "f", to: "k", label: 0),
+                    TestGraphEdge(from: "g", to: "h", label: 0)
             ]
         )
     }
@@ -147,11 +147,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphEdge(from: "b", to: "c", label: 0),
+                    TestGraphEdge(from: "b", to: "f", label: 0),
+                    TestGraphEdge(from: "c", to: "f", label: 0),
+                    TestGraphEdge(from: "f", to: "k", label: 0),
+                    TestGraphEdge(from: "g", to: "h", label: 0)
             ]
         )
     }
@@ -170,16 +170,16 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "b"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "f", to: "c"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h"),
-                    TestGraphEdge(from: "h", to: "g"),
-                    TestGraphEdge(from: "k", to: "f")
+                    TestGraphEdge(from: "b", to: "c", label: 0),
+                    TestGraphEdge(from: "b", to: "f", label: 0),
+                    TestGraphEdge(from: "c", to: "b", label: 0),
+                    TestGraphEdge(from: "c", to: "f", label: 0),
+                    TestGraphEdge(from: "f", to: "b", label: 0),
+                    TestGraphEdge(from: "f", to: "c", label: 0),
+                    TestGraphEdge(from: "f", to: "k", label: 0),
+                    TestGraphEdge(from: "g", to: "h", label: 0),
+                    TestGraphEdge(from: "h", to: "g", label: 0),
+                    TestGraphEdge(from: "k", to: "f", label: 0)
             ]
         )
     }
@@ -231,6 +231,51 @@ class GraphTests : XCTestCase {
                     TestGraphEdge(from: "g", to: "h", label: 8),
                     TestGraphEdge(from: "h", to: "g", label: 9),
                     TestGraphEdge(from: "k", to: "f", label: 10)
+            ]
+        )
+    }
+
+    func testGraphHumanFriendlyTermInitialization() {
+        var graph = Graph(string: "[d]")
+        XCTAssertNil(graph?.edges)
+        XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
+
+        // Use a string with duplicate and opposite edges to test for correctness.
+        graph = Graph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g, g-h]")
+        XCTAssertNotNil(graph)
+
+        _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
+                   edges: [
+                    TestGraphEdge(from: "b", to: "c", label: "0"),
+                    TestGraphEdge(from: "f", to: "c", label: "0"),
+                    TestGraphEdge(from: "g", to: "h", label: "0"),
+                    TestGraphEdge(from: "f", to: "b", label: "0"),
+                    TestGraphEdge(from: "k", to: "f", label: "0")
+            ]
+        )
+    }
+
+    func testDigraphHumanFriendlyTermInitialization() {
+        var graph = Digraph(string: "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]")
+
+        // Tried to initialize a Digraph using Graph separator.. No go.
+        XCTAssertNil(graph)
+
+        graph = Digraph(string: "[d]")
+        XCTAssertNil(graph?.edges)
+        XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
+
+        graph = Digraph(string: "[b>c, f>c, g>h, d, f>b, k>f, h>g, g>h]")
+        XCTAssertNotNil(graph)
+
+        _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
+                   edges: [
+                    TestGraphEdge(from: "b", to: "c", label: "0"),
+                    TestGraphEdge(from: "f", to: "c", label: "0"),
+                    TestGraphEdge(from: "g", to: "h", label: "0"),
+                    TestGraphEdge(from: "f", to: "b", label: "0"),
+                    TestGraphEdge(from: "k", to: "f", label: "0"),
+                    TestGraphEdge(from: "h", to: "g", label: "0"),
             ]
         )
     }

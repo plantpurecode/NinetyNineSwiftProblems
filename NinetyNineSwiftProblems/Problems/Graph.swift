@@ -38,11 +38,15 @@ class Graph<T, U> {
         return .Indirected
     }
 
+    class var humanFriendlyEdgeSeparator: String {
+        return "-"
+    }
+
     var nodes: List<Node>?
     var edges: List<Edge>?
 }
 
-extension Graph where U == Int, T : Hashable {
+extension Graph where T : Hashable {
     private struct GraphInitializationHelper {
         enum EdgeGenerationMode {
             case enforcingSymmetry
@@ -71,7 +75,7 @@ extension Graph where U == Int, T : Hashable {
             _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
         }
 
-        mutating func generateEdge(`for` nodePair: (T, T), label: U = 0) -> Edge? {
+        mutating func generateEdge(`for` nodePair: (T, T), label: U) -> Edge? {
             guard let from = _node(forValue: nodePair.0), let to = _node(forValue: nodePair.1) else {
                 return nil
             }
@@ -103,7 +107,9 @@ extension Graph where U == Int, T : Hashable {
             }
         }
     }
+}
 
+extension Graph where U == Int, T : Hashable {
     convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
         self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, 0) }.toList()!)
     }
@@ -135,8 +141,92 @@ extension Graph where U == Int, T : Hashable {
     }
 }
 
+extension Graph where T == String, U == String {
+    convenience init?(string: String) {
+        self.init()
+
+        guard string.first == "[", string.last == "]" else {
+            return nil
+        }
+
+        // Create a string without the leading and trailing brackets.
+        let truncatedEdgeString = string
+            .suffix(from: string.index(after: string.startIndex))
+            .prefix(upTo: string.index(before: string.endIndex))
+
+        let edgeComponents = truncatedEdgeString.components(separatedBy: ",")
+        guard edgeComponents.isEmpty == false else {
+            return nil
+        }
+
+        let edgeInfoTuples = edgeComponents.compactMap { edgeComponent -> (T, T?, U)? in
+            let separator = type(of: self).humanFriendlyEdgeSeparator
+
+            func findLabel(`in` string: String) -> String {
+                var label = "0"
+                if let labelPosition = string.scan(for: { $0 == "/" }),
+                    let foundLabel = string.substring(in: labelPosition..<string.count) {
+                    label = foundLabel
+                }
+
+                return label
+            }
+
+            guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
+                let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
+                if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
+                    return nil
+                }
+
+                return (edgeComponent.trimmingCharacters(in: .whitespaces), nil, findLabel(in: edgeComponent))
+            }
+
+            let components = edgeComponent.components(separatedBy: separator).map {
+                $0.trimmingCharacters(in: .whitespaces)
+            }
+
+            guard components.isEmpty == false else {
+                return nil
+            }
+
+            guard components.count == 2 else {
+                if components.isEmpty == false {
+                    return (components.first!, nil, findLabel(in: components.first!))
+                }
+
+                return nil
+            }
+
+            return (components.first!, components.last!, findLabel(in: edgeComponent))
+        }
+
+        guard edgeInfoTuples.isEmpty == false else {
+            return nil
+        }
+
+        let nodes = edgeInfoTuples.reduce([T]()) { array, tuple in
+            var a = array
+
+            [tuple.0, tuple.1]
+                // Filter out nil (i.e. when there is only one node in the component.)
+                .compactMap { $0 }
+                // Ensure we don't have duplicate nodes
+                .filter { a.contains($0) == false }
+                .forEach { a.append($0) }
+
+            return a
+        }.toList()!
+
+        var helper = GraphInitializationHelper(graph: self, nodes: nodes)
+        edges = edgeInfoTuples
+            .filter { $0.1 != nil }
+            .compactMap { helper.generateEdge(for: ($0.0, $0.1!), label: $0.2) }.toList()
+    }
+}
+
 class Digraph<T, U> : Graph<T, U> {
     override class var direction: Direction { return .Directed }
+    override class var humanFriendlyEdgeSeparator: String { return ">" }
 }
 
 extension Graph.Node where T : CustomStringConvertible {
