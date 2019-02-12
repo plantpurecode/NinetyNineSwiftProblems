@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Graph<T, U> {
+class Graph<T : CustomStringConvertible & Equatable, U> : CustomStringConvertible {
     class Node {
         let value: T
 
@@ -44,6 +44,21 @@ class Graph<T, U> {
 
     var nodes: List<Node>?
     var edges: List<Edge>?
+
+    var description: String {
+        let separator = type(of: self).humanFriendlyEdgeSeparator
+        let orphanNodes = nodes?.filter { node in
+            return (edges?.values ?? []).allSatisfy { (edge) -> Bool in
+                return edge.from.value != node.value && edge.to.value != node.value
+            }
+        }.map { String(describing: $0.value) } ?? []
+
+        let allEdges = edges?.values.reduce([String](), { res, edge in
+            return res + [[edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)]
+        }) ?? [String]()
+
+        return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
+    }
 }
 
 extension Graph where T : Hashable {
@@ -244,7 +259,7 @@ extension Graph where T == String, U == String {
     }
 }
 
-class Digraph<T, U> : Graph<T, U> {
+class Digraph<T : CustomStringConvertible & Equatable, U> : Graph<T, U> {
     override class var direction: Direction { return .Directed }
     override class var humanFriendlyEdgeSeparator: String { return ">" }
 }

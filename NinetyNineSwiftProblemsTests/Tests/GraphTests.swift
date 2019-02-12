@@ -319,4 +319,16 @@ class GraphTests : XCTestCase {
             ]
         )
     }
+
+    func testGraphHumanFriendlyDescription() {
+        let humanFriendlyString = "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]"
+        XCTAssertEqual(Graph(string: humanFriendlyString)?.description, "[b-c, f-c, g-h, f-b, k-f]")
+        XCTAssertEqual(Digraph(string: "[d, e]")?.description, "[d, e]")
+    }
+
+    func testDigraphHumanFriendlyDescription() {
+        let humanFriendlyString = "[b>c, f>c, g>h, d, f>b, k>f, h>g]"
+        XCTAssertEqual(Digraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
+        XCTAssertEqual(Digraph(string: "[d, e]")?.description, "[d, e]")
+    }
 }
