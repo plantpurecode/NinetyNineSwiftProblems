@@ -59,6 +59,10 @@ class Graph<T : CustomStringConvertible & Equatable, U> : CustomStringConvertibl
 
         return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
     }
+
+    func toTermForm() -> (List<T>, List<(T, T, U)>?) {
+        return (nodes!.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
+    }
 }
 
 extension Graph where T : Hashable {

@@ -331,4 +331,69 @@ class GraphTests : XCTestCase {
         XCTAssertEqual(Digraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
         XCTAssertEqual(Digraph(string: "[d, e]")?.description, "[d, e]")
     }
+
+    func testGraphToTermForm() {
+        let humanFriendlyString = "[b-c/1, f-c/2, g-h/3, f-b/4, k-f/5, h-g/6, g-h/7]"
+
+        let graphOfSingleNode = Graph(string: "[b]")
+        XCTAssertEqual(graphOfSingleNode?.toTermForm().0.values, ["b"])
+        XCTAssertNil(graphOfSingleNode?.toTermForm().1)
+
+        let graph = Graph(string: humanFriendlyString)!
+        let (nodes, edges) = graph.toTermForm()
+
+        XCTAssertEqual(nodes.values, ["b", "c", "f", "g", "h", "k"])
+
+        let expectedEdges = [
+            ("b", "c", "1"),
+            ("f", "c", "2"),
+            ("g", "h", "3"),
+            ("f", "b", "4"),
+            ("k", "f", "5")
+        ]
+
+        guard let actualEdges = edges?.values else {
+            XCTFail()
+            return
+        }
+
+        for (expected, actual) in zip(expectedEdges, actualEdges) {
+            XCTAssertEqual(expected.0, actual.0)
+            XCTAssertEqual(expected.1, actual.1)
+            XCTAssertEqual(expected.2, actual.2)
+        }
+    }
+
+    func testDigraphToTermForm() {
+        let humanFriendlyString = "[b>c/1, f>c/2, g>h/3, f>b/4, k>f/5, h>g/6, g>h/7]"
+
+        let graphOfSingleNode = Digraph(string: "[b]")
+        XCTAssertEqual(graphOfSingleNode?.toTermForm().0.values, ["b"])
+        XCTAssertNil(graphOfSingleNode?.toTermForm().1)
+
+        let graph = Digraph(string: humanFriendlyString)!
+        let (nodes, edges) = graph.toTermForm()
+
+        XCTAssertEqual(nodes.values, ["b", "c", "f", "g", "h", "k"])
+
+        let expectedEdges = [
+            ("b", "c", "1"),
+            ("f", "c", "2"),
+            ("g", "h", "3"),
+            ("f", "b", "4"),
+            ("k", "f", "5"),
+            ("h", "g", "6")
+        ]
+
+        guard let actualEdges = edges?.values else {
+            XCTFail()
+            return
+        }
+
+        for (expected, actual) in zip(expectedEdges, actualEdges) {
+            XCTAssertEqual(expected.0, actual.0)
+            XCTAssertEqual(expected.1, actual.1)
+            XCTAssertEqual(expected.2, actual.2)
+        }
+    }
 }
