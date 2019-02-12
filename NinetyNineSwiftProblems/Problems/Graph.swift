@@ -142,6 +142,66 @@ extension Graph where U == Int, T : Hashable {
 }
 
 extension Graph where T == String, U == String {
+    private func parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U)] {
+        return edgeComponents.compactMap { edgeComponent -> (T, T?, U)? in
+            let separator = type(of: self).humanFriendlyEdgeSeparator
+
+            func findLabel(`in` string: String) -> (String, Int?) {
+                var label = "0"
+                var position:Int?
+
+                if let labelPosition = string.scan(for: { $0 == "/" }),
+                    let foundLabel = string.substring(in: labelPosition + 1..<string.count) {
+                    label = foundLabel
+                    position = labelPosition
+                }
+
+                return (label, position)
+            }
+
+            // Parse separators.
+            guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
+                let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
+                if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
+                    return nil
+                }
+
+                return (from: edgeComponent.trimmingCharacters(in: .whitespaces), to: nil, label: findLabel(in: edgeComponent).0)
+            }
+
+            let components = edgeComponent.components(separatedBy: separator).map {
+                $0.trimmingCharacters(in: .whitespaces)
+            }
+
+            guard components.isEmpty == false else {
+                return nil
+            }
+
+            guard components.count == 2 else {
+                if let first = components.first {
+                    let (label, labelPositionOptional) = findLabel(in: first)
+                    let nodeValueEndPosition = (labelPositionOptional ?? first.count)
+                    guard let nodeValue = first.substring(in: 0..<nodeValueEndPosition) else {
+                        return nil
+                    }
+
+                    return (from: nodeValue, to: nil, label)
+                }
+
+                return nil
+            }
+
+            var toNodeValue = components.last!
+            let (label, labelPositionOptional) = findLabel(in: toNodeValue)
+
+            if let position = labelPositionOptional {
+                toNodeValue = toNodeValue.substring(in: 0..<position) ?? toNodeValue
+            }
+
+            return (from: components.first!, to: toNodeValue, label: label)
+        }
+    }
+
     convenience init?(string: String) {
         self.init()
 
@@ -159,47 +219,7 @@ extension Graph where T == String, U == String {
             return nil
         }
 
-        let edgeInfoTuples = edgeComponents.compactMap { edgeComponent -> (T, T?, U)? in
-            let separator = type(of: self).humanFriendlyEdgeSeparator
-
-            func findLabel(`in` string: String) -> String {
-                var label = "0"
-                if let labelPosition = string.scan(for: { $0 == "/" }),
-                    let foundLabel = string.substring(in: labelPosition..<string.count) {
-                    label = foundLabel
-                }
-
-                return label
-            }
-
-            guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
-                let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
-                if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
-                    return nil
-                }
-
-                return (edgeComponent.trimmingCharacters(in: .whitespaces), nil, findLabel(in: edgeComponent))
-            }
-
-            let components = edgeComponent.components(separatedBy: separator).map {
-                $0.trimmingCharacters(in: .whitespaces)
-            }
-
-            guard components.isEmpty == false else {
-                return nil
-            }
-
-            guard components.count == 2 else {
-                if components.isEmpty == false {
-                    return (components.first!, nil, findLabel(in: components.first!))
-                }
-
-                return nil
-            }
-
-            return (components.first!, components.last!, findLabel(in: edgeComponent))
-        }
-
+        let edgeInfoTuples = parseEdgeComponents(edgeComponents)
         guard edgeInfoTuples.isEmpty == false else {
             return nil
         }

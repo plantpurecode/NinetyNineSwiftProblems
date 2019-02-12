@@ -236,7 +236,16 @@ class GraphTests : XCTestCase {
     }
 
     func testGraphHumanFriendlyTermInitialization() {
-        var graph = Graph(string: "[d]")
+        var graph = Graph(string: "[b>c, f>c, g>h, f>b, k>f, h>g, g>h]")
+
+        // Try to initialize a Graph using Digraph separator.. No go.
+        XCTAssertNil(graph)
+
+        // Try to initialize a Graph without square brackets.. No go.
+        graph = Graph(string: "xx")
+        XCTAssertNil(graph)
+
+        graph = Graph(string: "[d]")
         XCTAssertNil(graph?.edges)
         XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
 
@@ -253,12 +262,29 @@ class GraphTests : XCTestCase {
                     TestGraphEdge(from: "k", to: "f", label: "0")
             ]
         )
+
+        graph = Graph(string: "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6, g-h/7]")
+        XCTAssertNotNil(graph)
+
+        _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
+                   edges: [
+                    TestGraphEdge(from: "b", to: "c", label: "1"),
+                    TestGraphEdge(from: "f", to: "c", label: "2"),
+                    TestGraphEdge(from: "g", to: "h", label: "3"),
+                    TestGraphEdge(from: "f", to: "b", label: "4"),
+                    TestGraphEdge(from: "k", to: "f", label: "5")
+            ]
+        )
     }
 
     func testDigraphHumanFriendlyTermInitialization() {
         var graph = Digraph(string: "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]")
 
-        // Tried to initialize a Digraph using Graph separator.. No go.
+        // Try to initialize a Digraph using Graph separator.. No go.
+        XCTAssertNil(graph)
+
+        // Try to initialize a Digraph without square brackets.. No go.
+        graph = Digraph(string: "xx")
         XCTAssertNil(graph)
 
         graph = Digraph(string: "[d]")
@@ -276,6 +302,20 @@ class GraphTests : XCTestCase {
                     TestGraphEdge(from: "f", to: "b", label: "0"),
                     TestGraphEdge(from: "k", to: "f", label: "0"),
                     TestGraphEdge(from: "h", to: "g", label: "0"),
+            ]
+        )
+
+        graph = Digraph(string: "[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6, g>h/7]")
+        XCTAssertNotNil(graph)
+
+        _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
+                   edges: [
+                    TestGraphEdge(from: "b", to: "c", label: "1"),
+                    TestGraphEdge(from: "f", to: "c", label: "2"),
+                    TestGraphEdge(from: "g", to: "h", label: "3"),
+                    TestGraphEdge(from: "f", to: "b", label: "4"),
+                    TestGraphEdge(from: "k", to: "f", label: "5"),
+                    TestGraphEdge(from: "h", to: "g", label: "6")
             ]
         )
     }
