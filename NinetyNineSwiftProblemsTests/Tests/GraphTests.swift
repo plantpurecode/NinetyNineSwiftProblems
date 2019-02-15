@@ -13,21 +13,21 @@ import XCTest
 struct TestGraphEdge<T, U : Equatable> {
     let from: T
     let to: T
-    let label: U
+    let label: U?
 
-    init(from: T, to: T, label: U) {
+    init(from: T, to: T, label: U? = nil) {
         self.from = from
         self.to = to
         self.label = label
     }
 
-    func toTuple() -> (from: T, to: T, label: U) {
+    func toTuple() -> (from: T, to: T, label: U?) {
         return (from: self.from, to: self.to, label: self.label)
     }
 }
 
-struct TestGraphData<T : CustomStringConvertible & Equatable, U : Equatable> {
-    typealias EdgeTuple = (from: T, to: T, label: U)
+struct TestGraphData<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint & Equatable> {
+    typealias EdgeTuple = (from: T, to: T, label: U?)
     typealias EdgeClosure = () -> [EdgeTuple]
     typealias NodeClosure = () -> [T]
 
@@ -70,8 +70,11 @@ struct TestGraphData<T : CustomStringConvertible & Equatable, U : Equatable> {
     }
 }
 
+typealias StringGraph = Graph<String, String>
+typealias StringDigraph = Digraph<String, String>
+
 class GraphTests : XCTestCase {
-    func _testGraph<T:CustomStringConvertible & Equatable, U:Equatable>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphEdge<T, U>], file: StaticString = #file, line: UInt = #line)  {
+    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphEdge<T, U>], file: StaticString = #file, line: UInt = #line)  {
         let data = TestGraphData(graph: graph, expectedNodes: nodes, expectedEdges: edges)
         data.runAssertions(file: file, line: line)
     }
@@ -85,11 +88,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 0),
-                    TestGraphEdge(from: "b", to: "f", label: 0),
-                    TestGraphEdge(from: "c", to: "f", label: 0),
-                    TestGraphEdge(from: "f", to: "k", label: 0),
-                    TestGraphEdge(from: "g", to: "h", label: 0)
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "b", to: "f"),
+                    TestGraphEdge(from: "c", to: "f"),
+                    TestGraphEdge(from: "f", to: "k"),
+                    TestGraphEdge(from: "g", to: "h")
             ]
         )
     }
@@ -130,13 +133,13 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 0),
-                    TestGraphEdge(from: "c", to: "b", label: 0),
-                    TestGraphEdge(from: "f", to: "b", label: 0),
-                    TestGraphEdge(from: "b", to: "f", label: 0),
-                    TestGraphEdge(from: "c", to: "f", label: 0),
-                    TestGraphEdge(from: "f", to: "k", label: 0),
-                    TestGraphEdge(from: "g", to: "h", label: 0)
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "c", to: "b"),
+                    TestGraphEdge(from: "f", to: "b"),
+                    TestGraphEdge(from: "b", to: "f"),
+                    TestGraphEdge(from: "c", to: "f"),
+                    TestGraphEdge(from: "f", to: "k"),
+                    TestGraphEdge(from: "g", to: "h")
             ]
         )
     }
@@ -184,11 +187,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 0),
-                    TestGraphEdge(from: "b", to: "f", label: 0),
-                    TestGraphEdge(from: "c", to: "f", label: 0),
-                    TestGraphEdge(from: "f", to: "k", label: 0),
-                    TestGraphEdge(from: "g", to: "h", label: 0)
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "b", to: "f"),
+                    TestGraphEdge(from: "c", to: "f"),
+                    TestGraphEdge(from: "f", to: "k"),
+                    TestGraphEdge(from: "g", to: "h")
             ]
         )
     }
@@ -207,16 +210,16 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 0),
-                    TestGraphEdge(from: "b", to: "f", label: 0),
-                    TestGraphEdge(from: "c", to: "b", label: 0),
-                    TestGraphEdge(from: "c", to: "f", label: 0),
-                    TestGraphEdge(from: "f", to: "b", label: 0),
-                    TestGraphEdge(from: "f", to: "c", label: 0),
-                    TestGraphEdge(from: "f", to: "k", label: 0),
-                    TestGraphEdge(from: "g", to: "h", label: 0),
-                    TestGraphEdge(from: "h", to: "g", label: 0),
-                    TestGraphEdge(from: "k", to: "f", label: 0)
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "b", to: "f"),
+                    TestGraphEdge(from: "c", to: "b"),
+                    TestGraphEdge(from: "c", to: "f"),
+                    TestGraphEdge(from: "f", to: "b"),
+                    TestGraphEdge(from: "f", to: "c"),
+                    TestGraphEdge(from: "f", to: "k"),
+                    TestGraphEdge(from: "g", to: "h"),
+                    TestGraphEdge(from: "h", to: "g"),
+                    TestGraphEdge(from: "k", to: "f")
             ]
         )
     }
@@ -273,7 +276,7 @@ class GraphTests : XCTestCase {
     }
 
     func testGraphHumanFriendlyTermInitialization() {
-        var graph = Graph(string: "[b>c, f>c, g>h, f>b, k>f, h>g, g>h]")
+        var graph = Graph<String, String>(string: "[b>c, f>c, g>h, f>b, k>f, h>g, g>h]")
 
         // Try to initialize a Graph using Digraph separator.. No go.
         XCTAssertNil(graph)
@@ -292,11 +295,11 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: ""),
-                    TestGraphEdge(from: "f", to: "c", label: ""),
-                    TestGraphEdge(from: "g", to: "h", label: ""),
-                    TestGraphEdge(from: "f", to: "b", label: ""),
-                    TestGraphEdge(from: "k", to: "f", label: "")
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "f", to: "c"),
+                    TestGraphEdge(from: "g", to: "h"),
+                    TestGraphEdge(from: "f", to: "b"),
+                    TestGraphEdge(from: "k", to: "f")
             ]
         )
 
@@ -315,76 +318,76 @@ class GraphTests : XCTestCase {
     }
 
     func testDigraphHumanFriendlyTermInitialization() {
-        var graph = Digraph(string: "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]")
+        var graph = StringDigraph(string: "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]")
 
         // Try to initialize a Digraph using Graph separator.. No go.
         XCTAssertNil(graph)
 
         // Try to initialize a Digraph without square brackets.. No go.
-        graph = Digraph(string: "xx")
+        graph = StringDigraph(string: "xx")
         XCTAssertNil(graph)
 
-        graph = Digraph(string: "[d]")
+        graph = StringDigraph(string: "[d]")
         XCTAssertNil(graph?.edges)
         XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
 
-        graph = Digraph(string: "[b>c, f>c, g>h, d, f>b, k>f, h>g, g>h]")
+        graph = StringDigraph(string: "[b>c, f>c, g>h, d, f>b, k>f, h>g, g>h]")
         XCTAssertNotNil(graph)
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: ""),
-                    TestGraphEdge(from: "f", to: "c", label: ""),
-                    TestGraphEdge(from: "g", to: "h", label: ""),
-                    TestGraphEdge(from: "f", to: "b", label: ""),
-                    TestGraphEdge(from: "k", to: "f", label: ""),
-                    TestGraphEdge(from: "h", to: "g", label: ""),
+                    TestGraphEdge(from: "b", to: "c"),
+                    TestGraphEdge(from: "f", to: "c"),
+                    TestGraphEdge(from: "g", to: "h"),
+                    TestGraphEdge(from: "f", to: "b"),
+                    TestGraphEdge(from: "k", to: "f"),
+                    TestGraphEdge(from: "h", to: "g")
             ]
         )
 
-        graph = Digraph(string: "[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6, g>h/7]")
-        XCTAssertNotNil(graph)
+        let intLabeledGraph = Digraph<String, Int>(string: "[b>c/1, f>c/2, g>h/3, d, f>b/4, k>f/5, h>g/6, g>h/7]")
+        XCTAssertNotNil(intLabeledGraph)
 
-        _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
+        _testGraph(intLabeledGraph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: "1"),
-                    TestGraphEdge(from: "f", to: "c", label: "2"),
-                    TestGraphEdge(from: "g", to: "h", label: "3"),
-                    TestGraphEdge(from: "f", to: "b", label: "4"),
-                    TestGraphEdge(from: "k", to: "f", label: "5"),
-                    TestGraphEdge(from: "h", to: "g", label: "6")
+                    TestGraphEdge(from: "b", to: "c", label: 1),
+                    TestGraphEdge(from: "f", to: "c", label: 2),
+                    TestGraphEdge(from: "g", to: "h", label: 3),
+                    TestGraphEdge(from: "f", to: "b", label: 4),
+                    TestGraphEdge(from: "k", to: "f", label: 5),
+                    TestGraphEdge(from: "h", to: "g", label: 6)
             ]
         )
     }
 
     func testGraphHumanFriendlyDescription() {
         let humanFriendlyString = "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]"
-        XCTAssertEqual(Graph(string: humanFriendlyString)?.description, "[b-c, f-c, g-h, f-b, k-f]")
-        XCTAssertEqual(Digraph(string: "[d, e]")?.description, "[d, e]")
+        XCTAssertEqual(StringGraph(string: humanFriendlyString)?.description, "[b-c, f-c, g-h, f-b, k-f]")
+        XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
 
     func testDigraphHumanFriendlyDescription() {
         let humanFriendlyString = "[b>c, f>c, g>h, d, f>b, k>f, h>g]"
-        XCTAssertEqual(Digraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
-        XCTAssertEqual(Digraph(string: "[d, e]")?.description, "[d, e]")
+        XCTAssertEqual(StringDigraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
+        XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
 
     func testGraphToTermForm() {
         let humanFriendlyString = "[b-c/1, f-c/2, g-h/3, f-b/4, k-f/5, h-g/6, g-h/7]"
 
-        let graphOfSingleNode = Graph(string: "[b]")
+        let graphOfSingleNode = StringGraph(string: "[b]")
         XCTAssertEqual(graphOfSingleNode?.toTermForm().0.values, ["b"])
         XCTAssertNil(graphOfSingleNode?.toTermForm().1)
 
-        let graph = Graph(string: humanFriendlyString)!
+        let graph = Graph<String, Int>(string: humanFriendlyString)!
         let (nodes, edges) = graph.toTermForm()
 
         let expectedEdges = [
-            ("b", "c", "1"),
-            ("f", "c", "2"),
-            ("g", "h", "3"),
-            ("f", "b", "4"),
-            ("k", "f", "5")
+            ("b", "c", 1),
+            ("f", "c", 2),
+            ("g", "h", 3),
+            ("f", "b", 4),
+            ("k", "f", 5)
         ].map {
             TestGraphEdge(from: $0.0, to: $0.1, label: $0.2)
         }
@@ -401,20 +404,20 @@ class GraphTests : XCTestCase {
     func testDigraphToTermForm() {
         let humanFriendlyString = "[b>c/1, f>c/2, g>h/3, f>b/4, k>f/5, h>g/6, g>h/7]"
 
-        let graphOfSingleNode = Digraph(string: "[b]")
+        let graphOfSingleNode = StringDigraph(string: "[b]")
         XCTAssertEqual(graphOfSingleNode?.toTermForm().0.values, ["b"])
         XCTAssertNil(graphOfSingleNode?.toTermForm().1)
 
-        let graph = Digraph(string: humanFriendlyString)!
+        let graph = Digraph<String, Int>(string: humanFriendlyString)!
         let (nodes, edges) = graph.toTermForm()
 
         let expectedEdges = [
-            ("b", "c", "1"),
-            ("f", "c", "2"),
-            ("g", "h", "3"),
-            ("f", "b", "4"),
-            ("k", "f", "5"),
-            ("h", "g", "6")
+            ("b", "c", 1),
+            ("f", "c", 2),
+            ("g", "h", 3),
+            ("f", "b", 4),
+            ("k", "f", 5),
+            ("h", "g", 6)
         ].map { TestGraphEdge(from: $0.0, to: $0.1, label: $0.2) }
 
         let edgeGetter = { edges!.values.map { (from: $0.0, to: $0.1, label: $0.2) } }

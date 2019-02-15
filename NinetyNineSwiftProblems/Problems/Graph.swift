@@ -8,7 +8,10 @@
 
 import Foundation
 
-class Graph<T : CustomStringConvertible & Equatable, U> : CustomStringConvertible {
+typealias GraphValueTypeConstraint = CustomStringConvertible & Equatable
+typealias GraphLabelTypeConstraint = LosslessStringConvertible
+
+class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
     class Node {
         let value: T
 
@@ -20,9 +23,9 @@ class Graph<T : CustomStringConvertible & Equatable, U> : CustomStringConvertibl
     class Edge {
         let from: Node
         let to: Node
-        let label: U
+        let label: U?
 
-        init(from: Node, to: Node, label: U) {
+        init(from: Node, to: Node, label: U?) {
             self.from = from
             self.to = to
             self.label = label
@@ -60,7 +63,7 @@ class Graph<T : CustomStringConvertible & Equatable, U> : CustomStringConvertibl
         return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
     }
 
-    func toTermForm() -> (List<T>, List<(T, T, U)>?) {
+    func toTermForm() -> (List<T>, List<(T, T, U?)>?) {
         return (nodes!.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
     }
 }
@@ -94,7 +97,7 @@ extension Graph where T : Hashable {
             _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
         }
 
-        mutating func generateEdge(`for` nodePair: (T, T), label: U) -> Edge? {
+        mutating func generateEdge(`for` nodePair: (T, T), label: U?) -> Edge? {
             guard let from = _node(forValue: nodePair.0), let to = _node(forValue: nodePair.1) else {
                 return nil
             }
@@ -128,12 +131,12 @@ extension Graph where T : Hashable {
     }
 }
 
-extension Graph where U == Int, T : Hashable {
+extension Graph where T : Hashable {
     convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
-        self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, 0) }.toList()!)
+        self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, nil) }.toList()!)
     }
 
-    convenience init(nodes n: List<T>, labeledEdges: List<(T, T, U)>) {
+    convenience init(nodes n: List<T>, labeledEdges: List<(T, T, U?)>) {
         self.init()
 
         var helper = GraphInitializationHelper(graph: self, nodes: n)
@@ -141,10 +144,10 @@ extension Graph where U == Int, T : Hashable {
     }
 
     convenience init(adjacentList list: List<(T, List<T>?)>) {
-        self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, 0) }.toList()) }.toList()!)
+        self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, nil) }.toList()) }.toList()!)
     }
 
-    convenience init(adjacentLabeledList list: List<(T, List<(T, U)>?)>) {
+    convenience init(adjacentLabeledList list: List<(T, List<(T, U?)>?)>) {
         self.init()
 
         var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
@@ -160,65 +163,68 @@ extension Graph where U == Int, T : Hashable {
     }
 }
 
-extension Graph where T == String, U == String {
-    private func parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U)] {
-        let results = edgeComponents.map { edgeComponent -> (T, T?, U)? in
-            let separator = type(of: self).humanFriendlyEdgeSeparator
+extension Graph where T == String {
+    private func parseEdgeComponent(_ edgeComponent: String) -> (T, T?, U?)? {
+        let separator = type(of: self).humanFriendlyEdgeSeparator
 
-            func findLabel(`in` string: String) -> (String, Int?) {
-                var label = ""
-                var position:Int?
+        func findLabel(`in` string: String) -> (U?, Int?) {
+            var label:U? = nil
+            var position:Int?
 
-                if let labelPosition = string.scan(for: { $0 == "/" }),
-                    let foundLabel = string.substring(in: labelPosition + 1..<string.count) {
-                    label = foundLabel
-                    position = labelPosition
-                }
-
-                return (label, position)
+            if let labelPosition = string.scan(for: { $0 == "/" }),
+                let foundLabel = string.substring(in: labelPosition + 1..<string.count),
+                let createdLabel = U(foundLabel) {
+                label = createdLabel
+                position = labelPosition
             }
 
-            // Parse separators.
-            guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
-                let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
-                if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
+            return (label, position)
+        }
+
+        // Parse separators.
+        guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
+            let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
+            if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
+                return nil
+            }
+
+            return (from: edgeComponent.trimmingCharacters(in: .whitespaces), to: nil, label: findLabel(in: edgeComponent).0)
+        }
+
+        let components = edgeComponent.components(separatedBy: separator).map {
+            $0.trimmingCharacters(in: .whitespaces)
+        }
+
+        guard components.isEmpty == false else {
+            return nil
+        }
+
+        guard components.count == 2 else {
+            if let first = components.first {
+                let (label, labelPositionOptional) = findLabel(in: first)
+                let nodeValueEndPosition = (labelPositionOptional ?? first.count)
+                guard let nodeValue = first.substring(in: 0..<nodeValueEndPosition) else {
                     return nil
                 }
 
-                return (from: edgeComponent.trimmingCharacters(in: .whitespaces), to: nil, label: findLabel(in: edgeComponent).0)
+                return (from: nodeValue, to: nil, label)
             }
 
-            let components = edgeComponent.components(separatedBy: separator).map {
-                $0.trimmingCharacters(in: .whitespaces)
-            }
-
-            guard components.isEmpty == false else {
-                return nil
-            }
-
-            guard components.count == 2 else {
-                if let first = components.first {
-                    let (label, labelPositionOptional) = findLabel(in: first)
-                    let nodeValueEndPosition = (labelPositionOptional ?? first.count)
-                    guard let nodeValue = first.substring(in: 0..<nodeValueEndPosition) else {
-                        return nil
-                    }
-
-                    return (from: nodeValue, to: nil, label)
-                }
-
-                return nil
-            }
-
-            var toNodeValue = components.last!
-            let (label, labelPositionOptional) = findLabel(in: toNodeValue)
-
-            if let position = labelPositionOptional {
-                toNodeValue = toNodeValue.substring(in: 0..<position) ?? toNodeValue
-            }
-
-            return (from: components.first!, to: toNodeValue, label: label)
+            return nil
         }
+
+        var toNodeValue = components.last!
+        let (label, labelPositionOptional) = findLabel(in: toNodeValue)
+
+        if let position = labelPositionOptional {
+            toNodeValue = toNodeValue.substring(in: 0..<position) ?? toNodeValue
+        }
+
+        return (from: components.first!, to: toNodeValue, label: label)
+    }
+
+    private func parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U?)] {
+        let results = edgeComponents.map { parseEdgeComponent($0) }
 
         guard results.contains(where: { $0 == nil }) == false else {
             return []
@@ -269,19 +275,24 @@ extension Graph where T == String, U == String {
     }
 }
 
-class Digraph<T : CustomStringConvertible & Equatable, U> : Graph<T, U> {
+// TODO: Change all usage of type(of:) to using the direction class variable
+class Digraph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Graph<T, U> {
     override class var direction: Direction { return .Directed }
     override class var humanFriendlyEdgeSeparator: String { return ">" }
 }
 
-extension Graph.Node where T : CustomStringConvertible {
+extension Graph.Node : CustomStringConvertible {
     var description: String {
         return "Graph.Node(value: \(value))"
     }
 }
 
-extension Graph.Edge where T : CustomStringConvertible, U : CustomStringConvertible {
+extension Graph.Edge : CustomStringConvertible {
     var description: String {
-        return "Graph.Edge(from: \(from.description)), to: \(to.description), value: \(label))"
+        let components = ["from": Optional(from.description), "to": Optional(to.description), "label" : label?.description].filter { $0.value != nil }.map {
+            "\($0.key): \($0.value!)"
+        }
+
+        return "Graph.Edge(\(components.joined(separator: ", ")))"
     }
 }
