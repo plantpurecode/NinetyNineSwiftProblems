@@ -162,7 +162,7 @@ extension Graph where U == Int, T : Hashable {
 
 extension Graph where T == String, U == String {
     private func parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U)] {
-        return edgeComponents.compactMap { edgeComponent -> (T, T?, U)? in
+        let results = edgeComponents.map { edgeComponent -> (T, T?, U)? in
             let separator = type(of: self).humanFriendlyEdgeSeparator
 
             func findLabel(`in` string: String) -> (String, Int?) {
@@ -219,6 +219,12 @@ extension Graph where T == String, U == String {
 
             return (from: components.first!, to: toNodeValue, label: label)
         }
+
+        guard results.contains(where: { $0 == nil }) == false else {
+            return []
+        }
+
+        return results.compactMap { $0 }
     }
 
     convenience init?(string: String) {
