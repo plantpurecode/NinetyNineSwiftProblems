@@ -166,7 +166,7 @@ extension Graph where T == String, U == String {
             let separator = type(of: self).humanFriendlyEdgeSeparator
 
             func findLabel(`in` string: String) -> (String, Int?) {
-                var label = "0"
+                var label = ""
                 var position:Int?
 
                 if let labelPosition = string.scan(for: { $0 == "/" }),

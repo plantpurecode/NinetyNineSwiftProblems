@@ -292,11 +292,11 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: "0"),
-                    TestGraphEdge(from: "f", to: "c", label: "0"),
-                    TestGraphEdge(from: "g", to: "h", label: "0"),
-                    TestGraphEdge(from: "f", to: "b", label: "0"),
-                    TestGraphEdge(from: "k", to: "f", label: "0")
+                    TestGraphEdge(from: "b", to: "c", label: ""),
+                    TestGraphEdge(from: "f", to: "c", label: ""),
+                    TestGraphEdge(from: "g", to: "h", label: ""),
+                    TestGraphEdge(from: "f", to: "b", label: ""),
+                    TestGraphEdge(from: "k", to: "f", label: "")
             ]
         )
 
@@ -333,12 +333,12 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: "0"),
-                    TestGraphEdge(from: "f", to: "c", label: "0"),
-                    TestGraphEdge(from: "g", to: "h", label: "0"),
-                    TestGraphEdge(from: "f", to: "b", label: "0"),
-                    TestGraphEdge(from: "k", to: "f", label: "0"),
-                    TestGraphEdge(from: "h", to: "g", label: "0"),
+                    TestGraphEdge(from: "b", to: "c", label: ""),
+                    TestGraphEdge(from: "f", to: "c", label: ""),
+                    TestGraphEdge(from: "g", to: "h", label: ""),
+                    TestGraphEdge(from: "f", to: "b", label: ""),
+                    TestGraphEdge(from: "k", to: "f", label: ""),
+                    TestGraphEdge(from: "h", to: "g", label: ""),
             ]
         )
 
