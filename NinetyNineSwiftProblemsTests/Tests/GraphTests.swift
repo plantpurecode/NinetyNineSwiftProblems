@@ -10,38 +10,38 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphEdge<T, U : Equatable> {
-    let from: T
-    let to: T
-    let label: U?
-
-    init(from: T, to: T, label: U? = nil) {
-        self.from = from
-        self.to = to
-        self.label = label
-    }
-
-    func toTuple() -> (from: T, to: T, label: U?) {
-        return (from: self.from, to: self.to, label: self.label)
-    }
-}
-
 struct TestGraphData<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint & Equatable> {
     typealias EdgeTuple = (from: T, to: T, label: U?)
     typealias EdgeClosure = () -> [EdgeTuple]
     typealias NodeClosure = () -> [T]
 
+    struct Edge {
+        let from: T
+        let to: T
+        let label: U?
+
+        init(from: T, to: T, label: U? = nil) {
+            self.from = from
+            self.to = to
+            self.label = label
+        }
+
+        func toTuple() -> EdgeTuple {
+            return (from: self.from, to: self.to, label: self.label)
+        }
+    }
+
     let edges: EdgeClosure
     let nodes: NodeClosure
 
     let expectedNodes: [T]
-    let expectedEdges: [TestGraphEdge<T, U>]
+    let expectedEdges: [Edge]
 
     init(graph: Graph<T, U>,
          edges edgeClosure: EdgeClosure? = nil,
          nodes nodeClosure: NodeClosure? = nil,
          expectedNodes: [T],
-         expectedEdges: [TestGraphEdge<T, U>]) {
+         expectedEdges: [Edge]) {
         self.edges = edgeClosure ?? {
             graph.edges?.map { (from: $0.from.value, to: $0.to.value, label: $0.label) } ?? []
         }
@@ -74,7 +74,7 @@ typealias StringGraph = Graph<String, String>
 typealias StringDigraph = Digraph<String, String>
 
 class GraphTests : XCTestCase {
-    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphEdge<T, U>], file: StaticString = #file, line: UInt = #line)  {
+    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphData<T, U>.Edge], file: StaticString = #file, line: UInt = #line)  {
         let data = TestGraphData(graph: graph, expectedNodes: nodes, expectedEdges: edges)
         data.runAssertions(file: file, line: line)
     }
@@ -88,11 +88,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "b", to: "f"),
+                    TestGraphData.Edge(from: "c", to: "f"),
+                    TestGraphData.Edge(from: "f", to: "k"),
+                    TestGraphData.Edge(from: "g", to: "h")
             ]
         )
     }
@@ -115,11 +115,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 1),
-                    TestGraphEdge(from: "b", to: "f", label: 2),
-                    TestGraphEdge(from: "c", to: "f", label: 3),
-                    TestGraphEdge(from: "f", to: "k", label: 4),
-                    TestGraphEdge(from: "g", to: "h", label: 5)
+                    TestGraphData.Edge(from: "b", to: "c", label: 1),
+                    TestGraphData.Edge(from: "b", to: "f", label: 2),
+                    TestGraphData.Edge(from: "c", to: "f", label: 3),
+                    TestGraphData.Edge(from: "f", to: "k", label: 4),
+                    TestGraphData.Edge(from: "g", to: "h", label: 5)
             ]
         )
     }
@@ -133,13 +133,13 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "c", to: "b"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "c", to: "b"),
+                    TestGraphData.Edge(from: "f", to: "b"),
+                    TestGraphData.Edge(from: "b", to: "f"),
+                    TestGraphData.Edge(from: "c", to: "f"),
+                    TestGraphData.Edge(from: "f", to: "k"),
+                    TestGraphData.Edge(from: "g", to: "h")
             ]
         )
     }
@@ -162,13 +162,13 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 1),
-                    TestGraphEdge(from: "b", to: "f", label: 2),
-                    TestGraphEdge(from: "c", to: "f", label: 3),
-                    TestGraphEdge(from: "f", to: "k", label: 4),
-                    TestGraphEdge(from: "g", to: "h", label: 5),
-                    TestGraphEdge(from: "h", to: "g", label: 6),
-                    TestGraphEdge(from: "f", to: "b", label: 7)
+                    TestGraphData.Edge(from: "b", to: "c", label: 1),
+                    TestGraphData.Edge(from: "b", to: "f", label: 2),
+                    TestGraphData.Edge(from: "c", to: "f", label: 3),
+                    TestGraphData.Edge(from: "f", to: "k", label: 4),
+                    TestGraphData.Edge(from: "g", to: "h", label: 5),
+                    TestGraphData.Edge(from: "h", to: "g", label: 6),
+                    TestGraphData.Edge(from: "f", to: "b", label: 7)
             ]
         )
     }
@@ -187,11 +187,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "b", to: "f"),
+                    TestGraphData.Edge(from: "c", to: "f"),
+                    TestGraphData.Edge(from: "f", to: "k"),
+                    TestGraphData.Edge(from: "g", to: "h")
             ]
         )
     }
@@ -210,16 +210,16 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "b", to: "f"),
-                    TestGraphEdge(from: "c", to: "b"),
-                    TestGraphEdge(from: "c", to: "f"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "f", to: "c"),
-                    TestGraphEdge(from: "f", to: "k"),
-                    TestGraphEdge(from: "g", to: "h"),
-                    TestGraphEdge(from: "h", to: "g"),
-                    TestGraphEdge(from: "k", to: "f")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "b", to: "f"),
+                    TestGraphData.Edge(from: "c", to: "b"),
+                    TestGraphData.Edge(from: "c", to: "f"),
+                    TestGraphData.Edge(from: "f", to: "b"),
+                    TestGraphData.Edge(from: "f", to: "c"),
+                    TestGraphData.Edge(from: "f", to: "k"),
+                    TestGraphData.Edge(from: "g", to: "h"),
+                    TestGraphData.Edge(from: "h", to: "g"),
+                    TestGraphData.Edge(from: "k", to: "f")
             ]
         )
     }
@@ -238,11 +238,11 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 1),
-                    TestGraphEdge(from: "b", to: "f", label: 2),
-                    TestGraphEdge(from: "c", to: "f", label: 4),
-                    TestGraphEdge(from: "f", to: "k", label: 7),
-                    TestGraphEdge(from: "g", to: "h", label: 8)
+                    TestGraphData.Edge(from: "b", to: "c", label: 1),
+                    TestGraphData.Edge(from: "b", to: "f", label: 2),
+                    TestGraphData.Edge(from: "c", to: "f", label: 4),
+                    TestGraphData.Edge(from: "f", to: "k", label: 7),
+                    TestGraphData.Edge(from: "g", to: "h", label: 8)
             ]
         )
     }
@@ -261,16 +261,16 @@ class GraphTests : XCTestCase {
         _testGraph(graph,
                    nodes: ["b", "c", "d", "f", "g", "h", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 1),
-                    TestGraphEdge(from: "b", to: "f", label: 2),
-                    TestGraphEdge(from: "c", to: "b", label: 3),
-                    TestGraphEdge(from: "c", to: "f", label: 4),
-                    TestGraphEdge(from: "f", to: "b", label: 5),
-                    TestGraphEdge(from: "f", to: "c", label: 6),
-                    TestGraphEdge(from: "f", to: "k", label: 7),
-                    TestGraphEdge(from: "g", to: "h", label: 8),
-                    TestGraphEdge(from: "h", to: "g", label: 9),
-                    TestGraphEdge(from: "k", to: "f", label: 10)
+                    TestGraphData.Edge(from: "b", to: "c", label: 1),
+                    TestGraphData.Edge(from: "b", to: "f", label: 2),
+                    TestGraphData.Edge(from: "c", to: "b", label: 3),
+                    TestGraphData.Edge(from: "c", to: "f", label: 4),
+                    TestGraphData.Edge(from: "f", to: "b", label: 5),
+                    TestGraphData.Edge(from: "f", to: "c", label: 6),
+                    TestGraphData.Edge(from: "f", to: "k", label: 7),
+                    TestGraphData.Edge(from: "g", to: "h", label: 8),
+                    TestGraphData.Edge(from: "h", to: "g", label: 9),
+                    TestGraphData.Edge(from: "k", to: "f", label: 10)
             ]
         )
     }
@@ -295,11 +295,11 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "f", to: "c"),
-                    TestGraphEdge(from: "g", to: "h"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "k", to: "f")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "f", to: "c"),
+                    TestGraphData.Edge(from: "g", to: "h"),
+                    TestGraphData.Edge(from: "f", to: "b"),
+                    TestGraphData.Edge(from: "k", to: "f")
             ]
         )
 
@@ -308,11 +308,11 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: "1"),
-                    TestGraphEdge(from: "f", to: "c", label: "2"),
-                    TestGraphEdge(from: "g", to: "h", label: "3"),
-                    TestGraphEdge(from: "f", to: "b", label: "4"),
-                    TestGraphEdge(from: "k", to: "f", label: "5")
+                    TestGraphData.Edge(from: "b", to: "c", label: "1"),
+                    TestGraphData.Edge(from: "f", to: "c", label: "2"),
+                    TestGraphData.Edge(from: "g", to: "h", label: "3"),
+                    TestGraphData.Edge(from: "f", to: "b", label: "4"),
+                    TestGraphData.Edge(from: "k", to: "f", label: "5")
             ]
         )
     }
@@ -336,12 +336,12 @@ class GraphTests : XCTestCase {
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c"),
-                    TestGraphEdge(from: "f", to: "c"),
-                    TestGraphEdge(from: "g", to: "h"),
-                    TestGraphEdge(from: "f", to: "b"),
-                    TestGraphEdge(from: "k", to: "f"),
-                    TestGraphEdge(from: "h", to: "g")
+                    TestGraphData.Edge(from: "b", to: "c"),
+                    TestGraphData.Edge(from: "f", to: "c"),
+                    TestGraphData.Edge(from: "g", to: "h"),
+                    TestGraphData.Edge(from: "f", to: "b"),
+                    TestGraphData.Edge(from: "k", to: "f"),
+                    TestGraphData.Edge(from: "h", to: "g")
             ]
         )
 
@@ -350,12 +350,12 @@ class GraphTests : XCTestCase {
 
         _testGraph(intLabeledGraph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
                    edges: [
-                    TestGraphEdge(from: "b", to: "c", label: 1),
-                    TestGraphEdge(from: "f", to: "c", label: 2),
-                    TestGraphEdge(from: "g", to: "h", label: 3),
-                    TestGraphEdge(from: "f", to: "b", label: 4),
-                    TestGraphEdge(from: "k", to: "f", label: 5),
-                    TestGraphEdge(from: "h", to: "g", label: 6)
+                    TestGraphData.Edge(from: "b", to: "c", label: 1),
+                    TestGraphData.Edge(from: "f", to: "c", label: 2),
+                    TestGraphData.Edge(from: "g", to: "h", label: 3),
+                    TestGraphData.Edge(from: "f", to: "b", label: 4),
+                    TestGraphData.Edge(from: "k", to: "f", label: 5),
+                    TestGraphData.Edge(from: "h", to: "g", label: 6)
             ]
         )
     }
@@ -389,7 +389,7 @@ class GraphTests : XCTestCase {
             ("f", "b", 4),
             ("k", "f", 5)
         ].map {
-            TestGraphEdge(from: $0.0, to: $0.1, label: $0.2)
+            TestGraphData.Edge(from: $0.0, to: $0.1, label: $0.2)
         }
 
         let edgeGetter = { edges!.values.map { (from: $0.0, to: $0.1, label: $0.2) } }
@@ -418,7 +418,7 @@ class GraphTests : XCTestCase {
             ("f", "b", 4),
             ("k", "f", 5),
             ("h", "g", 6)
-        ].map { TestGraphEdge(from: $0.0, to: $0.1, label: $0.2) }
+        ].map { TestGraphData.Edge(from: $0.0, to: $0.1, label: $0.2) }
 
         let edgeGetter = { edges!.values.map { (from: $0.0, to: $0.1, label: $0.2) } }
         let data = TestGraphData(graph: graph,
