@@ -10,33 +10,70 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphEdge<T> {
-    let from: String
-    let to: String
-    let label: T
+struct TestGraphEdge<T, U : Equatable> {
+    let from: T
+    let to: T
+    let label: U
 
-    init(from: String, to: String, label: T) {
+    init(from: T, to: T, label: U) {
         self.from = from
         self.to = to
         self.label = label
     }
+
+    func toTuple() -> (from: T, to: T, label: U) {
+        return (from: self.from, to: self.to, label: self.label)
+    }
+}
+
+struct TestGraphData<T : CustomStringConvertible & Equatable, U : Equatable> {
+    typealias EdgeTuple = (from: T, to: T, label: U)
+    typealias EdgeClosure = () -> [EdgeTuple]
+    typealias NodeClosure = () -> [T]
+
+    let edges: EdgeClosure
+    let nodes: NodeClosure
+
+    let expectedNodes: [T]
+    let expectedEdges: [TestGraphEdge<T, U>]
+
+    init(graph: Graph<T, U>,
+         edges edgeClosure: EdgeClosure? = nil,
+         nodes nodeClosure: NodeClosure? = nil,
+         expectedNodes: [T],
+         expectedEdges: [TestGraphEdge<T, U>]) {
+        self.edges = edgeClosure ?? {
+            graph.edges?.map { (from: $0.from.value, to: $0.to.value, label: $0.label) } ?? []
+        }
+
+        self.nodes = nodeClosure ?? {
+            graph.nodes?.map { $0.value } ?? []
+        }
+
+        self.expectedNodes = expectedNodes
+        self.expectedEdges = expectedEdges
+    }
+
+    func runAssertions(file: StaticString = #file, line: UInt = #line) {
+        let assertionTuple = (edges: edges(), expectedEdges: expectedEdges.map { $0.toTuple() })
+
+        XCTAssertEqual(nodes(), expectedNodes, file: file, line: line)
+        XCTAssertEqual(assertionTuple.edges.count, assertionTuple.expectedEdges.count, file: file, line: line)
+
+        zip(assertionTuple.edges, assertionTuple.expectedEdges).forEach { tuple in
+            let (edge, expectedEdge) = tuple
+
+            XCTAssertEqual(edge.from, expectedEdge.from, file: file, line: line)
+            XCTAssertEqual(edge.to, expectedEdge.to, file: file, line: line)
+            XCTAssertEqual(edge.label, expectedEdge.label, file: file, line: line)
+        }
+    }
 }
 
 class GraphTests : XCTestCase {
-    private func _testGraph<T : Equatable>(_ graph: Graph<String, T>, nodes: [String], edges: [TestGraphEdge<T>]) {
-        let nodeValues = graph.nodes!.values.map { $0.value }
-        let edgeDataTuples = graph.edges!.map({ (from: $0.from.value, to: $0.to.value, value: $0.label) })
-
-        XCTAssertEqual(nodeValues, nodes)
-        XCTAssertEqual(edges.count, edgeDataTuples.count)
-
-        zip(edges, edgeDataTuples).forEach { tuple in
-            let (expectedEdge, edge) = tuple
-
-            XCTAssertEqual(edge.from, expectedEdge.from)
-            XCTAssertEqual(edge.to, expectedEdge.to)
-            XCTAssertEqual(edge.value, expectedEdge.label)
-        }
+    func _testGraph<T:CustomStringConvertible & Equatable, U:Equatable>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphEdge<T, U>], file: StaticString = #file, line: UInt = #line)  {
+        let data = TestGraphData(graph: graph, expectedNodes: nodes, expectedEdges: edges)
+        data.runAssertions(file: file, line: line)
     }
 
     func testGraphTermInitialization() {
@@ -342,26 +379,23 @@ class GraphTests : XCTestCase {
         let graph = Graph(string: humanFriendlyString)!
         let (nodes, edges) = graph.toTermForm()
 
-        XCTAssertEqual(nodes.values, ["b", "c", "f", "g", "h", "k"])
-
         let expectedEdges = [
             ("b", "c", "1"),
             ("f", "c", "2"),
             ("g", "h", "3"),
             ("f", "b", "4"),
             ("k", "f", "5")
-        ]
-
-        guard let actualEdges = edges?.values else {
-            XCTFail()
-            return
+        ].map {
+            TestGraphEdge(from: $0.0, to: $0.1, label: $0.2)
         }
 
-        for (expected, actual) in zip(expectedEdges, actualEdges) {
-            XCTAssertEqual(expected.0, actual.0)
-            XCTAssertEqual(expected.1, actual.1)
-            XCTAssertEqual(expected.2, actual.2)
-        }
+        let edgeGetter = { edges!.values.map { (from: $0.0, to: $0.1, label: $0.2) } }
+        let data = TestGraphData(graph: graph,
+                                 edges: edgeGetter,
+                                 nodes: { nodes.values },
+                                 expectedNodes: ["b", "c", "f", "g", "h", "k"],
+                                 expectedEdges: expectedEdges)
+        data.runAssertions()
     }
 
     func testDigraphToTermForm() {
@@ -374,8 +408,6 @@ class GraphTests : XCTestCase {
         let graph = Digraph(string: humanFriendlyString)!
         let (nodes, edges) = graph.toTermForm()
 
-        XCTAssertEqual(nodes.values, ["b", "c", "f", "g", "h", "k"])
-
         let expectedEdges = [
             ("b", "c", "1"),
             ("f", "c", "2"),
@@ -383,17 +415,14 @@ class GraphTests : XCTestCase {
             ("f", "b", "4"),
             ("k", "f", "5"),
             ("h", "g", "6")
-        ]
+        ].map { TestGraphEdge(from: $0.0, to: $0.1, label: $0.2) }
 
-        guard let actualEdges = edges?.values else {
-            XCTFail()
-            return
-        }
-
-        for (expected, actual) in zip(expectedEdges, actualEdges) {
-            XCTAssertEqual(expected.0, actual.0)
-            XCTAssertEqual(expected.1, actual.1)
-            XCTAssertEqual(expected.2, actual.2)
-        }
+        let edgeGetter = { edges!.values.map { (from: $0.0, to: $0.1, label: $0.2) } }
+        let data = TestGraphData(graph: graph,
+                                 edges: edgeGetter,
+                                 nodes: { nodes.values },
+                                 expectedNodes: ["b", "c", "f", "g", "h", "k"],
+                                 expectedEdges: expectedEdges)
+        data.runAssertions()
     }
 }
