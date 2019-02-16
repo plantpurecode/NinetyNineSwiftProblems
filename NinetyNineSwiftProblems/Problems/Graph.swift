@@ -8,7 +8,7 @@
 
 import Foundation
 
-typealias GraphValueTypeConstraint = CustomStringConvertible & Equatable
+typealias GraphValueTypeConstraint = LosslessStringConvertible & Hashable
 typealias GraphLabelTypeConstraint = LosslessStringConvertible
 
 class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
@@ -77,7 +77,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 }
 
-extension Graph where T : Hashable {
+extension Graph {
     private struct GraphInitializationHelper {
         enum EdgeGenerationMode {
             case enforcingSymmetry
@@ -91,6 +91,8 @@ extension Graph where T : Hashable {
             }
         }
 
+        private let _edgeSeparator: String
+
         // For fast access to nodes through their underlying value
         private let _nodeCache: [T: Node]
 
@@ -102,6 +104,7 @@ extension Graph where T : Hashable {
         init(graph: Graph<T, U>, nodes: List<T>) {
             graph.nodes = nodes.map { Node(value: $0) }.toList()
 
+            _edgeSeparator = type(of: graph).humanFriendlyEdgeSeparator
             _edgeGenerationMode = EdgeGenerationMode(direction: type(of: graph).direction)
             _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
         }
@@ -112,10 +115,10 @@ extension Graph where T : Hashable {
             }
 
             let nodeValues = [from, to].map { "\($0.value)" }
-            var edgeStrings = [nodeValues.joined(separator: "-")]
+            var edgeStrings = [nodeValues.joined(separator: _edgeSeparator)]
 
             if case EdgeGenerationMode.enforcingSymmetry = _edgeGenerationMode {
-                edgeStrings.append(nodeValues.reversed().joined(separator: "-"))
+                edgeStrings.append(nodeValues.reversed().joined(separator: _edgeSeparator))
             }
 
             guard edgeStrings.allSatisfy({ _allEdges.contains($0) == false }) else {
@@ -138,9 +141,7 @@ extension Graph where T : Hashable {
             }
         }
     }
-}
 
-extension Graph where T : Hashable {
     convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
         self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, nil) }.toList()!)
     }
@@ -170,10 +171,49 @@ extension Graph where T : Hashable {
             } ?? []
         }.toList()
     }
-}
 
-extension Graph where T == String {
-    private func parseEdgeComponent(_ edgeComponent: String) -> (T, T?, U?)? {
+    convenience init?(string: String) {
+        self.init()
+
+        guard string.first == "[", string.last == "]" else {
+            return nil
+        }
+
+        // Create a string without the leading and trailing brackets.
+        let truncatedEdgeString = string
+            .suffix(from: string.index(after: string.startIndex))
+            .prefix(upTo: string.index(before: string.endIndex))
+
+        let edgeComponents = truncatedEdgeString.components(separatedBy: ",")
+        guard edgeComponents.isEmpty == false else {
+            return nil
+        }
+
+        let edgeInfoTuples = _parseEdgeComponents(edgeComponents)
+        guard edgeInfoTuples.isEmpty == false else {
+            return nil
+        }
+
+        let nodes = edgeInfoTuples.reduce([T]()) { array, tuple in
+            var a = array
+
+            [tuple.0, tuple.1]
+                // Filter out nil (i.e. when there is only one node in the component.)
+                .compactMap { $0 }
+                // Ensure we don't have duplicate nodes
+                .filter { a.contains($0) == false }
+                .forEach { a.append($0) }
+
+            return a
+        }.toList()!
+
+        var helper = GraphInitializationHelper(graph: self, nodes: nodes)
+        edges = edgeInfoTuples
+            .filter { $0.1 != nil }
+            .compactMap { helper.generateEdge(for: ($0.0, $0.1!), label: $0.2) }.toList()
+    }
+
+    private func _parseEdgeComponent(_ edgeComponent: String) -> (T, T?, U?)? {
         let separator = type(of: self).humanFriendlyEdgeSeparator
 
         func findLabel(`in` string: String) -> (U?, Int?) {
@@ -198,7 +238,11 @@ extension Graph where T == String {
                 return nil
             }
 
-            return (from: edgeComponent.trimmingCharacters(in: .whitespaces), to: nil, label: findLabel(in: edgeComponent).0)
+            guard let from = T.init(edgeComponent.trimmingCharacters(in: .whitespaces)) else {
+                return nil
+            }
+
+            return (from: from, to: nil, label: findLabel(in: edgeComponent).0)
         }
 
         let components = edgeComponent.components(separatedBy: separator).map {
@@ -209,75 +253,41 @@ extension Graph where T == String {
             if let first = components.first {
                 let (label, labelPositionOptional) = findLabel(in: first)
                 let nodeValueEndPosition = (labelPositionOptional ?? first.count)
-                guard let nodeValue = first.substring(in: 0..<nodeValueEndPosition) else {
+                guard
+                    let nodeValue = first.substring(in: 0..<nodeValueEndPosition),
+                    let concreteNodeValue = T.init(nodeValue) else {
                     return nil
                 }
 
-                return (from: nodeValue, to: nil, label)
+                return (from: concreteNodeValue, to: nil, label)
             }
 
             return nil
         }
 
-        var toNodeValue = components.last!
+        var (fromNodeValue, toNodeValue) = (components.first!, components.last!)
         let (label, labelPositionOptional) = findLabel(in: toNodeValue)
 
         if let position = labelPositionOptional {
             toNodeValue = toNodeValue.substring(in: 0..<position) ?? toNodeValue
         }
 
-        return (from: components.first!, to: toNodeValue, label: label)
+        guard let concreteFromValue = T.init(fromNodeValue) else {
+            return nil
+        }
+
+        let concreteToValue = T.init(toNodeValue)
+        return (from: concreteFromValue, to: concreteToValue, label: label)
     }
 
-    private func parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U?)] {
-        let results = edgeComponents.map { parseEdgeComponent($0) }
+    private func _parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U?)] {
+        let results = edgeComponents.map { _parseEdgeComponent($0) }
 
         guard results.contains(where: { $0 == nil }) == false else {
             return []
         }
 
         return results.compactMap { $0 }
-    }
-
-    convenience init?(string: String) {
-        self.init()
-
-        guard string.first == "[", string.last == "]" else {
-            return nil
-        }
-
-        // Create a string without the leading and trailing brackets.
-        let truncatedEdgeString = string
-            .suffix(from: string.index(after: string.startIndex))
-            .prefix(upTo: string.index(before: string.endIndex))
-
-        let edgeComponents = truncatedEdgeString.components(separatedBy: ",")
-        guard edgeComponents.isEmpty == false else {
-            return nil
-        }
-
-        let edgeInfoTuples = parseEdgeComponents(edgeComponents)
-        guard edgeInfoTuples.isEmpty == false else {
-            return nil
-        }
-
-        let nodes = edgeInfoTuples.reduce([T]()) { array, tuple in
-            var a = array
-
-            [tuple.0, tuple.1]
-                // Filter out nil (i.e. when there is only one node in the component.)
-                .compactMap { $0 }
-                // Ensure we don't have duplicate nodes
-                .filter { a.contains($0) == false }
-                .forEach { a.append($0) }
-
-            return a
-        }.toList()!
-
-        var helper = GraphInitializationHelper(graph: self, nodes: nodes)
-        edges = edgeInfoTuples
-            .filter { $0.1 != nil }
-            .compactMap { helper.generateEdge(for: ($0.0, $0.1!), label: $0.2) }.toList()
     }
 }
 

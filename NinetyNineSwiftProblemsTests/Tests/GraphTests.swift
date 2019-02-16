@@ -430,4 +430,72 @@ class GraphTests : XCTestCase {
                                  expectedEdges: expectedEdges)
         data.runAssertions()
     }
+
+    func testCustomGraphValueType() {
+        let graph = Graph<TestGraphValue, String>.init(string: "[a-b, c-d, e]")
+        XCTAssertNotNil(graph)
+
+        let expectedEdges = [
+            ("a", "b"),
+            ("c", "d")
+        ].map {
+            TestGraphData<TestGraphValue, String>.Edge(from: TestGraphValue($0.0)!,
+                                                       to: TestGraphValue($0.1)!)
+        }
+
+        let data = TestGraphData(graph: graph!,
+                                 expectedNodes: [TestGraphValue("a"),
+                                                 TestGraphValue("b"),
+                                                 TestGraphValue("c"),
+                                                 TestGraphValue("d"),
+                                                 TestGraphValue("e")].compactMap { $0 },
+                                 expectedEdges: expectedEdges)
+        data.runAssertions()
+    }
+
+    func testCustomDigraphValueType() {
+        let graph = Digraph<TestGraphValue, String>.init(string: "[a>b, c>d, d>c, b>a, e]")
+        XCTAssertNotNil(graph)
+
+        let expectedEdges = [
+            ("a", "b"),
+            ("c", "d"),
+            ("d", "c"),
+            ("b", "a")
+        ].map {
+            TestGraphData<TestGraphValue, String>.Edge(from: TestGraphValue($0.0)!,
+                                                       to: TestGraphValue($0.1)!)
+        }
+
+        let data = TestGraphData(graph: graph!,
+                                 expectedNodes: [TestGraphValue("a"),
+                                                 TestGraphValue("b"),
+                                                 TestGraphValue("c"),
+                                                 TestGraphValue("d"),
+                                                 TestGraphValue("e")].compactMap { $0 },
+                                 expectedEdges: expectedEdges)
+        data.runAssertions()
+    }
+}
+struct TestGraphValue : LosslessStringConvertible, Hashable {
+    let internalValue: String?
+    init?(_ description: String) {
+        guard description.isEmpty == false else {
+            return nil
+        }
+
+        internalValue = description
+    }
+
+    var description: String {
+        return "TestGraphValue(internalValue: \(internalValue ?? ""))"
+    }
+
+    var hashValue: Int {
+        return (internalValue?.hashValue ?? 0)
+    }
+
+    static func == (lhs: TestGraphValue, rhs: TestGraphValue) -> Bool {
+        return lhs.internalValue == rhs.internalValue
+    }
 }
