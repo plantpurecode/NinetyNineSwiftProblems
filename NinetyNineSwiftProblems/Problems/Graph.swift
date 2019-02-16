@@ -83,6 +83,33 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     func toTermForm() -> (List<T>, List<(T, T, U?)>?) {
         return (nodes!.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
     }
+
+    func toAdjacentForm() -> List<(T, List<(T, U?)>?)> {
+        var adjacentDictionary = [T : [(T, U?)]]()
+
+        // Edges
+        for edge in edges?.values ?? [] {
+            var targetNodes = adjacentDictionary[edge.from.value]
+            if let tn = targetNodes {
+                targetNodes = tn + [(edge.to.value, edge.label)]
+            } else {
+                targetNodes = [(edge.to.value, edge.label)]
+            }
+
+            adjacentDictionary[edge.from.value] = targetNodes
+        }
+
+        // Orphans
+        for orphan in orphanNodes?.values ?? [] {
+            adjacentDictionary[orphan.value] = []
+        }
+
+        return adjacentDictionary.reduce([(T, [(T, U?)]?)]()) { res, entry in
+            var r = res
+            r.append((entry.key, entry.value))
+            return r
+        }.map { ($0.0, $0.1?.toList()) }.toList()!
+    }
 }
 
 extension Graph {

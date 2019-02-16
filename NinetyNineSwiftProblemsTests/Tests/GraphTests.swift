@@ -431,6 +431,46 @@ class GraphTests : XCTestCase {
         data.runAssertions()
     }
 
+    func testGraphToAdjacentForm() {
+        let expectedResult:List<(String, List<(String, Int?)>?)> = [
+            ("p", List<(String, Int?)>(("q", 9), ("m", 5))),
+            ("m", List<(String, Int?)>(("q", 7))),
+            ("k", nil),
+            ("q", nil)
+        ].toList()!
+
+        let result = Graph<String, Int>(string: "[p-q/9, m-q/7, k, p-m/5]")!.toAdjacentForm()
+        for r in result {
+            XCTAssertTrue(expectedResult.contains(where: { (tuple) -> Bool in
+                return tuple.0 == r.0 &&
+                    tuple.1?.values.first?.0 == r.1?.values.first?.0 &&
+                    tuple.1?.values.first?.1 == r.1?.values.first?.1 &&
+                    tuple.1?.values.last?.0 == r.1?.values.last?.0 &&
+                    tuple.1?.values.last?.1 == r.1?.values.last?.1
+            }))
+        }
+    }
+
+    func testDigraphToAdjacentForm() {
+        let expectedResult:List<(String, List<(String, Int?)>?)> = [
+            ("p", List<(String, Int?)>(("q", 9), ("m", 5))),
+            ("m", List<(String, Int?)>(("q", 7))),
+            ("k", nil),
+            ("q", nil)
+        ].toList()!
+
+        let result = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]")!.toAdjacentForm()
+        for r in result {
+            XCTAssertTrue(expectedResult.contains(where: { (tuple) -> Bool in
+                return tuple.0 == r.0 &&
+                    tuple.1?.values.first?.0 == r.1?.values.first?.0 &&
+                    tuple.1?.values.first?.1 == r.1?.values.first?.1 &&
+                    tuple.1?.values.last?.0 == r.1?.values.last?.0 &&
+                    tuple.1?.values.last?.1 == r.1?.values.last?.1
+            }))
+        }
+    }
+
     func testOrphanNodes() {
         guard var graph:Graph<String, Int> = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]") else {
             XCTFail("Expected non-nil graph")
