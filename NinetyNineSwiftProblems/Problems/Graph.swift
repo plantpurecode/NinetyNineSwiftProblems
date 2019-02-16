@@ -45,6 +45,15 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return "-"
     }
 
+    final class var isDirected: Bool {
+        switch direction {
+        case .Directed:
+            return true
+        case .Indirected:
+            return false
+        }
+    }
+
     var nodes: List<Node>?
     var edges: List<Edge>?
 
@@ -183,7 +192,8 @@ extension Graph where T == String {
 
         // Parse separators.
         guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
-            let otherSeparator = type(of: self) == Graph.self ? Digraph<T, U>.humanFriendlyEdgeSeparator : Graph<T, U>.humanFriendlyEdgeSeparator
+            let otherGraphType = type(of: self).isDirected ? Graph<T, U>.self : Digraph<T, U>.self
+            let otherSeparator = otherGraphType.humanFriendlyEdgeSeparator
             if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
                 return nil
             }
@@ -275,7 +285,6 @@ extension Graph where T == String {
     }
 }
 
-// TODO: Change all usage of type(of:) to using the direction class variable
 class Digraph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Graph<T, U> {
     override class var direction: Direction { return .Directed }
     override class var humanFriendlyEdgeSeparator: String { return ">" }
