@@ -363,12 +363,14 @@ class GraphTests : XCTestCase {
     func testGraphHumanFriendlyDescription() {
         let humanFriendlyString = "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]"
         XCTAssertEqual(StringGraph(string: humanFriendlyString)?.description, "[b-c, f-c, g-h, f-b, k-f]")
+        XCTAssertEqual(StringGraph(string: "[a]")?.description, "[a]")
         XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
 
     func testDigraphHumanFriendlyDescription() {
         let humanFriendlyString = "[b>c, f>c, g>h, d, f>b, k>f, h>g]"
         XCTAssertEqual(StringDigraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
+        XCTAssertEqual(StringDigraph(string: "[a]")?.description, "[a]")
         XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
 
