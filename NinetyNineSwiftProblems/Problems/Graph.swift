@@ -205,10 +205,6 @@ extension Graph where T == String {
             $0.trimmingCharacters(in: .whitespaces)
         }
 
-        guard components.isEmpty == false else {
-            return nil
-        }
-
         guard components.count == 2 else {
             if let first = components.first {
                 let (label, labelPositionOptional) = findLabel(in: first)
