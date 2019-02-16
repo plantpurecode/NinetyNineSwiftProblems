@@ -431,6 +431,18 @@ class GraphTests : XCTestCase {
         data.runAssertions()
     }
 
+    func testOrphanNodes() {
+        guard var graph:Graph<String, Int> = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]") else {
+            XCTFail("Expected non-nil graph")
+            return
+        }
+
+        XCTAssertEqual(graph.orphanNodes?.values.map { $0.value }, ["k", "q"])
+
+        graph = Graph<String, Int>(string: "[p-q, m-q, r, s]")!
+        XCTAssertEqual(graph.orphanNodes?.values.map { $0.value }, ["s", "r", "q"])
+    }
+
     func testCustomGraphValueType() {
         let graph = Graph<TestGraphValue, String>.init(string: "[a-b, c-d, e]")
         XCTAssertNotNil(graph)
@@ -477,6 +489,7 @@ class GraphTests : XCTestCase {
         data.runAssertions()
     }
 }
+
 struct TestGraphValue : LosslessStringConvertible, Hashable {
     let internalValue: String?
     init?(_ description: String) {

@@ -57,6 +57,14 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     var nodes: List<Node>?
     var edges: List<Edge>?
 
+    var orphanNodes: List<Node>? {
+        return nodes?.reversed.filter { node in
+            edges?.map { $0.from }.contains {
+                return $0.value == node.value
+            } == false
+        }.toList()
+    }
+
     var description: String {
         let separator = type(of: self).humanFriendlyEdgeSeparator
         let orphanNodes = nodes?.filter { node in
