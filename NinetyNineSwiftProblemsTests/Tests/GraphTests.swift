@@ -276,21 +276,25 @@ class GraphTests : XCTestCase {
     }
 
     func testGraphHumanFriendlyTermInitialization() {
-        var graph = Graph<String, String>(string: "[b>c, f>c, g>h, f>b, k>f, h>g, g>h]")
+        var graph = StringGraph(string: "[b>c, f>c, g>h, f>b, k>f, h>g, g>h]")
 
         // Try to initialize a Graph using Digraph separator.. No go.
         XCTAssertNil(graph)
 
         // Try to initialize a Graph without square brackets.. No go.
-        graph = Graph(string: "xx")
+        graph = StringGraph(string: "xx")
         XCTAssertNil(graph)
 
-        graph = Graph(string: "[d]")
+        // Try to initialize a Graph with invalid syntax.. No go.
+        graph = StringGraph(string: "[b-c-d, g-c]")
+        XCTAssertNil(graph)
+
+        graph = StringGraph(string: "[d]")
         XCTAssertNil(graph?.edges)
         XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
 
         // Use a string with duplicate and opposite edges to test for correctness.
-        graph = Graph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g, g-h]")
+        graph = StringGraph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g, g-h]")
         XCTAssertNotNil(graph)
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
@@ -303,7 +307,7 @@ class GraphTests : XCTestCase {
             ]
         )
 
-        graph = Graph(string: "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6, g-h/7]")
+        graph = StringGraph(string: "[b-c/1, f-c/2, g-h/3, d, f-b/4, k-f/5, h-g/6, g-h/7]")
         XCTAssertNotNil(graph)
 
         _testGraph(graph!, nodes: ["b", "c", "f", "g", "h", "d", "k"],
@@ -325,6 +329,10 @@ class GraphTests : XCTestCase {
 
         // Try to initialize a Digraph without square brackets.. No go.
         graph = StringDigraph(string: "xx")
+        XCTAssertNil(graph)
+
+        // Try to initialize a Digraph with invalid syntax.. No go.
+        graph = StringDigraph(string: "[b>c>d, g>c]")
         XCTAssertNil(graph)
 
         graph = StringDigraph(string: "[d]")

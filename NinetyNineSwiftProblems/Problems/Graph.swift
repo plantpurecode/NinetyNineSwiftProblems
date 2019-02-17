@@ -285,7 +285,7 @@ extension Graph {
         }
 
         guard components.count == 2 else {
-            if let first = components.first {
+            if let first = components.first, components.count < 2 {
                 let (label, labelPositionOptional) = findLabel(in: first)
                 let nodeValueEndPosition = (labelPositionOptional ?? first.count)
                 guard
