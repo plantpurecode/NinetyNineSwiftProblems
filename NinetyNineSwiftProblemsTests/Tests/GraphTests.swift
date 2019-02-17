@@ -536,6 +536,26 @@ class GraphTests : XCTestCase {
                                  expectedEdges: expectedEdges)
         data.runAssertions()
     }
+
+    func testGraphFindPaths() {
+        let graph = StringGraph(string: "[p-q/9, m-q/7, k, p-m/5, p-x, x-y, y-q, q-p]")
+        let paths = graph?.findPaths(from: "p", to: "q")
+
+        XCTAssertEqual(paths?.values.map { $0.values }, [["p", "q"], ["p", "m", "q"], ["p", "x", "y", "q"]])
+
+        let invalidPaths = [graph?.findPaths(from: "p", to: "k"), graph?.findPaths(from: "k", to: "m")]
+        invalidPaths.forEach { XCTAssertNil($0) }
+    }
+
+    func testDigraphFindPaths() {
+        let graph = StringDigraph(string: "[p>q/9, m>q/7, k, p>m/5, p>x, x>y, y>q, q>p]") // Purposely add an q>p edge to test acyclic node filtration.
+        let paths = graph?.findPaths(from: "p", to: "q")
+
+        XCTAssertEqual(paths?.values.map { $0.values }, [["p", "q"], ["p", "m", "q"], ["p", "x", "y", "q"]])
+
+        let invalidPaths = [graph?.findPaths(from: "p", to: "k"), graph?.findPaths(from: "k", to: "m")]
+        invalidPaths.forEach { XCTAssertNil($0) }
+    }
 }
 
 struct TestGraphValue : LosslessStringConvertible, Hashable {

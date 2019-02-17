@@ -130,6 +130,37 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
         return adjacentForm.map { ($0.0, $0.1?.toList()) }.toList()!
     }
+
+    func findPaths(from: T, to: T, withEdges filteredEdges: [Edge]? = nil) -> List<List<T>>? {
+        var paths = [[T]]()
+
+        let edgesToTraverse = filteredEdges ?? (edges?.values ?? [])
+
+        for edge in edgesToTraverse {
+            guard edge.from.value == from else {
+                continue
+            }
+
+            if edge.to.value == to {
+                paths.append([edge.from.value, edge.to.value])
+            } else {
+                let subAcyclicEdges = edgesToTraverse.filter { $0.to.value != from }
+                guard var subpaths = findPaths(from: edge.to.value, to: to, withEdges: subAcyclicEdges)?.values, subpaths.isEmpty == false else {
+                    continue
+                }
+
+                let first = subpaths.remove(at: 0).values
+                guard let insertionList = ([edge.from.value] + first).toList() else {
+                    continue
+                }
+
+                subpaths.insert(insertionList, at: 0)
+                paths += subpaths.map { $0.values }
+            }
+        }
+
+        return paths.compactMap { $0.toList() }.toList()
+    }
 }
 
 extension Graph {
