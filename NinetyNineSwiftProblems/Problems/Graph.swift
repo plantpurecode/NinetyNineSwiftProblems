@@ -85,30 +85,50 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func toAdjacentForm() -> List<(T, List<(T, U?)>?)> {
-        var adjacentDictionary = [T : [(T, U?)]]()
+        var adjacentForm = [(T, [(T, U?)]?)]()
 
-        // Edges
+        // Process edges
         for edge in edges?.values ?? [] {
-            var targetNodes = adjacentDictionary[edge.from.value]
-            if let tn = targetNodes {
-                targetNodes = tn + [(edge.to.value, edge.label)]
+            let edgePairToAdd = (edge.to.value, edge.label)
+
+            // Find the index of the occurrence of this source node, if it exists
+            let sourceEdgePairIndex = adjacentForm.firstIndex(where: { $0.0 == edge.from.value })
+
+            // The index of the final nodes to be stored
+            var targetNodeIndex = sourceEdgePairIndex
+
+            // The pre-existing nodes for this edge's source
+            var existingNodesForSource = [(T, U?)]()
+
+            // Is there an existing pair with this source node?
+            if let index = targetNodeIndex {
+                let existingPair = adjacentForm[index]
+
+                existingNodesForSource = existingPair.1 ?? []
             } else {
-                targetNodes = [(edge.to.value, edge.label)]
+                // Set the index to be the last == append
+                targetNodeIndex = adjacentForm.endIndex
             }
 
-            adjacentDictionary[edge.from.value] = targetNodes
+            guard let tni = targetNodeIndex else {
+                continue
+            }
+
+            let concatenatedNodes = existingNodesForSource + [edgePairToAdd]
+            let adjacentTuple = (edge.from.value, Optional(concatenatedNodes))
+            if tni >= adjacentForm.count {
+                adjacentForm.append(adjacentTuple)
+            } else {
+                adjacentForm[tni] = adjacentTuple
+            }
         }
 
-        // Orphans
+        // Process the orphan nodes
         for orphan in orphanNodes?.values ?? [] {
-            adjacentDictionary[orphan.value] = []
+            adjacentForm.append((orphan.value, nil))
         }
 
-        return adjacentDictionary.reduce([(T, [(T, U?)]?)]()) { res, entry in
-            var r = res
-            r.append((entry.key, entry.value))
-            return r
-        }.map { ($0.0, $0.1?.toList()) }.toList()!
+        return adjacentForm.map { ($0.0, $0.1?.toList()) }.toList()!
     }
 }
 

@@ -448,14 +448,14 @@ class GraphTests : XCTestCase {
         ].toList()!
 
         let result = Graph<String, Int>(string: "[p-q/9, m-q/7, k, p-m/5]")!.toAdjacentForm()
-        for r in result {
-            XCTAssertTrue(expectedResult.contains(where: { (tuple) -> Bool in
-                return tuple.0 == r.0 &&
-                    tuple.1?.values.first?.0 == r.1?.values.first?.0 &&
-                    tuple.1?.values.first?.1 == r.1?.values.first?.1 &&
-                    tuple.1?.values.last?.0 == r.1?.values.last?.0 &&
-                    tuple.1?.values.last?.1 == r.1?.values.last?.1
-            }))
+        XCTAssertEqual(expectedResult.length, result.length)
+
+        for (er, r) in zip(expectedResult, result) {
+            XCTAssertEqual(er.0, r.0)
+            XCTAssertEqual(er.1?.values.first?.0, r.1?.values.first?.0)
+            XCTAssertEqual(er.1?.values.first?.1, r.1?.values.first?.1)
+            XCTAssertEqual(er.1?.values.last?.0, r.1?.values.last?.0)
+            XCTAssertEqual(er.1?.values.last?.1, r.1?.values.last?.1)
         }
     }
 
@@ -468,14 +468,14 @@ class GraphTests : XCTestCase {
         ].toList()!
 
         let result = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]")!.toAdjacentForm()
-        for r in result {
-            XCTAssertTrue(expectedResult.contains(where: { (tuple) -> Bool in
-                return tuple.0 == r.0 &&
-                    tuple.1?.values.first?.0 == r.1?.values.first?.0 &&
-                    tuple.1?.values.first?.1 == r.1?.values.first?.1 &&
-                    tuple.1?.values.last?.0 == r.1?.values.last?.0 &&
-                    tuple.1?.values.last?.1 == r.1?.values.last?.1
-            }))
+        XCTAssertEqual(expectedResult.length, result.length)
+
+        for (er, r) in zip(expectedResult, result) {
+            XCTAssertEqual(er.0, r.0)
+            XCTAssertEqual(er.1?.values.first?.0, r.1?.values.first?.0)
+            XCTAssertEqual(er.1?.values.first?.1, r.1?.values.first?.1)
+            XCTAssertEqual(er.1?.values.last?.0, r.1?.values.last?.0)
+            XCTAssertEqual(er.1?.values.last?.1, r.1?.values.last?.1)
         }
     }
 
