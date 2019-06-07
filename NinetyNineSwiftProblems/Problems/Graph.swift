@@ -14,6 +14,7 @@ typealias GraphLabelTypeConstraint = LosslessStringConvertible
 class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
     class Node {
         let value: T
+        var adjacentEdges = [Edge]()
 
         init(value: T) {
             self.value = value
@@ -203,16 +204,22 @@ extension Graph {
             let nodeValues = [from, to].map { "\($0.value)" }
             var edgeStrings = [nodeValues.joined(separator: _edgeSeparator)]
 
+            // Generate the reverse edge as well in an indirected graph.
             if case EdgeGenerationMode.enforcingSymmetry = _edgeGenerationMode {
                 edgeStrings.append(nodeValues.reversed().joined(separator: _edgeSeparator))
             }
 
-            guard edgeStrings.allSatisfy({ _allEdges.contains($0) == false }) else {
+            guard _allEdges.intersection(Set(edgeStrings)).count == 0 else {
                 return nil
             }
 
             edgeStrings.forEach { _allEdges.insert($0) }
-            return Edge(from: from, to: to, label: label)
+
+            let edge = Edge(from: from, to: to, label: label)
+            from.adjacentEdges = [edge] + from.adjacentEdges
+            to.adjacentEdges = [edge] + to.adjacentEdges
+
+            return edge
         }
 
         private func _node(forValue value: T) -> Node? {
