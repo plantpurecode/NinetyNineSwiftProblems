@@ -187,6 +187,36 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
         return paths.compactMap { $0.toList() }.toList()
     }
+
+    func findCycles(from: T) -> List<List<T>>? {
+        guard let node = edges?.first(where: { $0.from.value == from })?.from else {
+            return nil
+        }
+
+        let targets = Set(node.adjacentEdges.compactMap {
+            edgeTarget($0, node: node)?.value
+        })
+
+        var paths = targets.flatMap {
+            findPaths(from: $0, to: from)?.values ?? []
+        }.map { [from] + $0.values }
+
+        if type(of: self).isDirected == false {
+            paths += targets.flatMap {
+                findPaths(from: from, to: $0)?.values ?? []
+            }.map { $0.values + [from] }
+
+            paths += paths.map {
+                $0.reversed()
+            }
+        }
+
+        return paths
+            .filter { $0.count > 3 }
+            .compactMap { $0.toList() }
+            .reversed()
+            .toList()
+    }
 }
 
 extension Graph {

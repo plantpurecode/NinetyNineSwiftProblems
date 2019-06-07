@@ -556,6 +556,36 @@ class GraphTests : XCTestCase {
         let invalidPaths = [graph?.findPaths(from: "p", to: "k"), graph?.findPaths(from: "k", to: "m")]
         invalidPaths.forEach { XCTAssertNil($0) }
     }
+
+    func testGraphFindCycles() {
+        let graph = StringGraph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g]")!
+        let cycles = graph.findCycles(from: "f")
+
+        XCTAssertNotNil(cycles)
+        XCTAssertEqualCollectionIgnoringOrder(cycles!.values.compactMap { $0.values }, [
+            ["f", "c", "b", "f"],
+            ["f", "b", "c", "f"]
+        ])
+
+        let uncycledGraph = StringGraph(string: "[b-c, f-c, g-h, d, k-f]")!
+        XCTAssertNil(uncycledGraph.findCycles(from: "f"))
+        XCTAssertNil(uncycledGraph.findCycles(from: "i"))
+    }
+
+    func testDigraphFindCycles() {
+        let cycledGraph = StringDigraph(string: "[b>c, f>c, g>h, d, f>b, k>f, h>g, f>k, c>f, k>b]")!
+        let cycles = cycledGraph.findCycles(from: "f")
+
+        XCTAssertNotNil(cycles)
+        XCTAssertEqualCollectionIgnoringOrder(cycles!.values.compactMap { $0.values }, [
+            ["f", "k", "b", "c", "f"],
+            ["f", "b", "c", "f"]
+        ])
+
+        let uncycledGraph = StringDigraph(string: "[b>c, f>c, g>h, d, f>b, k>f, h>g, f>k]")!
+        XCTAssertNil(uncycledGraph.findCycles(from: "f"))
+        XCTAssertNil(uncycledGraph.findCycles(from: "i"))
+    }
 }
 
 struct TestGraphValue : LosslessStringConvertible, Hashable {
@@ -579,4 +609,11 @@ struct TestGraphValue : LosslessStringConvertible, Hashable {
     static func == (lhs: TestGraphValue, rhs: TestGraphValue) -> Bool {
         return lhs.internalValue == rhs.internalValue
     }
+}
+
+func XCTAssertEqualCollectionIgnoringOrder<A: Collection, B: Collection>(_ a: A, _ b: B, file: StaticString = #file, line: UInt = #line) where A.Element : Hashable, A.Element == B.Element {
+    let aSet = Set(a)
+    let bSet = Set(b)
+
+    XCTAssertEqual(aSet, bSet, file: file, line: line)
 }
