@@ -31,6 +31,18 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             self.to = to
             self.label = label
         }
+
+        func partner(for node: Node) -> Node? {
+            if from.value == node.value {
+                return to
+            }
+
+            if to.value == node.value {
+                return from
+            }
+
+            return nil
+        }
     }
 
     enum Direction {
@@ -79,6 +91,19 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         }) ?? [String]()
 
         return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
+    }
+
+    func edgeTarget(_ edge: Edge, node: Node) -> Node? {
+        guard type(of: self).isDirected else {
+            // Indirected graph.
+            if edge.from.value == node.value {
+                return edge.to
+            }
+
+            return nil
+        }
+
+        return edge.partner(for: node)
     }
 
     func toTermForm() -> (List<T>, List<(T, T, U?)>?) {
