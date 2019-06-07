@@ -602,8 +602,8 @@ struct TestGraphValue : LosslessStringConvertible, Hashable {
         return "TestGraphValue(internalValue: \(internalValue ?? ""))"
     }
 
-    var hashValue: Int {
-        return (internalValue?.hashValue ?? 0)
+    func hash(with hasher: inout Hasher) {
+        hasher.combine(internalValue)
     }
 
     static func == (lhs: TestGraphValue, rhs: TestGraphValue) -> Bool {
