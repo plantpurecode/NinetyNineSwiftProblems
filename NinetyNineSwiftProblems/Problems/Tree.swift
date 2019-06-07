@@ -568,8 +568,10 @@ extension Tree {
                 }
             } + maxHeightSubtree.flatMap { full in
                 return minHeightSubtree.flatMap { short in
-                    [Tree(value, full, short), Tree(value, short, full)]
-                }
+                    return short.flatMap {
+                        [Tree(value, full, $0), Tree(value, $0, full)]
+                    }
+                } ?? []
             }
         }
     }
