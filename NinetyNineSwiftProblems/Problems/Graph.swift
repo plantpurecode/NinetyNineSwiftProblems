@@ -310,7 +310,7 @@ extension Graph {
         var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
 
         // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
-        edges = list.values.flatMap { tuple -> [Edge] in
+        edges = list.flatMap { tuple -> [Edge] in
             let (nodeValue, adjacentNodeValueTuples) = tuple
 
             return adjacentNodeValueTuples?.values.compactMap {
@@ -441,6 +441,30 @@ extension Graph {
 class Digraph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Graph<T, U> {
     override class var direction: Direction { return .Directed }
     override class var humanFriendlyEdgeSeparator: String { return ">" }
+}
+
+extension Graph : Equatable where T : Equatable {
+    static func == (lhs: Graph, rhs: Graph) -> Bool {
+        return lhs.description == rhs.description
+    }
+}
+
+extension Graph : Hashable where T : Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(description)
+    }
+}
+
+extension Graph.Node : Equatable where T : Equatable {
+    static func == (lhs: Graph.Node, rhs: Graph.Node) -> Bool {
+        return lhs.description == rhs.description
+    }
+}
+
+extension Graph.Edge : Equatable where T : Equatable {
+    static func == (lhs: Graph.Edge, rhs: Graph.Edge) -> Bool {
+        return lhs.description == rhs.description
+    }
 }
 
 extension Graph.Node : CustomStringConvertible {
