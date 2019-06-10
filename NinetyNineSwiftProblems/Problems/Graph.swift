@@ -95,7 +95,6 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
     func edgeTarget(_ edge: Edge, node: Node) -> Node? {
         guard type(of: self).isDirected else {
-            // Indirected graph.
             if edge.from.value == node.value {
                 return edge.to
             }
