@@ -29,6 +29,11 @@ extension String {
             return nil
         }
 
-        return suffix(count - from).firstIndex(where: matching)?.encodedOffset
+        let suff = suffix(count - from)
+        guard let matchedChar = suff.filter({ matching($0) }).first else {
+            return nil
+        }
+
+        return suff.firstIndex(of: matchedChar)?.utf16Offset(in: self)
     }
 }
