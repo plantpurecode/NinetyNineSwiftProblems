@@ -690,9 +690,12 @@ extension List : Sequence {
         var index = 0
         
         mutating func next() -> T? {
-            let next = list[index]
+            guard let next = list[index] else {
+                return nil
+            }
+
             index += 1
-            return next?.value
+            return next.value
         }
     }
     
