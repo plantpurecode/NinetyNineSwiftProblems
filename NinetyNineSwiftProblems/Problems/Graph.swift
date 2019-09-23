@@ -246,6 +246,36 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             return one.degree >= two.degree
         }).toList()!
     }
+
+    func depthFirstTraversalFrom(node: T) -> List<T>? {
+        return nodes?.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
+    }
+}
+
+extension Graph.Node {
+    func nodesByDepth(_ seen: Set<Graph.Node>) -> [Graph.Node] {
+        func nodesByDepthRecursive(neighbors: [Graph.Node], set: Set<Graph.Node>) -> [Graph.Node] {
+            guard let head = neighbors.first else {
+                return []
+            }
+
+            let tail = Array(neighbors.dropFirst())
+
+            guard set.contains(head) == false else {
+                return nodesByDepthRecursive(neighbors: tail, set: set).reversed()
+            }
+
+            let subnodes = head.nodesByDepth(set)
+            return subnodes + nodesByDepthRecursive(neighbors: tail, set: set.union(subnodes))
+        }
+
+        guard let neighbors = neighbors, neighbors.length > 0 else {
+            return []
+        }
+
+        let newSet = Set([self]).union(seen)
+        return [self] + nodesByDepthRecursive(neighbors: neighbors.values, set: newSet)
+    }
 }
 
 extension Graph {

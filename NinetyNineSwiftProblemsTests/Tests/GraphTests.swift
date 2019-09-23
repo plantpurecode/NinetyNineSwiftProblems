@@ -600,6 +600,13 @@ class GraphTests : XCTestCase {
 
         XCTAssertEqual(graph.nodesByDegree().map { $0.value }, ["a", "c", "b", "d"])
     }
+
+    func testDepthFirstOrderGraphTraversal() {
+        let graph = StringGraph(string: "[a-b, b-c, e, a-c, a-d]")!
+
+        XCTAssertEqual(graph.depthFirstTraversalFrom(node: "d"), List("c", "b", "a", "d"))
+        XCTAssertNil(graph.depthFirstTraversalFrom(node: "e"))
+    }
 }
 
 
