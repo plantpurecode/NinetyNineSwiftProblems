@@ -12,8 +12,19 @@ typealias GraphValueTypeConstraint = LosslessStringConvertible & Hashable
 typealias GraphLabelTypeConstraint = LosslessStringConvertible
 
 class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
-    class Node {
+    class Node : Hashable {
+        // MARK: Hashable
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(value)
+            hasher.combine(degree)
+        }
+
+        // MARK: -
         let value: T
+
+        init(value: T) {
+            self.value = value
+        }
 
         var degree: Int {
             return adjacentEdges.count
@@ -26,10 +37,6 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         }
 
         var adjacentEdges = [Edge]()
-
-        init(value: T) {
-            self.value = value
-        }
     }
 
     class Edge {
