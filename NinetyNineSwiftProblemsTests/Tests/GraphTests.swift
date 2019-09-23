@@ -586,7 +586,22 @@ class GraphTests : XCTestCase {
         XCTAssertNil(uncycledGraph.findCycles(from: "f"))
         XCTAssertNil(uncycledGraph.findCycles(from: "i"))
     }
+
+    func testNodeDegrees() {
+        let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")!
+
+        XCTAssertEqual(graph.nodeDegrees("a"), 3)
+        XCTAssertEqual(graph.nodeDegrees("d"), 1)
+        XCTAssertEqual(graph.nodeDegrees("e"), 0)
+    }
+
+    func testNodesByDegree() {
+        let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")!
+
+        XCTAssertEqual(graph.nodesByDegree().map { $0.value }, ["a", "c", "b", "d"])
+    }
 }
+
 
 struct TestGraphValue : LosslessStringConvertible, Hashable {
     let internalValue: String?

@@ -14,6 +14,17 @@ typealias GraphLabelTypeConstraint = LosslessStringConvertible
 class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
     class Node {
         let value: T
+
+        var degree: Int {
+            return adjacentEdges.count
+        }
+
+        var neighbors: List<Node>? {
+            return adjacentEdges.compactMap {
+                $0.partner(for: self)
+            }.toList()
+        }
+
         var adjacentEdges = [Edge]()
 
         init(value: T) {
@@ -215,6 +226,18 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             .compactMap { $0.toList() }
             .reversed()
             .toList()
+    }
+
+    func nodeDegrees(_ node: T) -> Int {
+        return nodes?.first(where: {
+            $0.value == node
+        })?.degree ?? 0
+    }
+
+    func nodesByDegree() -> List<Node> {
+        return nodes!.sorted(by: { (one, two) -> Bool in
+            return one.degree >= two.degree
+        }).toList()!
     }
 }
 
