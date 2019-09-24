@@ -88,6 +88,23 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     var nodes: List<Node>?
     var edges: List<Edge>?
 
+    required init() {
+
+    }
+
+    required init(adjacentLabeledList list: List<(T, List<(T, U?)>?)>) {
+        var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
+
+        // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
+        edges = list.flatMap { tuple -> [Edge] in
+            let (nodeValue, adjacentNodeValueTuples) = tuple
+
+            return adjacentNodeValueTuples?.values.compactMap {
+                return helper.generateEdge(for: (nodeValue, $0.0), label: $0.1)
+            } ?? []
+        }.toList()
+    }
+
     var orphanNodes: List<Node>? {
         return nodes?.reversed.filter { node in
             edges?.map { $0.from }.contains {
@@ -362,21 +379,6 @@ extension Graph {
 
     convenience init(adjacentList list: List<(T, List<T>?)>) {
         self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, nil) }.toList()) }.toList()!)
-    }
-
-    convenience init(adjacentLabeledList list: List<(T, List<(T, U?)>?)>) {
-        self.init()
-
-        var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
-
-        // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
-        edges = list.flatMap { tuple -> [Edge] in
-            let (nodeValue, adjacentNodeValueTuples) = tuple
-
-            return adjacentNodeValueTuples?.values.compactMap {
-                return helper.generateEdge(for: (nodeValue, $0.0), label: $0.1)
-            } ?? []
-        }.toList()
     }
 
     convenience init?(string: String) {
