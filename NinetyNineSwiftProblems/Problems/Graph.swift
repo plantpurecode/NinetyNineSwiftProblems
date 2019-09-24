@@ -267,9 +267,63 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     func depthFirstTraversalFrom(node: T) -> List<T>? {
         return nodes?.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
     }
+
+    func split() -> List<Graph<T, U>>? {
+        guard let nodes = nodes, nodes.length > 0 else {
+            return nil
+        }
+
+        func findConnected(within potentials: [Node], cache: [Node]) -> [Node] {
+            guard potentials.isEmpty == false else {
+                return cache
+            }
+
+            let head = potentials.first!
+            let tail = Set(potentials.dropFirst())
+            let new = head.partners.subtracting(cache + [head])
+            let union = tail.union(new)
+
+            return findConnected(within: Array(union), cache: cache + [head])
+        }
+
+        func splitRecursive(remaining: [Node]) -> [Graph<T, U>] {
+            guard remaining.isEmpty == false else {
+                return []
+            }
+
+            let head = remaining.first!
+            let connectedNodes = findConnected(within: [head], cache: [])
+
+            guard let adjacent = adjacentForm(from: connectedNodes) else {
+                return []
+            }
+
+            return [adjacent] + splitRecursive(remaining: remaining.filter { connectedNodes.contains($0) == false })
+        }
+
+        return splitRecursive(remaining: nodes.values).toList()
+    }
+
+    private func adjacentForm(from nodes: [Node]) -> Self? {
+        return .init(adjacentLabeledList: nodes.map { n in
+            return (n.value, n.adjacentEdges.compactMap { e in
+                guard let target = edgeTarget(e, node: n) else {
+                    return nil
+                }
+
+                return (target.value, e.label)
+            }.toList())
+        }.toList()!)
+    }
 }
 
 extension Graph.Node {
+    var partners: Set<Graph.Node> {
+        return Set(adjacentEdges.compactMap {
+            $0.partner(for: self)
+        })
+    }
+
     func nodesByDepth(_ seen: Set<Graph.Node>) -> [Graph.Node] {
         func nodesByDepthRecursive(neighbors: [Graph.Node], set: Set<Graph.Node>) -> [Graph.Node] {
             guard let head = neighbors.first else {

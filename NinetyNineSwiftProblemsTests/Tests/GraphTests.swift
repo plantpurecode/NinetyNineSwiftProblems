@@ -607,6 +607,19 @@ class GraphTests : XCTestCase {
         XCTAssertEqual(graph.depthFirstTraversalFrom(node: "d"), List("c", "b", "a", "d"))
         XCTAssertNil(graph.depthFirstTraversalFrom(node: "e"))
     }
+
+    func testConnectedComponents() {
+        let graph = StringGraph(string: "[a-b, c]")!
+        let split = graph.split()!.values
+
+        _testGraph(split.first!,
+                   nodes: ["a", "b"],
+                   edges: [TestGraphData.Edge(from: "a", to: "b")])
+
+        _testGraph(split.last!,
+                   nodes: ["c"],
+                   edges: [])
+    }
 }
 
 
