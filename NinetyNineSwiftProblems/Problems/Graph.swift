@@ -340,7 +340,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return splitGraph.values.allSatisfy { $0.isGraphBipartite() }
     }
 
-    func toDOT() -> String {
+    func DOTRepresentation() -> String {
         let spacer = "    "
         let identifier = "\(type(of: self).isDirected ? "di" : "")graph"
         let edgeJoiner = type(of: self).isDirected ? "->" : "--"
