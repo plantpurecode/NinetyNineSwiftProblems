@@ -672,12 +672,13 @@ class GraphTests : XCTestCase {
         }
         """)
 
-        let dot3 = StringGraph(string: "[a-b, b-c, a-c]")!.toDOT()
+        let dot3 = StringGraph(string: "[a-b, b-c, a-c, d]")!.toDOT()
         XCTAssertEqual(dot3, """
         graph G {
             a -- b
             b -- c
             a -- c
+            d
         }
         """)
 
@@ -687,6 +688,7 @@ class GraphTests : XCTestCase {
             p -> q [label=9]
             m -> q [label=7]
             p -> m [label=5]
+            k
         }
         """)
     }

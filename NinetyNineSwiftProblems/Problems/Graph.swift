@@ -358,15 +358,26 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             return spacer + components.joined(separator: " ")
         }.joined(separator: "\n") ?? ""
 
+        var dotDataComponents = [edgeDescriptions]
+        let completelyOrphaned = completelyOrphanedNodes
+        if completelyOrphaned.isEmpty == false {
+            dotDataComponents.append(completelyOrphaned.map { spacer + $0.value.description }.joined(separator: "\n"))
+        }
+
         return """
         \(identifier) G {
-        \(edgeDescriptions)
+        \(dotDataComponents.joined(separator: "\n"))
         }
         """
     }
 
     // MARK: Private Functions
     // MARK: -
+
+    private var completelyOrphanedNodes: [Node] {
+        let edgeNodes = edges?.values.flatMap { [$0.from, $0.to] } ?? []
+        return nodes.filter { edgeNodes.contains($0) == false }
+    }
 
     private func isGraphBipartite() -> Bool {
         let nodes = nodesByDegree().reversed()
