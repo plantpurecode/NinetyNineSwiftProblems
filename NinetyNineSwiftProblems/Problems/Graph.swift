@@ -274,12 +274,11 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
     func split() -> List<Graph<T, U>>? {
         func findConnected(within potentials: [Node], cache: [Node]) -> [Node] {
-            guard potentials.isEmpty == false else {
+            guard let (head, tails) = potentials.splitHeadAndTails() else {
                 return cache
             }
 
-            let head = potentials.first!
-            let tail = Set(potentials.dropFirst())
+            let tail = Set(tails)
             let new = head.partners.subtracting(cache + [head])
             let union = tail.union(new)
 
@@ -287,13 +286,11 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         }
 
         func splitRecursive(remaining: [Node]) -> [Graph<T, U>] {
-            guard remaining.isEmpty == false else {
+            guard let head = remaining.first else {
                 return []
             }
 
-            let head = remaining.first!
             let connectedNodes = findConnected(within: [head], cache: [])
-
             guard let adjacent = adjacentForm(from: connectedNodes) else {
                 return []
             }
@@ -388,7 +385,9 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
             switch (evenPending, oddPending) {
             case (_, let odd) where !odd.isEmpty:
-                let (oddHead, oddTail) = (odd.first!, Array(odd.dropFirst()))
+                guard let (oddHead, oddTail) = odd.splitHeadAndTails() else {
+                    return false
+                }
 
                 return oddHead.partners.allNotContained(in: oddVisited) &&
                     isBipartiteRecursive(oddPending: oddTail,
@@ -396,7 +395,9 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                                          oddVisited: oddVisited.union([oddHead]),
                                          evenVisited: evenVisited.union(oddHead.partners))
             case (let even, _) where !even.isEmpty:
-                let (evenHead, evenTail) = (even.first!, Array(even.dropFirst()))
+                guard let (evenHead, evenTail) = even.splitHeadAndTails() else {
+                    return false
+                }
 
                 return evenHead.partners.allNotContained(in: evenVisited) &&
                     isBipartiteRecursive(oddPending: evenHead.partners.removingAllNotContained(in: oddVisited),
@@ -620,7 +621,7 @@ extension Graph {
             $0.trimmingCharacters(in: .whitespaces)
         }
 
-        guard components.count == 2 else {
+        guard components.count == 2, let bookends = components.bookends() else {
             if let first = components.first, components.count < 2 {
                 let (label, labelPositionOptional) = findLabel(in: first)
                 let nodeValueEndPosition = (labelPositionOptional ?? first.count)
@@ -636,7 +637,7 @@ extension Graph {
             return nil
         }
 
-        var (fromNodeValue, toNodeValue) = (components.first!, components.last!)
+        var (fromNodeValue, toNodeValue) = bookends
         let (label, labelPositionOptional) = findLabel(in: toNodeValue)
 
         if let position = labelPositionOptional {

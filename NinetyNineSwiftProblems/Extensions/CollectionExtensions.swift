@@ -35,3 +35,21 @@ extension Collection where Element : Hashable {
         return filter { !collection.contains($0) }
     }
 }
+
+extension RandomAccessCollection {
+    func bookends() -> (head: Element, tail: Element)? {
+        guard let first = first, let last = last, count >= 2 else {
+            return nil
+        }
+
+        return (head: first, tail: last)
+    }
+
+    func splitHeadAndTails() -> (head: Element, tails: [Element])? {
+        guard let head = first else {
+            return nil
+        }
+
+        return (head: head, tails: Array(dropFirst()))
+    }
+}
