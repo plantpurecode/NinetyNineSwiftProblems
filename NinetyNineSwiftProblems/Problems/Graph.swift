@@ -344,6 +344,35 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return splitGraph.values.allSatisfy { $0.isGraphBipartite() }
     }
 
+    func toDOT() -> String? {
+        guard (nodes?.length ?? 0) > 0 else {
+            return nil
+        }
+
+        let spacer = "    "
+        let identifier = "\(type(of: self).isDirected ? "di" : "")graph"
+        let edgeJoiner = type(of: self).isDirected ? "->" : "--"
+        let edgeDescriptions = edges?.map {
+            var components = [
+                $0.from.value.description,
+                edgeJoiner,
+                $0.to.value.description
+            ]
+
+            if let label = $0.label {
+                components.append("[label=\(label.description)]")
+            }
+
+            return spacer + components.joined(separator: " ")
+        }.joined(separator: "\n") ?? ""
+
+        return """
+        \(identifier) G {
+        \(edgeDescriptions)
+        }
+        """
+    }
+
     // MARK: Private Functions
     // MARK: -
 

@@ -652,6 +652,44 @@ class GraphTests : XCTestCase {
         XCTAssertFalse(StringGraph(string: "[a-b, b-c, c-a]")!.isBipartite())
         XCTAssertFalse(StringGraph(string: "[a-b, b-c, d, e-f, f-g, g-e, h]")!.isBipartite())
     }
+
+    func testDOTConversion() {
+        let dot1 = StringGraph(string: "[a-b/1, b-c/2, a-c/3]")!.toDOT()!
+        XCTAssertEqual(dot1, """
+        graph G {
+            a -- b [label=1]
+            b -- c [label=2]
+            a -- c [label=3]
+        }
+        """)
+
+        let dot2 = StringGraph(string: "[a-b, b-c, a-c/3]")!.toDOT()!
+        XCTAssertEqual(dot2, """
+        graph G {
+            a -- b
+            b -- c
+            a -- c [label=3]
+        }
+        """)
+
+        let dot3 = StringGraph(string: "[a-b, b-c, a-c]")!.toDOT()!
+        XCTAssertEqual(dot3, """
+        graph G {
+            a -- b
+            b -- c
+            a -- c
+        }
+        """)
+
+        let dot4 = StringDigraph(string: "[p>q/9, m>q/7, k, p>m/5]")!.toDOT()!
+        XCTAssertEqual(dot4, """
+        digraph G {
+            p -> q [label=9]
+            m -> q [label=7]
+            p -> m [label=5]
+        }
+        """)
+    }
 }
 
 
