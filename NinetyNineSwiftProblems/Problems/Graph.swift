@@ -252,9 +252,9 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             .toList()
     }
 
-    func nodeDegrees(_ node: T) -> Int {
+    func degree(forNodeWithValue value: T) -> Int {
         return nodes?.first(where: {
-            $0.value == node
+            $0.value == value
         })?.degree ?? 0
     }
 

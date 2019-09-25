@@ -587,12 +587,12 @@ class GraphTests : XCTestCase {
         XCTAssertNil(uncycledGraph.findCycles(from: "i"))
     }
 
-    func testNodeDegrees() {
+    func testDegreeForNode() {
         let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")!
 
-        XCTAssertEqual(graph.nodeDegrees("a"), 3)
-        XCTAssertEqual(graph.nodeDegrees("d"), 1)
-        XCTAssertEqual(graph.nodeDegrees("e"), 0)
+        XCTAssertEqual(graph.degree(forNodeWithValue: "a"), 3)
+        XCTAssertEqual(graph.degree(forNodeWithValue: "d"), 1)
+        XCTAssertEqual(graph.degree(forNodeWithValue: "e"), 0)
     }
 
     func testNodesByDegree() {
