@@ -593,6 +593,10 @@ class GraphTests : XCTestCase {
         XCTAssertEqual(graph.degree(forNodeWithValue: "a"), 3)
         XCTAssertEqual(graph.degree(forNodeWithValue: "d"), 1)
         XCTAssertEqual(graph.degree(forNodeWithValue: "e"), 0)
+
+        // Mathematical fact: Sum of all degrees is always twice the number of edges.
+        let sumOfDegrees = graph.nodes!.map { $0.degree }.reduce(0, +)
+        XCTAssertEqual(sumOfDegrees, graph.edges!.length * 2)
     }
 
     func testNodesByDegree() {
