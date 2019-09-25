@@ -621,6 +621,26 @@ class GraphTests : XCTestCase {
                    edges: [])
     }
 
+    func testColoredNodes() {
+        let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")!
+
+        let coloredNodes = graph.coloredNodes()!.values.sorted { (one, two) -> Bool in
+            return one.0 < two.0
+        }
+
+        let expected = [("a", 1), ("b", 2), ("c", 3), ("d", 2)]
+
+        print("\(expected) -> \(coloredNodes)")
+
+        expected.enumerated().forEach {
+            let correspondingTuple = coloredNodes[$0.offset]
+            XCTAssertEqual($0.element.0,
+                           correspondingTuple.0)
+            XCTAssertEqual($0.element.1,
+                           correspondingTuple.1)
+        }
+    }
+
     func testIsBipartite() {
         XCTAssertTrue(StringDigraph(string: "[a>b, c>a, d>b]")!.isBipartite())
         XCTAssertTrue(StringGraph(string: "[a-b, b-c, d]")!.isBipartite())

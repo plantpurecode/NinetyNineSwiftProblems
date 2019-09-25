@@ -308,6 +308,34 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return splitRecursive(remaining: nodes.values).toList()
     }
 
+    func coloredNodes() -> List<(T, Int)>? {
+        func computeColor(_ color: Int, uncolored: [Node], colored: [(Node, Int)], adjacent: Set<Node> = Set()) -> [(Node, Int)] {
+            guard let current = uncolored.first else {
+                return colored
+            }
+            
+            let newAdjacent = adjacent.union(current.neighbors?.values ?? [])
+            
+            return computeColor(color,
+                                uncolored: uncolored.dropFirst().removingAllNotContained(in: newAdjacent),
+                                colored: [(current, color)] + colored,
+                                adjacent: newAdjacent)
+        }
+        
+        func coloredNodesRecursive(_ color: Int, uncolored: [Node], colored: [(Node, Int)] = []) -> [(Node, Int)] {
+            guard uncolored.isEmpty == false else {
+                return colored
+            }
+            
+            let newColored = computeColor(color, uncolored: uncolored, colored: colored)
+            let newUncolored = uncolored.removingAllNotContained(in: newColored.map { $0.0 })
+            
+            return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
+        }
+        
+        return coloredNodesRecursive(1, uncolored: nodesByDegree(strict: true).values).map { ($0.value, $1) }.toList()
+    }
+
     func isBipartite() -> Bool {
         guard (nodes?.length ?? 0) > 0, let splitGraph = split() else {
             return false
