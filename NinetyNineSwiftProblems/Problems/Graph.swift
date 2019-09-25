@@ -85,7 +85,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         }
     }
 
-    var nodes: List<Node>?
+    var nodes: List<Node>!
     var edges: List<Edge>?
 
     required init() {
@@ -106,7 +106,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     var orphanNodes: List<Node>? {
-        return nodes?.reversed.filter { node in
+        return nodes.reversed.filter { node in
             edges?.map { $0.from }.contains {
                 return $0.value == node.value
             } == false
@@ -115,11 +115,11 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
     var description: String {
         let separator = type(of: self).humanFriendlyEdgeSeparator
-        let orphanNodes = nodes?.filter { node in
+        let orphanNodes = nodes.filter { node in
             return (edges?.values ?? []).allSatisfy { (edge) -> Bool in
                 return edge.from.value != node.value && edge.to.value != node.value
             }
-        }.map { String(describing: $0.value) } ?? []
+        }.map { String(describing: $0.value) }
 
         let allEdges = edges?.values.reduce([String](), { res, edge in
             return res + [[edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)]
@@ -141,7 +141,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func toTermForm() -> (List<T>, List<(T, T, U?)>?) {
-        return (nodes!.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
+        return (nodes.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
     }
 
     func toAdjacentForm() -> List<(T, List<(T, U?)>?)> {
@@ -253,13 +253,13 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func degree(forNodeWithValue value: T) -> Int {
-        return nodes?.first(where: {
+        return nodes.first(where: {
             $0.value == value
         })?.degree ?? 0
     }
 
     func nodesByDegree(strict: Bool = false) -> List<Node> {
-        return nodes!.sorted(by: { (one, two) -> Bool in
+        return nodes.sorted(by: { (one, two) -> Bool in
             if strict {
                 return one.degree > two.degree
             }
@@ -269,14 +269,10 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func depthFirstTraversalFrom(node: T) -> List<T>? {
-        return nodes?.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
+        return nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
     }
 
     func split() -> List<Graph<T, U>>? {
-        guard let nodes = nodes, nodes.length > 0 else {
-            return nil
-        }
-
         func findConnected(within potentials: [Node], cache: [Node]) -> [Node] {
             guard potentials.isEmpty == false else {
                 return cache
@@ -337,18 +333,14 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func isBipartite() -> Bool {
-        guard (nodes?.length ?? 0) > 0, let splitGraph = split() else {
+        guard let splitGraph = split() else {
             return false
         }
 
         return splitGraph.values.allSatisfy { $0.isGraphBipartite() }
     }
 
-    func toDOT() -> String? {
-        guard (nodes?.length ?? 0) > 0 else {
-            return nil
-        }
-
+    func toDOT() -> String {
         let spacer = "    "
         let identifier = "\(type(of: self).isDirected ? "di" : "")graph"
         let edgeJoiner = type(of: self).isDirected ? "->" : "--"
@@ -478,11 +470,12 @@ extension Graph {
         private let _edgeGenerationMode: EdgeGenerationMode
 
         init(graph: Graph<T, U>, nodes: List<T>) {
-            graph.nodes = nodes.map { Node(value: $0) }.toList()
+            // OK to unwrap here because we are accepting a List, which cannot be empty!
+            graph.nodes = nodes.map { Node(value: $0) }.toList()!
 
             _edgeSeparator = type(of: graph).humanFriendlyEdgeSeparator
             _edgeGenerationMode = EdgeGenerationMode(direction: type(of: graph).direction)
-            _nodeCache = type(of: self)._generateNodeCache(graph.nodes?.values ?? [])
+            _nodeCache = type(of: self)._generateNodeCache(graph.nodes.values)
         }
 
         mutating func generateEdge(`for` nodePair: (T, T), label: U?) -> Edge? {
