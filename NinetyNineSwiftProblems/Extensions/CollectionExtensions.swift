@@ -18,20 +18,20 @@ extension Collection {
     }
 }
 
-extension Collection where Element : Equatable {
-    func allContained(in collection: Self) -> Bool {
+extension Collection where Element : Hashable {
+    func allContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
         return allSatisfy { collection.contains($0) }
     }
 
-    func allNotContained(in collection: Self) -> Bool {
+    func allNotContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
         return allSatisfy { !collection.contains($0) }
     }
 
-    func removingAllContained(in collection: Self) -> [Element] {
+    func removingAllContained<C: Collection>(in collection: C) -> [Element] where C.Element == Element {
         return filter { collection.contains($0) }
     }
 
-    func removingAllNotContained(in collection: Self) -> [Element] {
+    func removingAllNotContained<C: Collection>(in collection: C) -> [Element] where C.Element == Element {
         return filter { !collection.contains($0) }
     }
 }
