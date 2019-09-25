@@ -27,6 +27,7 @@ class TreeTests: XCTestCase {
     }
     
     func testHeight() {
+        XCTAssertEqual(Tree(1).height, 1)
         XCTAssertEqual(Tree(1, Tree(2, Tree(3)), Tree(4, Tree(5, Tree(6)))).height, 4)
     }
     
