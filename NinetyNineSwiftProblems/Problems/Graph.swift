@@ -298,7 +298,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                 return []
             }
 
-            return [adjacent] + splitRecursive(remaining: remaining.filter { connectedNodes.contains($0) == false })
+            return [adjacent] + splitRecursive(remaining: remaining.removingAllNotContained(in: connectedNodes))
         }
 
         return splitRecursive(remaining: nodes.values).toList()
@@ -507,7 +507,7 @@ extension Graph {
                 // Filter out nil (i.e. when there is only one node in the component.)
                 .compactMap { $0 }
                 // Ensure we don't have duplicate nodes
-                .filter { a.contains($0) == false }
+                .removingAllNotContained(in: a)
                 .forEach { a.append($0) }
 
             return a
@@ -589,7 +589,7 @@ extension Graph {
     private func _parseEdgeComponents(_ edgeComponents: [String]) -> [(T, T?, U?)] {
         let results = edgeComponents.map { _parseEdgeComponent($0) }
 
-        guard results.contains(where: { $0 == nil }) == false else {
+        guard results.allNotNil() else {
             return []
         }
 
@@ -639,23 +639,5 @@ extension Graph.Edge : CustomStringConvertible {
         }
 
         return "Graph.Edge(\(components.joined(separator: ", ")))"
-    }
-}
-
-extension Collection where Element : Equatable {
-    func allContained(in collection: Self) -> Bool {
-        return allSatisfy { collection.contains($0) }
-    }
-
-    func allNotContained(in collection: Self) -> Bool {
-        return allSatisfy { !collection.contains($0) }
-    }
-
-    func removingAllContained(in collection: Self) -> [Element] {
-        return filter { collection.contains($0) }
-    }
-
-    func removingAllNotContained(in collection: Self) -> [Element] {
-        return filter { !collection.contains($0) }
     }
 }
