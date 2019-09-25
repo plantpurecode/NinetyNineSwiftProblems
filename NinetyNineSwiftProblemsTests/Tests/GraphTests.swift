@@ -620,6 +620,14 @@ class GraphTests : XCTestCase {
                    nodes: ["c"],
                    edges: [])
     }
+
+    func testIsBipartite() {
+        XCTAssertTrue(StringDigraph(string: "[a>b, c>a, d>b]")!.isBipartite())
+        XCTAssertTrue(StringGraph(string: "[a-b, b-c, d]")!.isBipartite())
+
+        XCTAssertFalse(StringGraph(string: "[a-b, b-c, c-a]")!.isBipartite())
+        XCTAssertFalse(StringGraph(string: "[a-b, b-c, d, e-f, f-g, g-e, h]")!.isBipartite())
+    }
 }
 
 

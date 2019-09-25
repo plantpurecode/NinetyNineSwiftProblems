@@ -304,6 +304,49 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return splitRecursive(remaining: nodes.values).toList()
     }
 
+    func isBipartite() -> Bool {
+        guard (nodes?.length ?? 0) > 0, let splitGraph = split() else {
+            return false
+        }
+
+        return splitGraph.values.allSatisfy { $0.isGraphBipartite() }
+    }
+
+    // MARK: Private Functions
+    // MARK: -
+
+    private func isGraphBipartite() -> Bool {
+        let nodes = nodesByDegree().reversed()
+        guard !nodes.isEmpty else {
+            return false
+        }
+
+        func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
+            switch (evenPending, oddPending) {
+            case (_, let odd) where !odd.isEmpty:
+                let (oddHead, oddTail) = (odd.first!, Array(odd.dropFirst()))
+
+                return oddHead.partners.allNotContained(in: oddVisited) &&
+                    isBipartiteRecursive(oddPending: oddTail,
+                                         evenPending: oddHead.partners.removingAllNotContained(in: evenVisited),
+                                         oddVisited: oddVisited.union([oddHead]),
+                                         evenVisited: evenVisited.union(oddHead.partners))
+            case (let even, _) where !even.isEmpty:
+                let (evenHead, evenTail) = (even.first!, Array(even.dropFirst()))
+
+                return evenHead.partners.allNotContained(in: evenVisited) &&
+                    isBipartiteRecursive(oddPending: evenHead.partners.removingAllNotContained(in: oddVisited),
+                                         evenPending: evenTail,
+                                         oddVisited: oddVisited.union(evenHead.partners),
+                                         evenVisited: evenVisited.union([evenHead]))
+            default:
+                return oddPending.isEmpty && evenPending.isEmpty
+            }
+        }
+
+        return isBipartiteRecursive(oddPending: [], evenPending: nodes, oddVisited: Set(), evenVisited: Set())
+    }
+
     private func adjacentForm(from nodes: [Node]) -> Self? {
         return .init(adjacentLabeledList: nodes.map { n in
             return (n.value, n.adjacentEdges.compactMap { e in
@@ -596,5 +639,23 @@ extension Graph.Edge : CustomStringConvertible {
         }
 
         return "Graph.Edge(\(components.joined(separator: ", ")))"
+    }
+}
+
+extension Collection where Element : Equatable {
+    func allContained(in collection: Self) -> Bool {
+        return allSatisfy { collection.contains($0) }
+    }
+
+    func allNotContained(in collection: Self) -> Bool {
+        return allSatisfy { !collection.contains($0) }
+    }
+
+    func removingAllContained(in collection: Self) -> [Element] {
+        return filter { collection.contains($0) }
+    }
+
+    func removingAllNotContained(in collection: Self) -> [Element] {
+        return filter { !collection.contains($0) }
     }
 }
