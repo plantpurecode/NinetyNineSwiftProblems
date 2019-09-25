@@ -258,8 +258,12 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         })?.degree ?? 0
     }
 
-    func nodesByDegree() -> List<Node> {
+    func nodesByDegree(strict: Bool = false) -> List<Node> {
         return nodes!.sorted(by: { (one, two) -> Bool in
+            if strict {
+                return one.degree > two.degree
+            }
+
             return one.degree >= two.degree
         }).toList()!
     }
