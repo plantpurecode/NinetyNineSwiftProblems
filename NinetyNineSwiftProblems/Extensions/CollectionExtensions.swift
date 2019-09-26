@@ -36,7 +36,7 @@ extension Collection where Element : Hashable {
     }
 }
 
-extension RandomAccessCollection {
+extension BidirectionalCollection {
     func bookends() -> (head: Element, tail: Element)? {
         guard let first = first, let last = last, count >= 2 else {
             return nil
