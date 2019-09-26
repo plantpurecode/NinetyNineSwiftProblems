@@ -1,0 +1,4 @@
+language: swift
+os: osx
+osx_image: xcode11
+script: xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" build test

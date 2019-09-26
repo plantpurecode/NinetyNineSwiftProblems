@@ -1,5 +1,7 @@
 # NinetyNineSwiftProblems
 
+![Travis CI Build Status](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems.svg?branch=master "Travis CI Build Status")
+
 Solutions to the Ninety-Nine Swift Problems from [@eneko](http://github.com/eneko)
 
 More on this here: https://www.enekoalonso.com/projects/99-swift-problems/
