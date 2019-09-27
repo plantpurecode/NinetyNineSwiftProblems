@@ -1,4 +1,8 @@
+cache: bundler
 language: swift
 os: osx
 osx_image: xcode11
-script: xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" build test
+install:
+  - bundle install
+  - ./.travis_build.sh
+after_success: ./.travis_gather_and_upload_coverage.sh
