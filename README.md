@@ -5,14 +5,21 @@
 
 Solutions to the Ninety-Nine Swift Problems from [@eneko](http://github.com/eneko)
 
-More on this here: https://www.enekoalonso.com/projects/99-swift-problems/
+More background on this can be found here: https://www.enekoalonso.com/projects/99-swift-problems/
 
-This project depends on Xcode and XCTest, but forgoes any other dependencies.
+### Dependencies
 
-The problem currently being solved can be located in the `current-problem` file.
+This project depends solely on Xcode and the built-in `XCTest` testing framework.
 
-If I have skipped any problems, they are listed in the `skipped-problems` file.
+### Progress
+
+- The problem currently being solved can be located in the [`current-problem`](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/current-problem) file.
+- If I have skipped any problems, they are listed in the [`skipped-problems`](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/skipped-problems) file.
+
+### Contributing
 
 If you'd like to make a contribution, I don't recommend contributing to this repo. Use [@eneko](http;//github.com/eneko)'s repo instead, [located here](https://github.com/eneko/Ninety-Nine-Swift-Solutions)
+
+### Contact
 
 If you have any questions or comments, please feel free to open an issue on GitHub or contact me at [plantpurecode@gmail.com](mailto:plantpurecode@gmail.com)
