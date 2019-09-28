@@ -24,26 +24,33 @@ struct Primes {
     static func generate(upTo n: Int) -> [Int] {
         var composite = Array(repeating: false, count: n + 1)
         var primes: [Int] = []
-        
-        if n >= 55 {
+
+        if n >= 50 {
             // Upper bound for the number of primes up to and including `n`,
             // from https://en.wikipedia.org/wiki/Prime_number_theorem#Non-asymptotic_bounds_on_the_prime-counting_function :
             let d = Double(n)
             let upperBound = Int(d / (log(d) - 4))
             primes.reserveCapacity(upperBound)
+        } else {
+            primes.reserveCapacity(n)
         }
-        
+
         let squareRootN = Int(Double(n).squareRoot())
-        
-        (2...squareRootN).filter { !composite[$0] }.forEach { p in
-            primes.append(p)
-            
-            for q in stride(from: p * p, through: n, by: p) {
+
+        (2...squareRootN).forEach {
+            guard composite[$0] == false else {
+                return
+            }
+
+            primes.append($0)
+            for q in stride(from: $0 * $0, through: n, by: $0) {
                 composite[q] = true
             }
         }
-        
-        return primes + (squareRootN...n).filter { !composite[$0] }
+
+        (squareRootN+1...n).filter { !composite[$0] }.forEach { primes.append($0) }
+
+        return primes
     }
 }
 
@@ -91,7 +98,7 @@ extension Int {
             return first.key < second.key
         }
         
-        print("\nPrinting \(compositions.count) Goldbach compositions...\n")
+        print("\nPrinting \(compositions.count) Goldbach compositions...")
         print(compositions.reduce("") { (result, current) -> String in
             let (key, value) = current
             return [result, "\(key) = \(value.0) + \(value.1)"].joined(separator: "\n")
@@ -166,7 +173,7 @@ extension Int {
                 continue
             }
             
-            if (try? both.allPrime()) ?? false {
+            if try! both.allPrime() {
                 return both.bookends()
             }
         }
