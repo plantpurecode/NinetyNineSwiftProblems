@@ -2,7 +2,5 @@ cache: bundler
 language: swift
 os: osx
 osx_image: xcode11
-install:
-  - bundle install
-  - ./.travis_build.sh
-after_success: ./.travis_gather_and_upload_coverage.sh
+install: bundle install
+script: ./.travis_build.sh && ./.travis_gather_and_upload_coverage.sh
