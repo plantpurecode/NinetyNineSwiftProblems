@@ -167,7 +167,7 @@ extension Int {
             }
             
             if (try? both.allPrime()) ?? false {
-                return both.convertToBinaryTuple()
+                return both.bookends()
             }
         }
         

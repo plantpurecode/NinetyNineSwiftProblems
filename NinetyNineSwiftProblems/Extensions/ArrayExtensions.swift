@@ -31,14 +31,6 @@ extension Array {
 // MARK: - Miscellaneous
 
 extension Array {
-    func convertToBinaryTuple() -> (Element, Element)? {
-        guard count == 2 else {
-            return nil
-        }
-        
-        return (first!, last!)
-    }
-    
     mutating func pad(upTo n: Int, with padding: Element) {
         guard n > 0 else {
             return
