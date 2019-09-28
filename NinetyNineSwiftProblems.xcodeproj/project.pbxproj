@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		520D3731233EF9CF00054A7F /* CollectionExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 520D3730233EF9CF00054A7F /* CollectionExtensionTests.swift */; };
 		52158CFB21C4001400B4980E /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52158CFA21C4001400B4980E /* Tree.swift */; };
 		52158CFD21C4002000B4980E /* TreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52158CFC21C4002000B4980E /* TreeTests.swift */; };
 		5222F3632187461C001C2B87 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F3602187461C001C2B87 /* List.swift */; };
@@ -57,6 +58,7 @@
 /* Begin PBXFileReference section */
 		2D12D886153592AEF3B2B9C9 /* Pods-NinetyNineSwiftProblems.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinetyNineSwiftProblems.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinetyNineSwiftProblems/Pods-NinetyNineSwiftProblems.debug.xcconfig"; sourceTree = "<group>"; };
 		3A25D3036A5E38893C688840 /* Pods_NinetyNineSwiftProblems.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinetyNineSwiftProblems.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		520D3730233EF9CF00054A7F /* CollectionExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionExtensionTests.swift; sourceTree = "<group>"; };
 		52158CFA21C4001400B4980E /* Tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
 		52158CFC21C4002000B4980E /* TreeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeTests.swift; sourceTree = "<group>"; };
 		5222F3602187461C001C2B87 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				52158CFC21C4002000B4980E /* TreeTests.swift */,
 				524E310A21FE671A0014D5B2 /* MultiwayTreeTests.swift */,
 				526730C7220961DC0010DE44 /* GraphTests.swift */,
+				520D3730233EF9CF00054A7F /* CollectionExtensionTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				52CAC86B21BC25D90066F57A /* LogicTests.swift in Sources */,
 				52158CFD21C4002000B4980E /* TreeTests.swift in Sources */,
 				5222F36D21874765001C2B87 /* ListTests.swift in Sources */,
+				520D3731233EF9CF00054A7F /* CollectionExtensionTests.swift in Sources */,
 				524E310B21FE671A0014D5B2 /* MultiwayTreeTests.swift in Sources */,
 				526730C8220961DC0010DE44 /* GraphTests.swift in Sources */,
 				526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */,

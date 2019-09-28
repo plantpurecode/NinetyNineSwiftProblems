@@ -295,7 +295,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                 return []
             }
 
-            return [adjacent] + splitRecursive(remaining: remaining.removingAllNotContained(in: connectedNodes))
+            return [adjacent] + splitRecursive(remaining: remaining.removingAllContained(in: connectedNodes))
         }
 
         return splitRecursive(remaining: nodes.values).toList()
@@ -310,7 +310,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             let newAdjacent = adjacent.union(current.neighbors?.values ?? [])
             
             return computeColor(color,
-                                uncolored: uncolored.dropFirst().removingAllNotContained(in: newAdjacent),
+                                uncolored: uncolored.dropFirst().removingAllContained(in: newAdjacent),
                                 colored: [(current, color)] + colored,
                                 adjacent: newAdjacent)
         }
@@ -321,7 +321,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             }
             
             let newColored = computeColor(color, uncolored: uncolored, colored: colored)
-            let newUncolored = uncolored.removingAllNotContained(in: newColored.map { $0.0 })
+            let newUncolored = uncolored.removingAllContained(in: newColored.map { $0.0 })
             
             return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
         }
@@ -391,7 +391,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
                 return oddHead.partners.allNotContained(in: oddVisited) &&
                     isBipartiteRecursive(oddPending: oddTail,
-                                         evenPending: oddHead.partners.removingAllNotContained(in: evenVisited),
+                                         evenPending: oddHead.partners.removingAllContained(in: evenVisited),
                                          oddVisited: oddVisited.union([oddHead]),
                                          evenVisited: evenVisited.union(oddHead.partners))
             case (let even, _) where !even.isEmpty:
@@ -400,7 +400,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                 }
 
                 return evenHead.partners.allNotContained(in: evenVisited) &&
-                    isBipartiteRecursive(oddPending: evenHead.partners.removingAllNotContained(in: oddVisited),
+                    isBipartiteRecursive(oddPending: evenHead.partners.removingAllContained(in: oddVisited),
                                          evenPending: evenTail,
                                          oddVisited: oddVisited.union(evenHead.partners),
                                          evenVisited: evenVisited.union([evenHead]))
@@ -573,7 +573,7 @@ extension Graph {
                 // Filter out nil (i.e. when there is only one node in the component.)
                 .compactMap { $0 }
                 // Ensure we don't have duplicate nodes
-                .removingAllNotContained(in: a)
+                .removingAllContained(in: a)
                 .forEach { a.append($0) }
 
             return a

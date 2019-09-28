@@ -28,10 +28,6 @@ extension Collection where Element : Hashable {
     }
 
     func removingAllContained<C: Collection>(in collection: C) -> [Element] where C.Element == Element {
-        return filter { collection.contains($0) }
-    }
-
-    func removingAllNotContained<C: Collection>(in collection: C) -> [Element] where C.Element == Element {
         return filter { !collection.contains($0) }
     }
 }
