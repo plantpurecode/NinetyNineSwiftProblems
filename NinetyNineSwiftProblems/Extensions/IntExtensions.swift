@@ -14,6 +14,6 @@ extension Int {
     }
     
     var odd: Bool {
-        return !even
+        return even == false
     }
 }
