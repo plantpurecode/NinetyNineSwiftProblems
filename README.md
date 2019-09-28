@@ -1,9 +1,9 @@
 # NinetyNineSwiftProblems
 
-[![Build Status](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems.svg?branch=master)](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems)
-[![Coverage Status](https://coveralls.io/repos/github/plantpurecode/NinetyNineSwiftProblems/badge.svg?branch=master)](https://coveralls.io/github/plantpurecode/NinetyNineSwiftProblems?branch=master)
-[![MIT License](https://camo.githubusercontent.com/bba9d52d3e0d92a3d95a660cff2dcc743cdb5059/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d6d69742d627269676874677265656e2e7376673f7374796c653d666c6174)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
-![Reviewed by Hound](https://camo.githubusercontent.com/1c940d021ef775a44e0880bc3ba124a6bee5fefb/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f52657669657765645f62792d486f756e642d3845363442302e737667)
+[![Build Status](https://img.shields.io/travis/plantpurecode/NinetyNineSwiftProblems)](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems)
+[![Code Coverage](https://img.shields.io/coveralls/github/plantpurecode/NinetyNineSwiftProblems)](https://coveralls.io/github/plantpurecode/NinetyNineSwiftProblems)
+[![License](https://img.shields.io/github/license/plantpurecode/NinetyNineSwiftProblems)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
+[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 Solutions to the Ninety-Nine Swift Problems from [@eneko](http://github.com/eneko)
 
