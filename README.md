@@ -2,9 +2,9 @@
 # NinetyNineSwiftProblems
 Solutions to the [Ninety-Nine Swift Problems](https://www.enekoalonso.com/projects/99-swift-problems/) from [@eneko](http://github.com/eneko)
 
+[![License](https://img.shields.io/github/license/plantpurecode/NinetyNineSwiftProblems)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/plantpurecode/NinetyNineSwiftProblems)](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems)
 [![Code Coverage](https://img.shields.io/coveralls/github/plantpurecode/NinetyNineSwiftProblems)](https://coveralls.io/github/plantpurecode/NinetyNineSwiftProblems)
-[![License](https://img.shields.io/github/license/plantpurecode/NinetyNineSwiftProblems)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 [![](https://img.shields.io/static/v1?label=depends-on&message=xcode11&color=informational)](#)
