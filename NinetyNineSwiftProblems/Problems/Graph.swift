@@ -674,21 +674,32 @@ extension Graph : Equatable where T : Equatable {
     }
 }
 
-extension Graph : Hashable where T : Hashable {
+extension Graph : Hashable where U : Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(description)
+        hasher.combine(nodes.values)
+
+        if let edges = edges {
+            hasher.combine(edges.values)
+        }
     }
 }
 
 extension Graph.Node : Equatable where T : Equatable {
     static func == (lhs: Graph.Node, rhs: Graph.Node) -> Bool {
-        return lhs.description == rhs.description
+        return lhs.value == rhs.value && lhs.degree == rhs.degree
     }
 }
 
-extension Graph.Edge : Equatable where T : Equatable {
+extension Graph.Edge : Equatable where T : Equatable, U : Equatable {
     static func == (lhs: Graph.Edge, rhs: Graph.Edge) -> Bool {
-        return lhs.description == rhs.description
+        return lhs.from == rhs.from && lhs.to == rhs.to && lhs.label == rhs.label
+    }
+}
+
+extension Graph.Edge : Hashable where U : Equatable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(description)
     }
 }
 

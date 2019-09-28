@@ -694,6 +694,23 @@ class GraphTests : XCTestCase {
     }
 }
 
+class GraphExtensionTests : XCTestCase {
+    func testHashable() {
+        let graph = StringGraph(string: "[a-b]")!
+
+        let set = Set([graph])
+        XCTAssertEqual(set.count, 1)
+    }
+
+    func testEquatable() {
+        let graph = StringDigraph(string: "[a>b]")!
+        let otherGraph = StringDigraph(string: "[a>b]")!
+        XCTAssertTrue(graph == otherGraph)
+        XCTAssertTrue(graph.nodes.values.first! == otherGraph.nodes.values.first!)
+
+        XCTAssertEqual(graph.edges!.values.first!, otherGraph.edges!.values.first!)
+    }
+}
 
 struct TestGraphValue : LosslessStringConvertible, Hashable {
     let internalValue: String?

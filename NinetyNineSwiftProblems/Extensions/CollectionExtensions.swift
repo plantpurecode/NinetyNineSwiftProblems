@@ -18,7 +18,7 @@ extension Collection {
     }
 }
 
-extension Collection where Element : Hashable {
+extension Collection where Element : Equatable {
     func allContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
         return allSatisfy { collection.contains($0) }
     }

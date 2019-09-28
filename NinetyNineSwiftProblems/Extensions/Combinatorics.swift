@@ -1,5 +1,5 @@
 //
-//  ArrayExtensions.swift
+//  Combinatorics.swift
 //  NinetyNineSwiftProblems
 //
 //  Created by Jacob Relkin on 12/8/18.
