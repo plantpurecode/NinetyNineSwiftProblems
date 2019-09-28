@@ -72,6 +72,6 @@ class MultiwayTreeTests: XCTestCase {
         XCTAssertNil(MTree(fromLispyRepresentation: " "))
         XCTAssertNil(MTree(fromLispyRepresentation: "("))
         XCTAssertNil(MTree(fromLispyRepresentation: "( )"))
-        XCTAssertNil(MTree(fromLispyRepresentation: "( (()) )"))
+        XCTAssertNil(MTree(fromLispyRepresentation: "( (()) )"))  
     }
 }
