@@ -1,0 +1,2 @@
+tap "thii/xcbeautify", "https://github.com/thii/xcbeautify.git"
+brew "xcbeautify"

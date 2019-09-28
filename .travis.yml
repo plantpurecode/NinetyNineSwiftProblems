@@ -5,8 +5,8 @@ cache: bundler
 language: swift
 os: osx
 osx_image: xcode11
-install:
-  - bundle install
-  - brew tap thii/xcbeautify https://github.com/thii/xcbeautify.git
-  - brew install xcbeautify
+install: bundle install
+addons:
+  homebrew:
+    brewfile: Brewfile.travis
 script: ./.travis_build.sh && ./.travis_gather_and_upload_coverage.sh
