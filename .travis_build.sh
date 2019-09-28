@@ -1,3 +1,3 @@
 set -o pipefail
 
-xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" -derivedDataPath "./.build" build test
+NSUnbufferedIO=YES xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" -derivedDataPath "./.build" build test 2>&1 | xcbeautify
