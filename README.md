@@ -7,9 +7,9 @@ Solutions to the [Ninety-Nine Swift Problems](https://www.enekoalonso.com/projec
 [![License](https://img.shields.io/github/license/plantpurecode/NinetyNineSwiftProblems)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
-![](https://img.shields.io/static/v1?label=depends-on&message=xcode11&color=informational)
-![](https://img.shields.io/static/v1?label=depends-on&message=xctest&color=informational)
-![](https://img.shields.io/static/v1?label=depends-on&message=swift5&color=red)
+[![](https://img.shields.io/static/v1?label=depends-on&message=xcode11&color=informational)](#)
+[![](https://img.shields.io/static/v1?label=depends-on&message=xctest&color=informational)](#)
+[![](https://img.shields.io/static/v1?label=depends-on&message=swift5&color=red)](#)
 
 ### Progress
 
