@@ -382,9 +382,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
             switch (evenPending, oddPending) {
             case (_, let odd) where !odd.isEmpty:
-                guard let (oddHead, oddTail) = odd.splitHeadAndTails() else {
-                    return false
-                }
+                let (oddHead, oddTail) = odd.splitHeadAndTails()!
 
                 return oddHead.partners.allNotContained(in: oddVisited) &&
                     isBipartiteRecursive(oddPending: oddTail,
@@ -392,9 +390,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                                          oddVisited: oddVisited.union([oddHead]),
                                          evenVisited: evenVisited.union(oddHead.partners))
             case (let even, _) where !even.isEmpty:
-                guard let (evenHead, evenTail) = even.splitHeadAndTails() else {
-                    return false
-                }
+                let (evenHead, evenTail) = even.splitHeadAndTails()!
 
                 return evenHead.partners.allNotContained(in: evenVisited) &&
                     isBipartiteRecursive(oddPending: evenHead.partners.removingAllContained(in: oddVisited),
@@ -488,9 +484,8 @@ extension Graph {
         }
 
         mutating func generateEdge(`for` nodePair: (T, T), label: U?) -> Edge? {
-            guard let from = _node(forValue: nodePair.0), let to = _node(forValue: nodePair.1) else {
-                return nil
-            }
+            let from = _node(forValue: nodePair.0)!
+            let to = _node(forValue: nodePair.1)!
 
             let nodeValues = [from, to].map { "\($0.value)" }
             var edgeStrings = [nodeValues.joined(separator: _edgeSeparator)]
@@ -549,16 +544,10 @@ extension Graph {
         }
 
         // Create a string without the leading and trailing brackets.
-        let truncatedEdgeString = string
-            .suffix(from: string.index(after: string.startIndex))
-            .prefix(upTo: string.index(before: string.endIndex))
-
+        let truncatedEdgeString = string.dropFirst().dropLast().trimmingCharacters(in: .whitespaces)
         let edgeComponents = truncatedEdgeString.components(separatedBy: ",")
-        guard edgeComponents.isEmpty == false else {
-            return nil
-        }
-
         let edgeInfoTuples = _parseEdgeComponents(edgeComponents)
+
         guard edgeInfoTuples.isEmpty == false else {
             return nil
         }
@@ -619,18 +608,6 @@ extension Graph {
         }
 
         guard components.count == 2, let bookends = components.bookends() else {
-            if let first = components.first, components.count < 2 {
-                let (label, labelPositionOptional) = findLabel(in: first)
-                let nodeValueEndPosition = (labelPositionOptional ?? first.count)
-                guard
-                    let nodeValue = first.substring(in: 0..<nodeValueEndPosition),
-                    let concreteNodeValue = T.init(nodeValue) else {
-                    return nil
-                }
-
-                return (from: concreteNodeValue, to: nil, label)
-            }
-
             return nil
         }
 

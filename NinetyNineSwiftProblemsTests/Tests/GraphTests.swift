@@ -70,6 +70,25 @@ struct TestGraphData<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint 
     }
 }
 
+class RejectingLosslessInitialization : LosslessStringConvertible, Hashable {
+    static func == (lhs: RejectingLosslessInitialization, rhs: RejectingLosslessInitialization) -> Bool {
+        return false
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(["ABCDEFGHIJKLMNOPQRSTUVWXYZ"].randomElement())
+    }
+
+    required init?(_ description: String) {
+        print("Trying to initialize a \(type(of: self))")
+        return nil
+    }
+
+    var description: String {
+        return "\(type(of: self))"
+    }
+}
+
 typealias StringGraph = Graph<String, String>
 typealias StringDigraph = Digraph<String, String>
 
@@ -289,9 +308,17 @@ class GraphTests : XCTestCase {
         graph = StringGraph(string: "[b-c-d, g-c]")
         XCTAssertNil(graph)
 
+        XCTAssertNil(Graph<RejectingLosslessInitialization, String>(string: "[b]"))
+        XCTAssertNil(Graph<RejectingLosslessInitialization, String>(string: "[b-c]"))
+        XCTAssertNotNil(StringGraph(string: "[a-b]"))
+        XCTAssertNotNil(StringGraph(string: "[a-b, b-c]"))
+
+        XCTAssertNil(StringGraph(string: ""))
+        XCTAssertNil(StringGraph(string: "[]"))
+
         graph = StringGraph(string: "[d]")
         XCTAssertNil(graph?.edges)
-        XCTAssertEqual(graph?.nodes!.map { $0.value }, ["d"])
+        XCTAssertEqual(graph?.nodes.map { $0.value }, ["d"])
 
         // Use a string with duplicate and opposite edges to test for correctness.
         graph = StringGraph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g, g-h]")
@@ -650,6 +677,7 @@ class GraphTests : XCTestCase {
         XCTAssertTrue(StringGraph(string: "[a-b, b-c, d]")!.isBipartite())
 
         XCTAssertFalse(StringGraph(string: "[a-b, b-c, c-a]")!.isBipartite())
+        XCTAssertFalse(StringGraph(string: "[a-b, b-c, c-a, d-a, c-d]")!.isBipartite())
         XCTAssertFalse(StringGraph(string: "[a-b, b-c, d, e-f, f-g, g-e, h]")!.isBipartite())
     }
 
