@@ -53,11 +53,7 @@ extension Tree {
     }
     
     class func makeHeightBalancedTrees(nodes: Int, value: T) -> List<Tree<T>>? {
-        guard let result = _makeHeightBalancedTrees(nodes: nodes, value: value) else {
-            return nil
-        }
-    
-        return List(result)
+        return _makeHeightBalancedTrees(nodes: nodes, value: value).toList()
     }
     
     class func makeCompleteTree(nodes: Int, value: T) -> Tree<T>? {
@@ -539,13 +535,9 @@ extension Tree {
 
     // MARK: - Tree Builder Functions
 
-    private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>]? {
+    private class func _makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>] {
         let range = minimumHeightForBalancedTree(withNodeCount: nodes)...maximumHeightForBalancedTree(withNodeCount: nodes)
-        
-        guard range.count > 0 else {
-            return nil
-        }
-        
+
         return range
             .compactMap { _makeHeightBalancedTrees(height: $0, value: value) }
             .flatMap { $0 }
@@ -639,10 +631,6 @@ fileprivate func minimumNodesForBalancedTree(ofHeight height: Int) -> Int {
     default:
         return minimumNodesForBalancedTree(ofHeight: height - 1) + minimumNodesForBalancedTree(ofHeight: height - 2) + 1
     }
-}
-
-fileprivate func maximumNodesForBalancedTree(ofHeight height: Int) -> Int {
-     return 2 * height - 1
 }
 
 fileprivate func minimumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
