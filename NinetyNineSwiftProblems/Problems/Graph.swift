@@ -378,9 +378,6 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
 
     private func isGraphBipartite() -> Bool {
         let nodes = nodesByDegree().reversed()
-        guard !nodes.isEmpty else {
-            return false
-        }
 
         func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
             switch (evenPending, oddPending) {
