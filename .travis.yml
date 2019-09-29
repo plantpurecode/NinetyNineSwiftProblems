@@ -9,4 +9,5 @@ install: bundle install
 addons:
   homebrew:
     brewfile: Brewfile.travis
-script: ./.travis_build.sh && ./.travis_gather_and_upload_coverage.sh
+script: ./.travis_build.sh
+after_success: ./.travis_gather_and_upload_coverage.sh
