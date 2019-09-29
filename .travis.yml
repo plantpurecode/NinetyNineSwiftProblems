@@ -1,13 +1,20 @@
 notifications:
   slack:
     secure: VqQIQ/xyBx/n39ZNRdDXKv2eXhzswbT8m7HFrTWc8cnP58BDPcPVCAzPaDgVneirhzKcCVWDJgEOsGteatOevsNHpDkBpP2R5qXmQa7mV3uVR9/3Xp5WwYbQCrTfa4aTPwCqTMBpVn/6Q4ecVTmAMoAi96qykfJaKzGMw74raw+dTHyeMe5Hnpzcbo8irkZxb7yoJHzN35e1qAb/mrBvuG0/WT3HEQCR7VhQAUNpAFbh6w7yCzrELQ1IB53T2nZjUcvbKjl7s5N32hWUKRxeBu8kTlwMP4ywCf4fCE7IY2d2NHve6O+M4jr5qj5hVHJEet70GGpEXPbT0KzhUhW8cn+MgGE2KJ7O3pibx6EITbtcO7UV/PXC77Ls2KmdaASd/dkbrZFh1sg55iSUlQFdOSo1s/SJ3MD6tuhTjCS8U4U5WL3/G5/clapms70KjG467jQtzaiU5CZCNdRiQflgoh1K3CODVbHxwe0oN2T+qBxSQ0rPknx4LvPvVLqVusXCz6d+oRuMuWY9ESbiinYdn1vz/nKsNril/bLOJhgmcOmyE0L7s0uuddPcpOdvfr92noMMPCm9W4GnZek2H+z8zsQaZQ+OkR7F4k5ABP5+9hic3MWrawghm2iPNBne4KqnkvZcaiEPfomlSbBL+tA4edQ5BkmynjI/ilm+wJl58kI=
-cache: bundler
+cache:
+  bundler: true
+  directories:
+      - /usr/local/Cellar/xcbeautify
+      - /usr/local/opt/xcbeautify
 language: swift
 os: osx
 osx_image: xcode11
-install: bundle install
 addons:
   homebrew:
     brewfile: Brewfile.travis
-script: ./.travis_build.sh
+before_install:
+  - bundle install
+  - chmod 755 -R /usr/local/Cellar
+  - chmod 755 -R /usr/local/opt
+script: ./.travis_build_and_test.sh
 after_success: ./.travis_gather_and_upload_coverage.sh
