@@ -13,7 +13,7 @@ git:
 addons:
   homebrew:
     brewfile: Brewfile.travis
-before_install:
-  - bundle install
+before_install: rvm use $RVM_RUBY_VERSION
+install: bundle install
 script: ./.travis_build_and_test.sh
-after_success: ./.travis_gather_and_upload_coverage.sh
+after_success: slather
