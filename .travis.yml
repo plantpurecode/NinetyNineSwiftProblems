@@ -14,6 +14,6 @@ addons:
   homebrew:
     brewfile: Brewfile.travis
 before_install: rvm use $RVM_RUBY_VERSION
-install: bundle install
+install: bundle install --without=documentation
 script: ./.travis_build_and_test.sh
 after_success: slather
