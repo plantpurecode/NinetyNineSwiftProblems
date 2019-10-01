@@ -8,6 +8,10 @@
 
 import Foundation
 
+func either<T>(_ lhs: Optional<T>, _ rhs: T) -> T {
+    return lhs.or(rhs)
+}
+
 extension Optional {
     func or(_ value: Wrapped) -> Wrapped {
         switch self {

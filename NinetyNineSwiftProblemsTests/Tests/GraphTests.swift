@@ -467,23 +467,31 @@ class GraphTests : XCTestCase {
     }
 
     func testGraphToAdjacentForm() {
-        let expectedResult:List<(String, List<(String, Int?)>?)> = [
+        typealias ResultType = List<(String, List<(String, Int?)>?)>
+        func testAdjacentForm(_ expected: ResultType, result: ResultType?, line: UInt = #line) {
+            XCTAssertNotNil(result, file: #file, line: line)
+            XCTAssertEqual(expected.length, result!.length, file: #file, line: line)
+
+            for (er, r) in zip(expected, result!) {
+                XCTAssertEqual(er.0, r.0, file: #file, line: line)
+                XCTAssertEqual(er.1?.values.first?.0, r.1?.values.first?.0, file: #file, line: line)
+                XCTAssertEqual(er.1?.values.first?.1, r.1?.values.first?.1, file: #file, line: line)
+                XCTAssertEqual(er.1?.values.last?.0, r.1?.values.last?.0, file: #file, line: line)
+                XCTAssertEqual(er.1?.values.last?.1, r.1?.values.last?.1, file: #file, line: line)
+            }
+        }
+
+        testAdjacentForm([
             ("p", List<(String, Int?)>(("q", 9), ("m", 5))),
             ("m", List<(String, Int?)>(("q", 7))),
             ("k", nil),
             ("q", nil)
-        ].toList()!
+        ].toList()!, result: Graph<String, Int>(string: "[p-q/9, m-q/7, k, p-m/5]")!.toAdjacentForm())
 
-        let result = Graph<String, Int>(string: "[p-q/9, m-q/7, k, p-m/5]")!.toAdjacentForm()
-        XCTAssertEqual(expectedResult.length, result.length)
-
-        for (er, r) in zip(expectedResult, result) {
-            XCTAssertEqual(er.0, r.0)
-            XCTAssertEqual(er.1?.values.first?.0, r.1?.values.first?.0)
-            XCTAssertEqual(er.1?.values.first?.1, r.1?.values.first?.1)
-            XCTAssertEqual(er.1?.values.last?.0, r.1?.values.last?.0)
-            XCTAssertEqual(er.1?.values.last?.1, r.1?.values.last?.1)
-        }
+        // No edges? No adjacency list!
+        let nodeOnlyGraph = StringGraph(string: "[p,q,r,s]")!
+        XCTAssertEqual(nodeOnlyGraph.nodes.length, 4)
+        XCTAssertNil(nodeOnlyGraph.toAdjacentForm())
     }
 
     func testDigraphToAdjacentForm() {
@@ -495,15 +503,21 @@ class GraphTests : XCTestCase {
         ].toList()!
 
         let result = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]")!.toAdjacentForm()
-        XCTAssertEqual(expectedResult.length, result.length)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(expectedResult.length, result!.length)
 
-        for (er, r) in zip(expectedResult, result) {
+        for (er, r) in zip(expectedResult, result!) {
             XCTAssertEqual(er.0, r.0)
             XCTAssertEqual(er.1?.values.first?.0, r.1?.values.first?.0)
             XCTAssertEqual(er.1?.values.first?.1, r.1?.values.first?.1)
             XCTAssertEqual(er.1?.values.last?.0, r.1?.values.last?.0)
             XCTAssertEqual(er.1?.values.last?.1, r.1?.values.last?.1)
         }
+
+        // No edges? No adjacency list!
+        let nodeOnlyGraph = StringDigraph(string: "[p,q,r,s]")!
+        XCTAssertEqual(nodeOnlyGraph.nodes.length, 4)
+        XCTAssertNil(nodeOnlyGraph.toAdjacentForm())
     }
 
     func testOrphanNodes() {
@@ -572,6 +586,9 @@ class GraphTests : XCTestCase {
 
         let invalidPaths = [graph?.findPaths(from: "p", to: "k"), graph?.findPaths(from: "k", to: "m")]
         invalidPaths.forEach { XCTAssertNil($0) }
+
+        let edgelessGraph = StringGraph(string: "[g,h,i]")!
+        XCTAssertNil(edgelessGraph.findPaths(from: "g", to: "i"))
     }
 
     func testDigraphFindPaths() {
@@ -593,6 +610,9 @@ class GraphTests : XCTestCase {
             ["f", "c", "b", "f"],
             ["f", "b", "c", "f"]
         ])
+
+        let edgelessGraph = StringGraph(string: "[b,c,f]")!
+        XCTAssertNil(edgelessGraph.findCycles(from: "f"))
 
         let uncycledGraph = StringGraph(string: "[b-c, f-c, g-h, d, k-f]")!
         XCTAssertNil(uncycledGraph.findCycles(from: "f"))
@@ -641,7 +661,7 @@ class GraphTests : XCTestCase {
 
     func testConnectedComponents() {
         let graph = StringGraph(string: "[a-b, c]")!
-        let split = graph.split()!.values
+        let split = graph.split().values
 
         _testGraph(split.first!,
                    nodes: ["a", "b"],
@@ -719,6 +739,19 @@ class GraphTests : XCTestCase {
             k
         }
         """)
+
+        let dot5 = StringDigraph(string: "[p,m]")!.DOTRepresentation()
+        XCTAssertEqual(dot5, """
+        digraph G {
+            p
+            m
+        }
+        """)
+    }
+
+    func testEdgePartnerWithUnrelatedNode() {
+        let edge = StringDigraph(string: "[p>q/9]")!.edges!.values.first!
+        XCTAssertNil(edge.partner(for: Graph.Node(value: "a")))
     }
 }
 

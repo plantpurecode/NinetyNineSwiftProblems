@@ -144,51 +144,38 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return (nodes.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
     }
 
-    func toAdjacentForm() -> List<(T, List<(T, U?)>?)> {
+    func toAdjacentForm() -> List<(T, List<(T, U?)>?)>? {
+        guard let edges = edges else {
+            return nil
+        }
+
         var adjacentForm = [(T, [(T, U?)]?)]()
 
         // Process edges
-        for edge in edges?.values ?? [] {
+        for edge in edges {
             let edgePairToAdd = (edge.to.value, edge.label)
-
-            // Find the index of the occurrence of this source node, if it exists
-            let sourceEdgePairIndex = adjacentForm.firstIndex(where: { $0.0 == edge.from.value })
-
-            // The index of the final nodes to be stored
-            var targetNodeIndex = sourceEdgePairIndex
+            let targetNodeIndex = adjacentForm.firstIndex(where: { $0.0 == edge.from.value }) ?? adjacentForm.endIndex
 
             // The pre-existing nodes for this edge's source
             var existingNodesForSource = [(T, U?)]()
 
             // Is there an existing pair with this source node?
-            if let index = targetNodeIndex {
-                let existingPair = adjacentForm[index]
-
-                existingNodesForSource = existingPair.1 ?? []
-            } else {
-                // Set the index to be the last == append
-                targetNodeIndex = adjacentForm.endIndex
-            }
-
-            guard let tni = targetNodeIndex else {
-                continue
+            if adjacentForm.isEmpty == false, targetNodeIndex < adjacentForm.count, let existingPairAdjacencyList = adjacentForm[targetNodeIndex].1 {
+                existingNodesForSource.append(contentsOf: existingPairAdjacencyList)
             }
 
             let concatenatedNodes = existingNodesForSource + [edgePairToAdd]
             let adjacentTuple = (edge.from.value, Optional(concatenatedNodes))
-            if tni >= adjacentForm.count {
+            if targetNodeIndex >= adjacentForm.count {
                 adjacentForm.append(adjacentTuple)
             } else {
-                adjacentForm[tni] = adjacentTuple
+                adjacentForm[targetNodeIndex] = adjacentTuple
             }
         }
 
         // Process the orphan nodes
-        for orphan in orphanNodes?.values ?? [] {
-            adjacentForm.append((orphan.value, nil))
-        }
-
-        return adjacentForm.map { ($0.0, $0.1?.toList()) }.toList()!
+        adjacentForm.append(contentsOf: either(orphanNodes?.values.map { ($0.value, nil) }, []))
+        return adjacentForm.map { ($0.0, $0.1?.toList()) }.toList()
     }
 
     func findPaths(from: T, to: T, withEdges filteredEdges: [Edge]? = nil) -> List<List<T>>? {
@@ -210,10 +197,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                 }
 
                 let first = subpaths.remove(at: 0).values
-                guard let insertionList = ([edge.from.value] + first).toList() else {
-                    continue
-                }
-
+                let insertionList = ([edge.from.value] + first).toList()!
                 subpaths.insert(insertionList, at: 0)
                 paths += subpaths.map { $0.values }
             }
@@ -236,9 +220,10 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         }.map { [from] + $0.values }
 
         if type(of: self).isDirected == false {
-            paths += targets.flatMap {
-                findPaths(from: from, to: $0)?.values ?? []
-            }.map { $0.values + [from] }
+            paths += targets
+            .compactMap { findPaths(from: from, to: $0)?.values }
+            .flatMap { $0 }
+            .map { $0.values + [from] }
 
             paths += paths.map {
                 $0.reversed()
@@ -272,7 +257,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
         return nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
     }
 
-    func split() -> List<Graph<T, U>>? {
+    func split() -> List<Graph<T, U>> {
         func findConnected(within potentials: [Node], cache: [Node]) -> [Node] {
             guard let (head, tails) = potentials.splitHeadAndTails() else {
                 return cache
@@ -291,14 +276,13 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             }
 
             let connectedNodes = findConnected(within: [head], cache: [])
-            guard let adjacent = adjacentForm(from: connectedNodes) else {
-                return []
-            }
+            let adjacent = adjacentForm(from: connectedNodes)
 
             return [adjacent] + splitRecursive(remaining: remaining.removingAllContained(in: connectedNodes))
         }
 
-        return splitRecursive(remaining: nodes.values).toList()
+        // Since there can not be an empty node list in a graph, we can force-unwrap this toList() call.
+        return splitRecursive(remaining: nodes.values).toList()!
     }
 
     func coloredNodes() -> List<(T, Int)>? {
@@ -330,17 +314,14 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     func isBipartite() -> Bool {
-        guard let splitGraph = split() else {
-            return false
-        }
-
-        return splitGraph.values.allSatisfy { $0.isGraphBipartite() }
+        return split().values.allSatisfy { $0.isGraphBipartite() }
     }
 
     func DOTRepresentation() -> String {
+        let directed = type(of: self).isDirected
         let spacer = "    "
-        let identifier = "\(type(of: self).isDirected ? "di" : "")graph"
-        let edgeJoiner = type(of: self).isDirected ? "->" : "--"
+        let identifier = "\(directed ? "di" : "")graph"
+        let edgeJoiner = directed ? "->" : "--"
         let edgeDescriptions = edges?.map {
             var components = [
                 $0.from.value.description,
@@ -353,9 +334,9 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             }
 
             return spacer + components.joined(separator: " ")
-        }.joined(separator: "\n") ?? ""
+        }.joined(separator: "\n")
 
-        var dotDataComponents = [edgeDescriptions]
+        var dotDataComponents = edgeDescriptions.map { [$0] } ?? []
         let completelyOrphaned = completelyOrphanedNodes
         if completelyOrphaned.isEmpty == false {
             dotDataComponents.append(completelyOrphaned.map { spacer + $0.value.description }.joined(separator: "\n"))
@@ -377,8 +358,6 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     private func isGraphBipartite() -> Bool {
-        let nodes = nodesByDegree().reversed()
-
         func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
             switch (evenPending, oddPending) {
             case (_, let odd) where !odd.isEmpty:
@@ -402,10 +381,10 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             }
         }
 
-        return isBipartiteRecursive(oddPending: [], evenPending: nodes, oddVisited: Set(), evenVisited: Set())
+        return isBipartiteRecursive(oddPending: [], evenPending: nodesByDegree().values, oddVisited: Set(), evenVisited: Set())
     }
 
-    private func adjacentForm(from nodes: [Node]) -> Self? {
+    private func adjacentForm(from nodes: [Node]) -> Self {
         return .init(adjacentLabeledList: nodes.map { n in
             return (n.value, n.adjacentEdges.compactMap { e in
                 guard let target = edgeTarget(e, node: n) else {
