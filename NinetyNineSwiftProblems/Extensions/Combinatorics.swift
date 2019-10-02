@@ -44,7 +44,7 @@ extension Array {
 
 fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else {
-        return [[]]
+        return []
     }
     
     guard taking > 1 else {
@@ -64,7 +64,7 @@ fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]]
 
 fileprivate func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
-    guard elements.count > 0 && taking > 0 else { return [[]] }
+    guard elements.count > 0 && taking > 0 else { return [] }
     
     guard taking > 1 else {
         return elements.map { [$0] }
@@ -81,7 +81,7 @@ fileprivate func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[
 
 fileprivate func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
-    guard elements.count >= taking && taking > 0 else { return [[]] }
+    guard elements.count >= taking && taking > 0 else { return [] }
     
     guard taking > 1 else {
         return elements.map { [$0] }
@@ -97,7 +97,7 @@ fileprivate func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[
 }
 
 fileprivate func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
-    guard elements.count >= 0 && taking > 0 else { return [[]] }
+    guard elements.count >= 0 && taking > 0 else { return [] }
     guard taking > 1 else {
         return elements.map {[$0]}
     }

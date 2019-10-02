@@ -22,6 +22,7 @@
 		526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6EE218AD9B60047835E /* Arithmetic.swift */; };
 		526EA6F3218ADA750047835E /* ArithmeticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6F2218ADA750047835E /* ArithmeticTests.swift */; };
 		526EA6FB218B00E70047835E /* SetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA6FA218B00E70047835E /* SetExtensions.swift */; };
+		527301C22344BBF000EB4E8B /* CombinatoricsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527301C12344BBF000EB4E8B /* CombinatoricsTests.swift */; };
 		52B3AE9621FA9DD900506491 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B3AE9121FA9DD900506491 /* AppDelegate.swift */; };
 		52B3AE9821FA9DD900506491 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 52B3AE9421FA9DD900506491 /* Assets.xcassets */; };
 		52B3AE9921FA9E2D00506491 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 52B3AE8F21FA9DD900506491 /* MainMenu.xib */; };
@@ -74,6 +75,7 @@
 		526EA6EE218AD9B60047835E /* Arithmetic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arithmetic.swift; sourceTree = "<group>"; };
 		526EA6F2218ADA750047835E /* ArithmeticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArithmeticTests.swift; sourceTree = "<group>"; };
 		526EA6FA218B00E70047835E /* SetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtensions.swift; sourceTree = "<group>"; };
+		527301C12344BBF000EB4E8B /* CombinatoricsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinatoricsTests.swift; sourceTree = "<group>"; };
 		52B3AE9021FA9DD900506491 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = MainMenu.xib; sourceTree = "<group>"; };
 		52B3AE9121FA9DD900506491 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = HostApp/AppDelegate.swift; sourceTree = "<group>"; };
 		52B3AE9221FA9DD900506491 /* NinetyNineSwiftProblems.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = NinetyNineSwiftProblems.entitlements; path = HostApp/NinetyNineSwiftProblems.entitlements; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				526730C7220961DC0010DE44 /* GraphTests.swift */,
 				520D3730233EF9CF00054A7F /* CollectionExtensionTests.swift */,
 				52F2D45F234005A3008E3C95 /* StringExtensionTests.swift */,
+				527301C12344BBF000EB4E8B /* CombinatoricsTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -365,6 +368,7 @@
 				52CAC86B21BC25D90066F57A /* LogicTests.swift in Sources */,
 				52158CFD21C4002000B4980E /* TreeTests.swift in Sources */,
 				5222F36D21874765001C2B87 /* ListTests.swift in Sources */,
+				527301C22344BBF000EB4E8B /* CombinatoricsTests.swift in Sources */,
 				520D3731233EF9CF00054A7F /* CollectionExtensionTests.swift in Sources */,
 				52F2D460234005A3008E3C95 /* StringExtensionTests.swift in Sources */,
 				524E310B21FE671A0014D5B2 /* MultiwayTreeTests.swift in Sources */,

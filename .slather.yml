@@ -3,5 +3,3 @@
 coverage_service: coveralls
 xcodeproj: NinetyNineSwiftProblems.xcodeproj
 scheme: NinetyNineSwiftProblems
-ignore:
-  - NinetyNineSwiftProblems/Extensions/Combinatorics.swift
