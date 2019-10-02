@@ -63,9 +63,9 @@ extension MTree where T == String {
             }
 
             let endPosition = nextPosition(fromPosition: position + 1, atNestingLevel: 1)
-            let arrayOfOneSubstring = string.substring(in: position..<endPosition - 1).flatMap { [$0] } ?? []
+            let substring = string.substring(in: position..<endPosition - 1)!
 
-            return arrayOfOneSubstring + extractChildren(atPosition: endPosition)
+            return [substring] + extractChildren(atPosition: endPosition)
         }
 
         let children = extractChildren(atPosition: 1).compactMap { MTree(string: $0) }
@@ -124,30 +124,22 @@ extension MTree where T == String {
             return lispyRepresentation.scan(for: { $0 != " " }, fromIndex: position)
         }
 
-        func substrings(at position: Int) -> [String] {
+        func nextSubstring(at position: Int) -> String? {
             let character = lispyRepresentation.character(atIndex: position)
 
             guard position < lispyRepresentation.count,
                 character !=  ")",
-                let endPosition = nextSpace(at: position),
-                let substring = lispyRepresentation.substring(in: position..<endPosition) else {
-                return []
+                let endPosition = nextSpace(at: position) else {
+                return nil
             }
 
-            var additionalSubstrings = [String]()
-            if let nextNonSpaceIndex = nextNonSpace(at: endPosition),
-                let endCharacter = lispyRepresentation.character(atIndex: endPosition),
-                endCharacter != ")" {
-                additionalSubstrings = substrings(at: nextNonSpaceIndex)
-            }
-
-            return [substring] + additionalSubstrings
+            return lispyRepresentation.substring(in: position..<endPosition)!
         }
 
         let firstChar = lispyRepresentation.character(atIndex: 0)
 
         guard firstChar == "(" else {
-            guard firstChar != " " else {
+            guard firstChar != " ", firstChar != ")" else {
                 return nil
             }
 
@@ -163,7 +155,11 @@ extension MTree where T == String {
             return nil
         }
 
-        self.init(String(value), List(substrings(at: nextNonSpaceIndex).compactMap { MTree(fromLispyRepresentation:$0) }))
+        guard let next = nextSubstring(at: nextNonSpaceIndex) else {
+            return nil
+        }
+
+        self.init(String(value), List([MTree(fromLispyRepresentation:next)].compactMap { $0 }))
     }
 }
 
