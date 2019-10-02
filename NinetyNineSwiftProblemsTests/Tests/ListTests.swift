@@ -43,8 +43,8 @@ class ListTests : XCTestCase {
     
     func testSubscripting() {
         let values = defaultList.values
-        for (i, _) in values.enumerated() {
-            XCTAssertEqual(defaultList[i]?.value, values[i])
+        for (i, value) in values.enumerated() {
+            XCTAssertEqual(defaultList[i]?.value, value)
         }
         
         // Shouldn't allow subscripting above length
