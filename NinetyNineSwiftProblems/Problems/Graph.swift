@@ -594,7 +594,8 @@ extension Graph {
         let (label, labelPositionOptional) = findLabel(in: toNodeValue)
 
         if let position = labelPositionOptional {
-            toNodeValue = toNodeValue.substring(in: 0..<position) ?? toNodeValue
+            // OK to force-unwrap here because we know the label position is valid
+            toNodeValue = toNodeValue.substring(in: 0..<position)!
         }
 
         guard let concreteFromValue = T.init(fromNodeValue) else {
