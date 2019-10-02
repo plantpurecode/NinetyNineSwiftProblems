@@ -114,13 +114,7 @@ extension Int {
             return true
         }
 
-        for i in 2...Int(Double(self).squareRoot()) {
-            if self % i == 0 {
-                return false
-            }
-        }
-        
-        return true
+        return (2...Int(Double(self).squareRoot())).filter { self % $0 == 0 }.isEmpty
     }
     
     func isCoprimeTo(_ other: Int) -> Bool {
