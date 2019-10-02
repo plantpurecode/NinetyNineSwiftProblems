@@ -80,7 +80,6 @@ class RejectingLosslessInitialization : LosslessStringConvertible, Hashable {
     }
 
     required init?(_ description: String) {
-        print("Trying to initialize a \(type(of: self))")
         return nil
     }
 

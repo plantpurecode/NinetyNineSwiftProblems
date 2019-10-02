@@ -28,8 +28,12 @@ extension Tree : CustomStringConvertible {
     var description: String {
         let joinedChildDescriptions = [left?.description ?? "", right?.description ?? ""].joined(separator: ",")
         let childValueDescription = isLeaf == false ? "(\(joinedChildDescriptions))" : ""
-        
-        return "\(value)\(childValueDescription)"
+        var selfDescription = "\(value)"
+        if let this = self as? PositionedTree {
+            selfDescription += "{x: \(this.x), y: \(this.y)}"
+        }
+
+        return "\(selfDescription)\(childValueDescription)"
     }
 }
 
@@ -558,20 +562,18 @@ extension Tree {
                 return maxHeightSubtree.map { r in
                     Tree(value, l, r)
                 }
-            } + maxHeightSubtree.flatMap { full in
+            } + maxHeightSubtree.compactMap { full in
                 return minHeightSubtree.flatMap { short in
                     return short.flatMap {
                         [Tree(value, full, $0), Tree(value, $0, full)]
                     }
-                } ?? []
-            }
+                }
+            }.flatMap { $0 }
         }
     }
 
     private class func _makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
         switch n {
-        case 0:
-            return []
         case 1:
             return [Tree(value)]
         case 2:
@@ -584,7 +586,7 @@ extension Tree {
                     return Tree(value, left, right)
                 }
             }
-        case n where n.even:
+        case n where n > 0 && n.even:
             let lesser = _makeBalancedTrees(nodes: (n - 1) / 2, value: value)
             let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
 
@@ -645,5 +647,5 @@ fileprivate func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> I
     return Array((1...).prefix {
         let nodes = minimumNodesForBalancedTree(ofHeight: $0)
         return nodes <= nodeCount
-    }).last ?? 0
+    }).last!
 }

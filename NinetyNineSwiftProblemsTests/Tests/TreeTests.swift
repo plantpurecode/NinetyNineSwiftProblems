@@ -121,7 +121,6 @@ class TreeTests: XCTestCase {
             return
         }
         
-        print("Found \(res.length) height balanced trees with 15 nodes")
         XCTAssertTrue(res.values.allSatisfy { $0.heightBalanced })
     }
     
@@ -212,25 +211,13 @@ class TreeTests: XCTestCase {
     
     func testTreeLayout3() {
         let test = Tree("a", Tree("b", nil, Tree("c")), Tree("d")).layoutBinaryTree3()!
-        print(test)
-        
-        XCTAssertEqual(test.x, 2)
-        XCTAssertEqual(test.y, 1)
-        XCTAssertEqual(test.value, "a")
-        
-        XCTAssertEqual((test.left as! PositionedTree<String>).x, 1)
-        XCTAssertEqual((test.left as! PositionedTree<String>).y, 2)
-        XCTAssertEqual((test.left as! PositionedTree<String>).value, "b")
-        
-        XCTAssertNil((test.left as! PositionedTree<String>).left)
-        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).x, 2)
-        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).y, 3)
-        XCTAssertEqual(((test.left as! PositionedTree<String>).right as! PositionedTree).value, "c")
-        
-        XCTAssertEqual((test.right as! PositionedTree<String>).x, 3)
-        XCTAssertEqual((test.right as! PositionedTree<String>).y, 2)
-        XCTAssertEqual((test.right as! PositionedTree<String>).value, "d")
-        
+        let test2 = Tree("a", Tree("b", Tree("a"), Tree("c", nil, Tree("e"))), Tree("d")).layoutBinaryTree3()!
+        let test3 = Tree("a", Tree("b", Tree("a", Tree("e")), Tree("c")), Tree("d")).layoutBinaryTree3()!
+
+        XCTAssertEqual(test.description, "a{x: 2, y: 1}(b{x: 1, y: 2}(,c{x: 2, y: 3}),d{x: 3, y: 2})")
+        XCTAssertEqual(test2.description, "a{x: 3, y: 1}(b{x: 2, y: 2}(a{x: 1, y: 3},c{x: 3, y: 3}(,e{x: 4, y: 4})),d{x: 4, y: 2})")
+        XCTAssertEqual(test3.description, "a{x: 4, y: 1}(b{x: 3, y: 2}(a{x: 2, y: 3}(e{x: 3, y: 4},),c{x: 4, y: 3}),d{x: 5, y: 2})")
+
         XCTAssertNil(Tree("a").layoutBinaryTree3())
     }
     
