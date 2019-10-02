@@ -23,8 +23,7 @@ class CombinatoricsTests: XCTestCase {
     func testNonRepeatingCombinations() {
         XCTAssertEqual(testCollection.combinations(taking: 2),
                        [["a", "b"], ["a", "c"], ["b", "c"]])
-        XCTAssertEqual(testCollection.permutations(taking: nil, repeating: true),
-                       [["a", "a", "a"], ["a", "a", "b"], ["a", "a", "c"], ["a", "b", "a"], ["a", "b", "b"], ["a", "b", "c"], ["a", "c", "a"], ["a", "c", "b"], ["a", "c", "c"], ["b", "a", "a"], ["b", "a", "b"], ["b", "a", "c"], ["b", "b", "a"], ["b", "b", "b"], ["b", "b", "c"], ["b", "c", "a"], ["b", "c", "b"], ["b", "c", "c"], ["c", "a", "a"], ["c", "a", "b"], ["c", "a", "c"], ["c", "b", "a"], ["c", "b", "b"], ["c", "b", "c"], ["c", "c", "a"], ["c", "c", "b"], ["c", "c", "c"]])
+        XCTAssertEqual(testCollection.combinations(), [["a", "b", "c"]])
     }
 
     func testRepeatingPermutations() {
