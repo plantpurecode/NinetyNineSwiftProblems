@@ -15,5 +15,5 @@ addons:
   homebrew:
     brewfile: Brewfile.travis
 before_install: rvm use $RVM_RUBY_VERSION
-script: ./.travis_build_and_test.sh
-after_success: slather
+script: set -o pipefail; xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" build test 2>&1 | xcbeautify
+after_success: bundle exec slather
