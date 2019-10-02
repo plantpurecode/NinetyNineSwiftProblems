@@ -5,6 +5,7 @@ Solutions to the [Ninety-Nine Swift Problems](https://www.enekoalonso.com/projec
 [![License](https://img.shields.io/github/license/plantpurecode/NinetyNineSwiftProblems)](https://github.com/plantpurecode/NinetyNineSwiftProblems/blob/master/LICENSE)
 [![Build Status](https://img.shields.io/travis/plantpurecode/NinetyNineSwiftProblems)](https://travis-ci.org/plantpurecode/NinetyNineSwiftProblems)
 [![Code Coverage](https://img.shields.io/coveralls/github/plantpurecode/NinetyNineSwiftProblems)](https://coveralls.io/github/plantpurecode/NinetyNineSwiftProblems)
+[![Code Quality](https://api.codacy.com/project/badge/Grade/4ef31645ec0648fe8e8ea7f1fc296f0d)](https://www.codacy.com/manual/plantpurecode/NinetyNineSwiftProblems?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=plantpurecode/NinetyNineSwiftProblems&amp;utm_campaign=Badge_Grade)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 [![](https://img.shields.io/static/v1?label=depends-on&message=xcode11&color=informational)](#)
