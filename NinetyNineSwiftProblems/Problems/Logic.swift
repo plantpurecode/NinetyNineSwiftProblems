@@ -161,7 +161,7 @@ private func toBinary(number: Int, ofLength length: Int) -> String {
     
     while x > 0 {
         binary.append(x % 2)
-        x = x / 2
+        x /= 2
     }
     
     let padding = String(repeating: "0", count: length - binary.count)
