@@ -15,15 +15,15 @@ extension Collection {
         if repeating {
             return repeatingCombinations(ArraySlice(self), taking: taking ?? count)
         }
-        
+
         return nonRepeatingCombinations(ArraySlice(self), taking: taking ?? count)
     }
-    
+
     func permutations(taking: Int? = nil, repeating: Bool = false) -> [[Element]] {
         if repeating {
             return repeatingPermutations(ArraySlice(self), taking: taking ?? count)
         }
-        
+
         return nonRepeatingPermutations(ArraySlice(self), taking: taking ?? count)
     }
 }
@@ -35,41 +35,41 @@ extension Array {
         guard n > 0 else {
             return
         }
-        
+
         self += (0..<n).map { _ in padding }
     }
 }
 
 // MARK: - Private Combinatoric functions
 
-fileprivate func repeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
-    guard elements.count >= 0 && taking > 0 else {
+private func repeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
+    guard taking > 0 else {
         return []
     }
-    
-    guard taking > 1 else {
+
+    guard elements.isEmpty == false, taking > 1 else {
         return elements.map { [$0] }
     }
-    
+
     var reducedElements = elements
     return elements.reduce([[T]]()) { res, element in
         let combined = res + repeatingCombinations(reducedElements, taking: taking - 1).map {
             [element] + $0
         }
-        
+
         reducedElements.removeFirst()
         return combined
     }
 }
 
-fileprivate func nonRepeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
+private func nonRepeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
-    guard elements.count > 0 && taking > 0 else { return [] }
-    
+    guard elements.isEmpty == false && taking > 0 else { return [] }
+
     guard taking > 1 else {
         return elements.map { [$0] }
     }
-    
+
     return elements.enumerated().reduce([[T]]()) { res, tuple in
         var reducedElements = elements
         reducedElements.removeFirst(tuple.offset + 1)
@@ -79,14 +79,14 @@ fileprivate func nonRepeatingCombinations<T>(_ elements: ArraySlice<T>, taking: 
     }
 }
 
-fileprivate func nonRepeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
+private func nonRepeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
     guard elements.count >= taking && taking > 0 else { return [] }
-    
+
     guard taking > 1 else {
         return elements.map { [$0] }
     }
-    
+
     return elements.enumerated().reduce([[T]]()) { res, tuple in
         var reducedElements = elements
         reducedElements.remove(at: tuple.offset)
@@ -96,12 +96,12 @@ fileprivate func nonRepeatingPermutations<T>(_ elements: ArraySlice<T>, taking: 
     }
 }
 
-fileprivate func repeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
-    guard elements.count >= 0 && taking > 0 else { return [] }
-    guard taking > 1 else {
+private func repeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
+    guard taking > 0 else { return [] }
+    guard elements.isEmpty == false, taking > 1 else {
         return elements.map {[$0]}
     }
-    
+
     return elements.reduce([[T]]()) { res, element in
         return res + repeatingPermutations(elements, taking: taking - 1).map {
             [element] + $0

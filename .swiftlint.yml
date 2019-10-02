@@ -1,0 +1,49 @@
+disabled_rules: # rule identifiers to exclude from running
+  - identifier_name
+  - nesting
+  - function_parameter_count
+opt_in_rules:
+  - control_statement
+  - empty_count
+  - trailing_newline
+  - colon
+  - comma
+included: # paths to include during linting. `--path` is ignored if present.
+  - NinetyNineSwiftProblems
+  - NinetyNineSwiftProblemsTests
+
+# configurable rules can be customized from this configuration file
+# binary rules can set their severity level
+force_cast: warning # implicitly. Give warning only for force casting
+
+force_try:
+  severity: error # explicitly. Give warning only for force try
+
+type_body_length:
+  - 500 # warning
+  - 600 # error
+
+function_body_length:
+  - 50 # warning
+
+line_length:
+  - 230 # error
+
+# or they can set both explicitly
+file_length:
+  warning: 850
+  error: 1000
+
+large_tuple: # warn user when using 3 values in tuple, give error if there are 4
+   - 3
+   - 4
+
+# naming rules can set warnings/errors for min_length and max_length
+# additionally they can set excluded names
+type_name:
+  min_length: 4 # only warning
+  max_length: # warning and error
+    warning: 35
+    error: 40
+
+reporter: "xcode"

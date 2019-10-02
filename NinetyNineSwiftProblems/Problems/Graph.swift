@@ -11,8 +11,8 @@ import Foundation
 typealias GraphValueTypeConstraint = LosslessStringConvertible & Hashable
 typealias GraphLabelTypeConstraint = LosslessStringConvertible
 
-class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : CustomStringConvertible {
-    class Node : Hashable {
+class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStringConvertible {
+    class Node: Hashable {
         // MARK: Hashable
         func hash(into hasher: inout Hasher) {
             hasher.combine(value)
@@ -192,7 +192,8 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
                 paths.append([edge.from.value, edge.to.value])
             } else {
                 let subAcyclicEdges = edgesToTraverse.filter { $0.to.value != from }
-                guard var subpaths = findPaths(from: edge.to.value, to: to, withEdges: subAcyclicEdges)?.values, subpaths.isEmpty == false else {
+                guard var subpaths = findPaths(from: edge.to.value, to: to, withEdges: subAcyclicEdges)?.values,
+                    subpaths.isEmpty == false else {
                     continue
                 }
 
@@ -290,23 +291,23 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             guard let current = uncolored.first else {
                 return colored
             }
-            
+
             let newAdjacent = adjacent.union(current.neighbors?.values ?? [])
-            
+
             return computeColor(color,
                                 uncolored: uncolored.dropFirst().removingAllContained(in: newAdjacent),
                                 colored: [(current, color)] + colored,
                                 adjacent: newAdjacent)
         }
-        
+
         func coloredNodesRecursive(_ color: Int, uncolored: [Node], colored: [(Node, Int)] = []) -> [(Node, Int)] {
             guard uncolored.isEmpty == false else {
                 return colored
             }
-            
+
             let newColored = computeColor(color, uncolored: uncolored, colored: colored)
             let newUncolored = uncolored.removingAllContained(in: newColored.map { $0.0 })
-            
+
             return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
         }
 
@@ -358,7 +359,10 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
     }
 
     private func isGraphBipartite() -> Bool {
-        func isBipartiteRecursive(oddPending: [Node], evenPending: [Node], oddVisited: Set<Node>, evenVisited: Set<Node>) -> Bool {
+        func isBipartiteRecursive(oddPending: [Node],
+                                evenPending: [Node],
+                                oddVisited: Set<Node> = Set(),
+                                evenVisited: Set<Node> = Set()) -> Bool {
             switch (evenPending, oddPending) {
             case (_, let odd) where !odd.isEmpty:
                 let (oddHead, oddTail) = odd.splitHeadAndTails()!
@@ -381,7 +385,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             }
         }
 
-        return isBipartiteRecursive(oddPending: [], evenPending: nodesByDegree().values, oddVisited: Set(), evenVisited: Set())
+        return isBipartiteRecursive(oddPending: [], evenPending: nodesByDegree().values)
     }
 
     private func adjacentForm(from nodes: [Node]) -> Self {
@@ -474,7 +478,7 @@ extension Graph {
                 edgeStrings.append(nodeValues.reversed().joined(separator: _edgeSeparator))
             }
 
-            guard _allEdges.intersection(Set(edgeStrings)).count == 0 else {
+            guard _allEdges.isDisjoint(with: edgeStrings) else {
                 return nil
             }
 
@@ -491,8 +495,8 @@ extension Graph {
             return _nodeCache[value]
         }
 
-        private static func _generateNodeCache(_ nodes: [Node]) -> [T : Node] {
-            return nodes.reduce([T:Node]()) { (res, node) -> [T:Node] in
+        private static func _generateNodeCache(_ nodes: [Node]) -> [T: Node] {
+            return nodes.reduce([T: Node]()) { (res, node) -> [T: Node] in
                 var r = res
                 r[node.value] = node
                 return r
@@ -554,8 +558,8 @@ extension Graph {
         let separator = type(of: self).humanFriendlyEdgeSeparator
 
         func findLabel(`in` string: String) -> (U?, Int?) {
-            var label:U?
-            var position:Int?
+            var label: U?
+            var position: Int?
 
             if let labelPosition = string.scan(for: { $0 == "/" }),
                 let foundLabel = string.substring(in: labelPosition + 1..<string.count),
@@ -568,7 +572,7 @@ extension Graph {
         }
 
         // Parse separators.
-        guard let _ = edgeComponent.scan(for: { $0 == Character(separator) }) else {
+        guard edgeComponent.scan(for: { $0 == Character(separator) }) != nil else {
             let otherGraphType = type(of: self).isDirected ? Graph<T, U>.self : Digraph<T, U>.self
             let otherSeparator = otherGraphType.humanFriendlyEdgeSeparator
             if edgeComponent.isEmpty || edgeComponent.contains(otherSeparator) {
@@ -617,18 +621,18 @@ extension Graph {
     }
 }
 
-class Digraph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Graph<T, U> {
+class Digraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: Graph<T, U> {
     override class var direction: Direction { return .Directed }
     override class var humanFriendlyEdgeSeparator: String { return ">" }
 }
 
-extension Graph : Equatable where T : Equatable {
+extension Graph: Equatable where T: Equatable {
     static func == (lhs: Graph, rhs: Graph) -> Bool {
         return lhs.description == rhs.description
     }
 }
 
-extension Graph : Hashable where U : Equatable {
+extension Graph: Hashable where U: Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(description)
         hasher.combine(nodes.values)
@@ -639,33 +643,33 @@ extension Graph : Hashable where U : Equatable {
     }
 }
 
-extension Graph.Node : Equatable where T : Equatable {
+extension Graph.Node: Equatable where T: Equatable {
     static func == (lhs: Graph.Node, rhs: Graph.Node) -> Bool {
         return lhs.value == rhs.value && lhs.degree == rhs.degree
     }
 }
 
-extension Graph.Edge : Equatable where T : Equatable, U : Equatable {
+extension Graph.Edge: Equatable where T: Equatable, U: Equatable {
     static func == (lhs: Graph.Edge, rhs: Graph.Edge) -> Bool {
         return lhs.from == rhs.from && lhs.to == rhs.to && lhs.label == rhs.label
     }
 }
 
-extension Graph.Edge : Hashable where U : Equatable {
+extension Graph.Edge: Hashable where U: Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(description)
     }
 }
 
-extension Graph.Node : CustomStringConvertible {
+extension Graph.Node: CustomStringConvertible {
     var description: String {
         return "Graph.Node(value: \(value))"
     }
 }
 
-extension Graph.Edge : CustomStringConvertible {
+extension Graph.Edge: CustomStringConvertible {
     var description: String {
-        let components = ["from": Optional(from.description), "to": Optional(to.description), "label" : label?.description].filter { $0.value != nil }.map {
+        let components = ["from": Optional(from.description), "to": Optional(to.description), "label": label?.description].filter { $0.value != nil }.map {
             "\($0.key): \($0.value!)"
         }
 

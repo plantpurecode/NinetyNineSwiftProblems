@@ -10,7 +10,7 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphData<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint & Equatable> {
+struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint & Equatable> {
     typealias EdgeTuple = (from: T, to: T, label: U?)
     typealias EdgeClosure = () -> [EdgeTuple]
     typealias NodeClosure = () -> [T]
@@ -70,7 +70,7 @@ struct TestGraphData<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint 
     }
 }
 
-class RejectingLosslessInitialization : LosslessStringConvertible, Hashable {
+class RejectingLosslessInitialization: LosslessStringConvertible, Hashable {
     static func == (lhs: RejectingLosslessInitialization, rhs: RejectingLosslessInitialization) -> Bool {
         return false
     }
@@ -91,8 +91,8 @@ class RejectingLosslessInitialization : LosslessStringConvertible, Hashable {
 typealias StringGraph = Graph<String, String>
 typealias StringDigraph = Digraph<String, String>
 
-class GraphTests : XCTestCase {
-    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>, nodes: [T], edges:[TestGraphData<T, U>.Edge], file: StaticString = #file, line: UInt = #line)  {
+class GraphTests: XCTestCase {
+    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>, nodes: [T], edges: [TestGraphData<T, U>.Edge], file: StaticString = #file, line: UInt = #line) {
         let data = TestGraphData(graph: graph, expectedNodes: nodes, expectedEdges: edges)
         data.runAssertions(file: file, line: line)
     }
@@ -494,7 +494,7 @@ class GraphTests : XCTestCase {
     }
 
     func testDigraphToAdjacentForm() {
-        let expectedResult:List<(String, List<(String, Int?)>?)> = [
+        let expectedResult: List<(String, List<(String, Int?)>?)> = [
             ("p", List<(String, Int?)>(("q", 9), ("m", 5))),
             ("m", List<(String, Int?)>(("q", 7))),
             ("k", nil),
@@ -520,7 +520,7 @@ class GraphTests : XCTestCase {
     }
 
     func testOrphanNodes() {
-        guard var graph:Graph<String, Int> = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]") else {
+        guard var graph: Graph<String, Int> = Digraph<String, Int>(string: "[p>q/9, m>q/7, k, p>m/5]") else {
             XCTFail("Expected non-nil graph")
             return
         }
@@ -754,7 +754,7 @@ class GraphTests : XCTestCase {
     }
 }
 
-class GraphExtensionTests : XCTestCase {
+class GraphExtensionTests: XCTestCase {
     func testHashable() {
         let graph = StringGraph(string: "[a-b]")!
 
@@ -772,7 +772,7 @@ class GraphExtensionTests : XCTestCase {
     }
 }
 
-struct TestGraphValue : LosslessStringConvertible, Hashable {
+struct TestGraphValue: LosslessStringConvertible, Hashable {
     let internalValue: String?
     init?(_ description: String) {
         guard description.isEmpty == false else {
@@ -795,7 +795,7 @@ struct TestGraphValue : LosslessStringConvertible, Hashable {
     }
 }
 
-func XCTAssertEqualCollectionIgnoringOrder<A: Collection, B: Collection>(_ a: A, _ b: B, file: StaticString = #file, line: UInt = #line) where A.Element : Hashable, A.Element == B.Element {
+func XCTAssertEqualCollectionIgnoringOrder<A: Collection, B: Collection>(_ a: A, _ b: B, file: StaticString = #file, line: UInt = #line) where A.Element: Hashable, A.Element == B.Element {
     let aSet = Set(a)
     let bSet = Set(b)
 

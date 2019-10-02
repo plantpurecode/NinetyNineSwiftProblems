@@ -9,27 +9,27 @@
 import XCTest
 @testable import NinetyNineSwiftProblems
 
-fileprivate let primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47]
+private let primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
 
 class ArithmeticTests: XCTestCase {
     func testIsPrime() {
         primes.forEach {
             XCTAssertTrue($0.isPrime())
         }
-        
+
         XCTAssertFalse((-1).isPrime())
     }
-    
+
     func testAllPrime() {
         XCTAssertNoThrow(try primes.allPrime())
-        XCTAssertTrue(try! primes.allPrime())
-        
-        let unorderedPrimes1 = [2,5,3,37,29,7]
-        XCTAssertTrue(try! unorderedPrimes1.allPrime(greatestIndex: 3))
+        XCTAssertTrue(try primes.allPrime())
+
+        let unorderedPrimes1 = [2, 5, 3, 37, 29, 7]
+        XCTAssertTrue(try unorderedPrimes1.allPrime(greatestIndex: 3))
 
         var unorderedPrimes2 = primes.prefix(15)
         unorderedPrimes2.swapAt(3, 14)
-        XCTAssertTrue(try! unorderedPrimes2.allPrime(greatestIndex: 3))
+        XCTAssertTrue(try unorderedPrimes2.allPrime(greatestIndex: 3))
 
         // Negative numbers should throw an error.
         XCTAssertThrowsError(try [-1].allPrime()) {
@@ -46,7 +46,7 @@ class ArithmeticTests: XCTestCase {
                 return
             }
         }
-        
+
         XCTAssertThrowsError(try unorderedPrimes1.allPrime(greatestIndex: 10)) {
             guard case Primes.Error.greatestIndexTooLarge = $0 else {
                 XCTFail("Invalid error type thrown")
@@ -54,68 +54,68 @@ class ArithmeticTests: XCTestCase {
             }
         }
 
-        XCTAssertFalse(try! [1,2].allPrime())
-        XCTAssertFalse(try! (1...10).map { $0 }.allPrime())
+        XCTAssertFalse(try [1, 2].allPrime())
+        XCTAssertFalse(try (1...10).map { $0 }.allPrime())
     }
-    
+
     func testGCD() {
         XCTAssertEqual(Int.gcd(36, 63), 9)
         XCTAssertEqual(Int.gcd(63, 36), 9)
     }
-    
+
     func testLCM() {
         XCTAssertEqual(Int.lcm(4, 6), 12)
     }
-    
+
     func testCoprime() {
         XCTAssertTrue(35.isCoprimeTo(64))
         XCTAssertFalse(35.isCoprimeTo(63))
     }
-    
+
     func testTotient() {
-        let expectations = [1:1, 10:4, 486: 162, 1292:576, 38856: 12944]
-        
+        let expectations = [1: 1, 10: 4, 486: 162, 1292: 576, 38856: 12944]
+
         for (n, t) in expectations {
             XCTAssertEqual(n.totient, t)
             XCTAssertEqual(n.totientImproved(), t)
         }
     }
-    
+
     func testTotientPerformance() {
         measure {
-            let _ = 10090.totient
+            _ = 10090.totient
         }
     }
-    
+
     func testTotientImprovedPerformance() {
         let dict = 10090.primeFactorMultiplicityDict
-        
+
         measure {
-            let _ = 10090.totientImproved(dict)
+            _ = 10090.totientImproved(dict)
         }
     }
 
     func testPrimeFactors() {
         XCTAssertEqual(315.primeFactors, List(3, 3, 5, 7))
         XCTAssertEqual(42.primeFactors, List(2, 3, 7))
-        
+
         (-10...1).forEach {
             XCTAssertNil($0.primeFactors)
         }
-        
+
         XCTAssertEqual(2.primeFactors, List(2))
     }
-    
+
     func testPrimeFactorMultiplicity() {
-        let expected = [3:2, 5:1, 7:1]
+        let expected = [3: 2, 5: 1, 7: 1]
         315.primeFactorMultiplicity.values.forEach { tuple in
             XCTAssertNotNil(expected[tuple.0])
             XCTAssertEqual(tuple.1, expected[tuple.0])
         }
-        
+
         XCTAssertEqual(315.primeFactorMultiplicityDict, expected)
     }
-    
+
     func testListPrimesInRange() {
         XCTAssertEqual(Int.listPrimesInRange(range: 7...31), List(7, 11, 13, 17, 19, 23, 29, 31))
     }
@@ -128,30 +128,34 @@ class ArithmeticTests: XCTestCase {
 
     func testPrimeGenerationRuntime() {
         // This test will be disabled normally in order to keep overall test suite runtime to a minimum.
-        
+
         let upperBound = 5_000_000
         var primeCount = 0
-        
+
         measure {
             primeCount = Primes.generate(upTo: upperBound).count
         }
-        
+
         print("Found \(primeCount) primes up to \(upperBound)")
     }
-    
+
     func testGoldbach() {
         measure {
-            let expectsNil = [0,1,4,5,7,9]
-            expectsNil.forEach {
-                XCTAssertNil($0.goldbach())
-            }
+            do {
+                let expectsNil = [0, 1, 4, 5, 7, 9]
+                expectsNil.forEach {
+                    XCTAssertNil(try? $0.goldbach())
+                }
 
-            let result = 28.goldbach()
-            XCTAssertNotNil(result)
-            XCTAssertEqual(result!.0, 5)
-            XCTAssertEqual(result!.1, 23)
-            
-            XCTAssertNil(29.goldbach())
+                let result = try 28.goldbach()
+                XCTAssertNotNil(result)
+                XCTAssertEqual(result!.0, 5)
+                XCTAssertEqual(result!.1, 23)
+
+                XCTAssertNil(try 29.goldbach())
+            } catch {
+                XCTFail("Caught error: \(error)")
+            }
         }
     }
 
@@ -172,7 +176,7 @@ class ArithmeticTests: XCTestCase {
                 XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
             }
 
-            let goldbachCompositions = Int.goldbachCompositionsLimitedString(inRange: 1...50)
+            let goldbachCompositions = Int.goldbachCompositionsLimited(inRange: 1...50)
             XCTAssertEqual(goldbachCompositions, "2 = 1 + 1, 3 = 1 + 2")
         }
     }
@@ -183,4 +187,3 @@ class ArithmeticTests: XCTestCase {
         }
     }
 }
-

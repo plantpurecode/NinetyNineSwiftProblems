@@ -15,11 +15,11 @@ class LogicTests: XCTestCase {
         for row in type.truthTable {
             let operands = Array(row.prefix(through: 1))
             let evaluated = logExpr(type, operands.first!, operands.last!)
-            
+
             XCTAssertEqual(evaluated, row.last!, "\(type.rawValue) expression failed with operands (\(operands))", file: #file, line: line)
         }
     }
-    
+
     func testAnd() {
         performTruthTableTest(.and)
     }
@@ -27,27 +27,27 @@ class LogicTests: XCTestCase {
     func testOr() {
          performTruthTableTest(.or)
     }
-    
+
     func testNand() {
         performTruthTableTest(.nand)
     }
-    
+
     func testNor() {
         performTruthTableTest(.nor)
     }
-    
+
     func testXor() {
         performTruthTableTest(.xor)
     }
-    
+
     func testImpl() {
         performTruthTableTest(.impl)
     }
-    
+
     func testEqu() {
         performTruthTableTest(.equ)
     }
-    
+
     func testTruthTableGeneration() {
         for type in LogicalExpression.ExpressionType.allCases {
             let result = generateTruthTable(expression: { array in
@@ -56,28 +56,28 @@ class LogicTests: XCTestCase {
 
             XCTAssertEqual(result, type.truthTable)
         }
-    
+
         let table = generateTruthTable(variables: 3) { vars in
             vars[0] ∧ vars[1] ∨ vars[2]
         }.values.map { $0.values }
-        
+
         let expectation = [
-            [true,  true,  true,  true],
-            [true,  true,  false, true],
-            [true,  false, true,  true],
-            [true,  false, false, false],
-            [false, true,  true,  true],
-            [false, true,  false, false],
-            [false, false, true,  true],
+            [true, true, true, true],
+            [true, true, false, true],
+            [true, false, true, true],
+            [true, false, false, false],
+            [false, true, true, true],
+            [false, true, false, false],
+            [false, false, true, true],
             [false, false, false, false]
         ]
-        
+
         XCTAssertEqual(table, expectation)
     }
-    
+
     func testLogicalOperators() {
         typealias LogicalOperator = (Bool, Bool) -> Bool
-        
+
         let operatorsAndExpressionTypes:[(`operator`: LogicalOperator, type: LogicalExpression.ExpressionType)] = [
             (∧, .and),
             (∨, .or),
@@ -87,10 +87,10 @@ class LogicTests: XCTestCase {
             (→, .impl),
             (≡, .equ)
         ]
-        
+
         operatorsAndExpressionTypes.forEach { tuple in
             let table = tuple.type.truthTable
-            
+
             table.forEach { row in
                 let actualResult = tuple.operator(row[0], row[1])
                 let expectedResult = row[2]
@@ -99,7 +99,7 @@ class LogicTests: XCTestCase {
             }
         }
     }
-    
+
     func testGrayCodes() {
         XCTAssertNil(gray(0))
         XCTAssertEqual(gray(1), List("0", "1"))

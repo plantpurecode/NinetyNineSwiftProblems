@@ -75,7 +75,7 @@ extension MTree where T == String {
 
 // MARK: - Lisp-y String Representations
 
-extension MTree where T : CustomStringConvertible {
+extension MTree where T: CustomStringConvertible {
     var lispyRepresentation: String {
         guard let children = children else {
             return value.description
@@ -93,7 +93,7 @@ extension MTree where T : CustomStringConvertible {
 
 extension MTree where T == String {
     convenience init?(fromLispyRepresentation lispyRepresentation: String) {
-        guard lispyRepresentation.count > 0 else {
+        guard lispyRepresentation.isEmpty == false else {
             return nil
         }
 
@@ -151,7 +151,7 @@ extension MTree where T == String {
             let nextSpaceIndex = nextSpace(at: 1),
             let nextNonSpaceIndex = nextNonSpace(at: nextSpaceIndex),
             let value = lispyRepresentation.substring(in: 1..<nextSpaceIndex)?.trimmingCharacters(in: .whitespaces),
-            value.count > 0 else {
+            value.isEmpty == false else {
             return nil
         }
 
@@ -159,13 +159,13 @@ extension MTree where T == String {
             return nil
         }
 
-        self.init(String(value), List([MTree(fromLispyRepresentation:next)].compactMap { $0 }))
+        self.init(String(value), List([MTree(fromLispyRepresentation: next)].compactMap { $0 }))
     }
 }
 
 // MARK: - CustomStringConvertible Conformance
 
-extension MTree : CustomStringConvertible where T : CustomStringConvertible {
+extension MTree: CustomStringConvertible where T: CustomStringConvertible {
     var description: String {
         return description()
     }
@@ -181,8 +181,8 @@ extension MTree : CustomStringConvertible where T : CustomStringConvertible {
 
 // MARK: - Equatable Conformance
 
-extension MTree : Equatable where T : Equatable, T : CustomStringConvertible {
-    static func ==(tree: MTree, otherTree: MTree) -> Bool {
+extension MTree: Equatable where T: Equatable, T: CustomStringConvertible {
+    static func == (tree: MTree, otherTree: MTree) -> Bool {
         return tree.description == otherTree.description
     }
 }

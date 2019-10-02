@@ -8,7 +8,7 @@
 
 import Foundation
 
-func either<T>(_ lhs: Optional<T>, _ rhs: T) -> T {
+func either<T>(_ lhs: T?, _ rhs: T) -> T {
     return lhs.or(rhs)
 }
 
@@ -23,7 +23,7 @@ extension Optional {
     }
 }
 
-extension Optional where Wrapped : Numeric {
+extension Optional where Wrapped: Numeric {
     var orZero: Wrapped {
         return or(0)
     }

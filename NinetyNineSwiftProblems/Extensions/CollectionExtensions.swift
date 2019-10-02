@@ -9,16 +9,16 @@
 import Foundation
 
 extension Collection {
-    func allNil<T>() -> Bool where Element == Optional<T> {
+    func allNil<T>() -> Bool where Element == T? {
         return allSatisfy { $0 == nil }
     }
 
-    func allNotNil<T>() -> Bool where Element == Optional<T> {
+    func allNotNil<T>() -> Bool where Element == T? {
         return allSatisfy { $0 != nil }
     }
 }
 
-extension Collection where Element : Equatable {
+extension Collection where Element: Equatable {
     func allContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
         return allSatisfy { collection.contains($0) }
     }

@@ -15,12 +15,12 @@ func ^^ (radix: Int, power: Int) -> Int {
 }
 
 struct Primes {
-    enum Error : Swift.Error {
+    enum Error: Swift.Error {
         case greatestIndexTooLarge
         case negativeGreatestIndex
         case negativeNumber
     }
-    
+
     static func generate(upTo n: Int) -> [Int] {
         var composite = Array(repeating: false, count: n + 1)
         var primes: [Int] = []
@@ -59,149 +59,146 @@ extension Int {
         var a = 0
         var b = first > second ? first : second
         var r = first < second ? first : second
-        
+
         while r != 0 {
             a = b
             b = r
             r = a % b
         }
-        
+
         return b
     }
 
     static func lcm(_ m: Int, _ n: Int) -> Int {
         return m / gcd(m, n) * n
     }
- 
+
     static func listPrimesInRange(range: ClosedRange<Int>) -> List<Int>? {
         let primes = Primes.generate(upTo: range.upperBound)
-        
+
         return List(primes.filter {
             $0 >= range.lowerBound
         })
     }
-    
-    static func goldbachCompositions(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> [Int : (Int, Int)] {
+
+    static func goldbachCompositions(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> [Int: (Int, Int)] {
         return range.dropFirst().reduce([:]) { result, current in
-            guard let goldbach = current.goldbach(aboveMinimum: minimum) else {
+            guard let goldbach = try? current.goldbach(aboveMinimum: minimum) else {
                 return result
             }
-            
+
             var res = result
             res[current] = goldbach
             return res
         }
     }
-    
-    static func goldbachCompositionsLimitedString(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> String {
-        let compositions = goldbachCompositions(inRange: range, aboveMinimum: minimum).sorted { (first, second) -> Bool in
-            return first.key < second.key
-        }
-        
+
+    static func goldbachCompositionsLimited(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> String {
+        let compositions = goldbachCompositions(inRange: range, aboveMinimum: minimum).sorted { $0.key < $1.key }
+
         return compositions.map {
             let (key, value) = $0
             return "\(key) = \(value.0) + \(value.1)"
         }.joined(separator: ", ")
     }
-    
+
     func isPrime() -> Bool {
         guard self >= 2 else {
             return false
         }
-        
+
         if [2, 3].contains(self) {
             return true
         }
 
         return (2...Int(Double(self).squareRoot())).filter { self % $0 == 0 }.isEmpty
     }
-    
+
     func isCoprimeTo(_ other: Int) -> Bool {
         return Int.gcd(self, other) == 1
     }
-    
+
     private func _rawPrimeFactorization() -> [Int] {
         guard isPrime() == false, self > 1 else {
             return [self]
         }
-        
+
         var n = self
-        
+
         return (2..<n).reduce([Int]()) { factors, divisor in
             var mutableFactors = factors
             while n % divisor == 0 {
                 mutableFactors.append(divisor)
                 n /= divisor
             }
-            
+
             return mutableFactors
         }
     }
-    
+
     var totient: Int {
         guard self != 1 else {
             return 1
         }
-        
+
         return (1..<self).filter { $0.isCoprimeTo(self) }.count
     }
-    
-    func goldbach(aboveMinimum minimum: Int = 3) -> (Int, Int)? {
-        // TODO: Throw specific errors instead of returning nil
+
+    func goldbach(aboveMinimum minimum: Int = 3) throws -> (Int, Int)? {
         guard self != 2 else {
             return (1, 1)
         }
-        
+
         guard self != 3 else {
             return (1, 2)
         }
-        
+
         guard self > 3, minimum >= 3, self % 2 == 0 else {
             return nil
         }
-        
+
         for first in 0...self/2 {
             let both = [first, self - first]
             if !both.allSatisfy({ $0 >= minimum }) {
                 continue
             }
-            
-            if try! both.allPrime() {
+
+            if try both.allPrime() {
                 return both.bookends()
             }
         }
-        
+
         return nil
     }
-    
+
     func totientImproved(_ multiplicityDict: [Int: Int]? = nil) -> Int {
         guard self != 1 else {
             return 1
         }
-        
+
         let multiplicityDictionary = multiplicityDict ?? primeFactorMultiplicityDict
         return multiplicityDictionary.reduce(1) { tot, factorPair -> Int in
             let (factor, mult) = factorPair
-            
+
             return tot * (factor - 1) * (factor ^^ (mult - 1))
         }
     }
-    
+
     var primeFactors: List<Int>? {
         guard self > 1 else {
             return nil
         }
-        
+
         return List(_rawPrimeFactorization())
     }
 
     var primeFactorMultiplicity: List<(Int, Int)> {
         return List(primeFactorMultiplicityDict.map { ($0.key, $0.value) })!
     }
-    
-    var primeFactorMultiplicityDict: [Int : Int] {
+
+    var primeFactorMultiplicityDict: [Int: Int] {
         let factors = _rawPrimeFactorization()
-        return factors.reduce([Int:Int]()) { (res, factor) -> [Int:Int] in
+        return factors.reduce([Int: Int]()) { (res, factor) -> [Int: Int] in
             var result = res
             result[factor] = (res[factor] ?? 0) + 1
             return result
@@ -214,7 +211,7 @@ extension Collection where Element == Int, Index == Int {
         guard contains(where: { $0 < 0 }) == false else {
             throw Primes.Error.negativeNumber
         }
-        
+
         guard greatestIndex >= -1 else {
             throw Primes.Error.negativeGreatestIndex
         }
@@ -228,15 +225,14 @@ extension Collection where Element == Int, Index == Int {
             // Use individual invocations of isPrime
             return allSatisfy { $0.isPrime() }
         }
-    
+
         let greatest = self[gi]
         let primes = Primes.generate(upTo: greatest)
-        
+
         if primes.elementsEqual(self) {
             return true
         }
-        
+
         return Set(primes).fullyIntersects(other: Set(self))
     }
 }
-

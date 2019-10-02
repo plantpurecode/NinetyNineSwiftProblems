@@ -14,7 +14,7 @@ class Tree<T> {
     let value: T
     var left: Tree<T>?
     var right: Tree<T>?
-    
+
     init(_ value: T, _ left: Tree<T>? = nil, _ right: Tree<T>? = nil) {
         self.value = value
         self.left = left
@@ -24,7 +24,7 @@ class Tree<T> {
 
 // MARK: - CustomStringConvertible Conformance
 
-extension Tree : CustomStringConvertible {
+extension Tree: CustomStringConvertible {
     var description: String {
         let joinedChildDescriptions = [left?.description ?? "", right?.description ?? ""].joined(separator: ",")
         let childValueDescription = isLeaf == false ? "(\(joinedChildDescriptions))" : ""
@@ -43,36 +43,36 @@ extension Tree {
     class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
         return List(_makeBalancedTrees(nodes: n, value: value))
     }
-    
+
     class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
         return List(_makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric })
     }
-    
+
     class func makeHeightBalancedTrees(height: Int, value: T) -> List<Tree<T>>? {
         guard let result = _makeHeightBalancedTrees(height: height, value: value) else {
             return nil
         }
-        
+
         return List(result)
     }
-    
+
     class func makeHeightBalancedTrees(nodes: Int, value: T) -> List<Tree<T>>? {
         return _makeHeightBalancedTrees(nodes: nodes, value: value).toList()
     }
-    
+
     class func makeCompleteTree(nodes: Int, value: T) -> Tree<T>? {
         guard nodes > 0 else {
             return nil
         }
-        
+
         func generate(index: Int) -> Tree<T>? {
             guard index <= nodes else {
                 return nil
             }
-            
+
             return Tree(value, generate(index: 2 * index), generate(index: 2 * index + 1))
         }
-        
+
         return generate(index: 1)
     }
 }
@@ -81,43 +81,43 @@ extension Tree {
 
 extension Tree {
     var isLeaf: Bool {
-        return [left, right].compactMap { $0 }.count == 0
+        return [left, right].compactMap { $0 }.isEmpty
     }
-    
+
     var leafCount: Int {
         return (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
     }
-    
+
     var leaves: List<T> {
         guard isLeaf == false else {
             return List(value)!
         }
-        
+
         return [left, right].compactMap { $0 }.reduce([T]()) {
             return $0 + $1.leaves.values
         }.toList()!
     }
-    
+
     var nodeCount: Int {
         return 1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
     }
-    
+
     var height: Int {
         return 1 + Swift.max(leftHeight, rightHeight)
     }
-    
+
     var leftHeight: Int {
         return (left?.height).orZero
     }
-    
+
     var rightHeight: Int {
         return (right?.height).orZero
     }
-    
+
     var heightBalanced: Bool {
         return _heightDifferential <= 1
     }
-    
+
     var completelyBalanced: Bool {
         return !(_nodeCountDifferential > 1)
     }
@@ -126,38 +126,38 @@ extension Tree {
         guard isLeaf == false else {
             return true
         }
-        
+
         guard let left = left, let right = right else {
             return false
         }
-        
+
         return left.isMirror(of: right)
     }
-    
+
     var internalNodes: List<T>? {
         guard isLeaf == false else {
             return nil
         }
-        
+
         let successorNodes = [left, right].compactMap { $0 }.filter { !$0.isLeaf }
-        let prefix = successorNodes.count > 0 ? [value] : [T]()
+        let prefix = successorNodes.isEmpty == false ? [value] : [T]()
         let internalNodes = prefix +
-            successorNodes.map ({ $0.value }) +
+            successorNodes.map({ $0.value }) +
             successorNodes.flatMap({ $0.internalNodes?.values ?? [] })
 
         return internalNodes.toList()
     }
-    
+
     // MARK: Traversal
-    
+
     var preOrder: List<T> {
         return List(_preOrder)!
     }
-    
+
     var inOrder: List<T> {
         return List(_inOrder)!
     }
-    
+
     var postOrder: List<T> {
         return List(_postOrder)!
     }
@@ -167,7 +167,7 @@ extension Tree {
 
 extension Tree {
     // MARK: Layout
-    
+
     func layoutBinaryTree() -> PositionedTree<T>? {
         guard isLeaf == false else {
             return nil
@@ -175,29 +175,29 @@ extension Tree {
 
         return _layoutBinaryTreeInternal(x: 1, depth: 1).0
     }
-    
+
     func layoutBinaryTree2() -> PositionedTree<T>? {
         guard isLeaf == false else {
             return nil
         }
-        
+
         let d = _depth
         let x0 = (2..._leftmostDepth).map { 2 ^^ (d - $0) }.reduce(1, +)
-        
+
         return _layoutBinaryTree2Internal(x: x0, depth: 1, exp: d - 2)
     }
-    
+
     func layoutBinaryTree3() -> PositionedTree<T>? {
         guard isLeaf == false else {
             return nil
         }
-        
+
         let x = (_bounds.map { $0.0 }.reduce(Int.max - 1, Swift.min) * -1) + 1
         return _layoutBinaryTree3Internal(x: x, depth: 1)
     }
-    
+
     // MARK: -
-    
+
     func isMirror(of tree: Tree) -> Bool {
         // Are these both leaves?
         if isLeaf, tree.isLeaf {
@@ -208,21 +208,21 @@ extension Tree {
             [left, tree.right],
             [right, tree.left]
         ]
-        
+
         return nodePairs.allSatisfy { nodePair in
             let bothNil = nodePair.allNil()
             let areMirrors = { () -> Bool in
                 guard nodePair.allNotNil() else {
                     return false
                 }
-                
+
                 return nodePair[0]!.isMirror(of: nodePair[1]!)
             }()
-            
+
             return bothNil || areMirrors
         }
     }
-    
+
     func nodes(atLevel level: Int) -> List<T>? {
         switch level {
         case level where level < 1:
@@ -232,7 +232,7 @@ extension Tree {
         default:
             let leftNodes = left?.nodes(atLevel: level - 1)?.values ?? [T]()
             let rightNodes = right?.nodes(atLevel: level - 1)?.values ?? [T]()
-            
+
             return List(leftNodes + rightNodes)
         }
     }
@@ -240,13 +240,13 @@ extension Tree {
 
 // MARK: - Comparable
 
-extension Tree where T : Comparable {
+extension Tree where T: Comparable {
     convenience init(list: List<T>!) {
         let tree = Tree<T>(list.value)
         list.dropFirst().forEach {
-            let _ = tree.insert(value: $0)
+            _ = tree.insert(value: $0)
         }
-        
+
         self.init(tree.value, tree.left, tree.right)
     }
 
@@ -264,14 +264,14 @@ extension Tree where T : Comparable {
                 _ = right!.insert(value: v)
             }
         }
-        
+
         return self
     }
 }
 
 // MARK: - Equatable
 
-extension Tree : Equatable where T : Equatable {
+extension Tree: Equatable where T: Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
         return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
     }
@@ -281,14 +281,14 @@ extension Tree : Equatable where T : Equatable {
 
 extension Tree where T == String {
     convenience init?(string: String) {
-        guard string.count > 0 else {
+        guard string.isEmpty == false else {
             return nil
         }
 
         func extractTreeString(_ s: String, start: Int, end: Character) -> (string: String, commaPosition: Int) {
             func endOfString(position: Int, nesting: Int) -> Int {
                 let charAtThisPosition = s[s.index(s.startIndex, offsetBy: position)]
-                
+
                 func nestingOffset() -> Int {
                     switch charAtThisPosition {
                     case "(": return 1
@@ -313,7 +313,7 @@ extension Tree where T == String {
             self.init(String(string.first!))
             return
         }
-        
+
         let (left, commaPosition) = extractTreeString(string, start: 2, end: ",")
         let (right, _) = extractTreeString(string, start: commaPosition + 1, end: ")")
 
@@ -323,7 +323,7 @@ extension Tree where T == String {
 
 // MARK: - Traversal Based Tree Initialization
 
-extension Tree where T : Comparable {
+extension Tree where T: Comparable {
     convenience init?(preOrder po: List<T>, inOrder io: List<T>) {
         guard let tree = Tree<T>._makeTraversalBasedTree(preOrder: po.values, inOrder: io.values, preStart: 0, preEnd: po.length - 1, inStart: 0, inEnd: io.length - 1) else {
             return nil
@@ -335,7 +335,7 @@ extension Tree where T : Comparable {
 
 // MARK: - Dotstring Support
 
-extension Tree where T : CustomStringConvertible {
+extension Tree where T: CustomStringConvertible {
     var dotString: String {
         return [value.description, left?.dotString, right?.dotString].map {
             $0 == nil ? "." : $0!
@@ -345,7 +345,7 @@ extension Tree where T : CustomStringConvertible {
 
 extension Tree where T == Character {
     convenience init?(dotString: String) {
-        guard dotString.trimmingCharacters(in: .whitespaces).count > 0 else {
+        guard dotString.trimmingCharacters(in: .whitespaces).isEmpty == false else {
             return nil
         }
 
@@ -370,8 +370,8 @@ extension Tree where T == Character {
 
 // MARK: - Sequence Conformance
 
-extension Tree : Sequence {
-    struct TreeIterator : IteratorProtocol {
+extension Tree: Sequence {
+    struct TreeIterator: IteratorProtocol {
         typealias Element = T
 
         enum Kind {
@@ -415,10 +415,10 @@ extension Tree : Sequence {
 
 // MARK: - Layout-Specific Tree Subclass
 
-class PositionedTree<T> : Tree<T> {
+class PositionedTree<T>: Tree<T> {
     var x: Int
     var y: Int
-    
+
     init(x: Int, y: Int, value: T, _ left: Tree<T>? = nil, _ right: Tree<T>? = nil) {
         self.x = x
         self.y = y
@@ -430,38 +430,38 @@ class PositionedTree<T> : Tree<T> {
 
 extension Tree {
     // MARK: Traversal
-    
+
     private var _preOrder: [T] {
         return [value] + (left?._preOrder ?? []) + (right?._preOrder ?? [])
     }
-    
+
     private var _inOrder: [T] {
         return (left?._inOrder ?? []) + [value] + (right?._inOrder ?? [])
     }
-    
+
     private var _postOrder: [T] {
         return (left?._postOrder ?? []) + (right?._postOrder ?? []) + [value]
     }
-    
+
     // MARK: Layout
-    
+
     private var _depth: Int {
         return Swift.max(left?._depth ?? 0, right?._depth ?? 0) + 1
     }
-    
+
     private var _leftmostDepth: Int {
         return (left?._leftmostDepth ?? 0) + 1
     }
-    
+
     private var _bounds: [(Int, Int)] {
         func fullInnerBounds(lb: [(Int, Int)], rb: [(Int, Int)]) -> [(Int, Int)] {
             let shift = zip(lb, rb).map {
                 (($0.0.1 - $0.1.0) / 2) + 1
             }.reduce(0, Swift.max)
-            
+
             return zipAll(left: lb.map { Optional($0) }, right: rb.map { Optional($0) }, defaultValue: nil).compactMap {
                 let tuple = $0
-                
+
                 if let l = tuple.0, let r = tuple.1 {
                     return (l.0 - shift, r.1 + shift)
                 } else if let l = tuple.0 {
@@ -473,7 +473,7 @@ extension Tree {
                 return nil
             }
         }
-        
+
         func lowerBounds() -> [(Int, Int)]? {
             let lb = left?._bounds
             let rb = right?._bounds
@@ -492,14 +492,14 @@ extension Tree {
 
             return nil
         }
-        
+
         return [(0, 0)] + (lowerBounds() ?? [])
     }
 
     private func _layoutBinaryTreeInternal(x: Int, depth: Int) -> (PositionedTree<T>?, Int) {
         let (_left, _x) = left?._layoutBinaryTreeInternal(x: x, depth: depth + 1) ?? (nil, x)
         let (_right, nextX) = right?._layoutBinaryTreeInternal(x: _x + 1, depth: depth + 1) ?? (nil, x + 1)
-        
+
         return (PositionedTree(x: _x, y: depth, value: value, _left, _right), nextX)
     }
 
@@ -519,7 +519,7 @@ extension Tree {
         let bounds = _bounds
         let (bl, br) = bounds.count > 2 ? bounds[1] : bounds[0]
         let offset = bounds.count > 2 ? 0 : 1
-        
+
         return PositionedTree<T>(x: x,
                                  y: depth,
                                  value: value,
@@ -557,7 +557,7 @@ extension Tree {
         default:
             let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)!
             let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value) ?? Array(repeating: nil, count: maxHeightSubtree.count / 2)
-            
+
             return maxHeightSubtree.flatMap { l in
                 return maxHeightSubtree.map { r in
                     Tree(value, l, r)
@@ -580,7 +580,7 @@ extension Tree {
             return [Tree(value, nil, Tree(value)), Tree(value, Tree(value))]
         case n where n % 2 == 1:
             let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
-            
+
             return subtrees.reduce([]) { res, left in
                 return res + subtrees.map { right in
                     return Tree(value, left, right)
@@ -601,8 +601,8 @@ extension Tree {
     }
 }
 
-extension Tree where T : Comparable {
-    private class func _makeTraversalBasedTree(preOrder: [T], inOrder:[T], preStart: Int, preEnd: Int, inStart: Int, inEnd: Int) -> Tree<T>? {
+extension Tree where T: Comparable {
+    private class func _makeTraversalBasedTree(preOrder: [T], inOrder: [T], preStart: Int, preEnd: Int, inStart: Int, inEnd: Int) -> Tree<T>? {
         guard preStart <= preEnd, inStart <= inEnd else {
             return nil
         }
@@ -621,10 +621,9 @@ extension Tree where T : Comparable {
     }
 }
 
-
 // MARK: - Utility Functions
 
-fileprivate func minimumNodesForBalancedTree(ofHeight height: Int) -> Int {
+private func minimumNodesForBalancedTree(ofHeight height: Int) -> Int {
     switch height {
     case height where height < 1:
         return 0
@@ -635,15 +634,15 @@ fileprivate func minimumNodesForBalancedTree(ofHeight height: Int) -> Int {
     }
 }
 
-fileprivate func minimumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
+private func minimumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
     guard nodeCount > 0 else {
         return 0
     }
-    
+
     return minimumHeightForBalancedTree(withNodeCount: nodeCount / 2) + 1
 }
 
-fileprivate func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
+private func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
     return Array((1...).prefix {
         let nodes = minimumNodesForBalancedTree(ofHeight: $0)
         return nodes <= nodeCount
