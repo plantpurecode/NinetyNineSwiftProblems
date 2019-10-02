@@ -93,16 +93,15 @@ extension Int {
         }
     }
     
-    static func printGoldbachCompositionsLimited(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) {
+    static func goldbachCompositionsLimitedString(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> String {
         let compositions = goldbachCompositions(inRange: range, aboveMinimum: minimum).sorted { (first, second) -> Bool in
             return first.key < second.key
         }
         
-        print("\nPrinting \(compositions.count) Goldbach compositions...")
-        print(compositions.reduce("") { (result, current) -> String in
-            let (key, value) = current
-            return [result, "\(key) = \(value.0) + \(value.1)"].joined(separator: "\n")
-        })
+        return compositions.map {
+            let (key, value) = $0
+            return "\(key) = \(value.0) + \(value.1)"
+        }.joined(separator: ", ")
     }
     
     func isPrime() -> Bool {

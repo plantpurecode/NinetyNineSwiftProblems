@@ -172,7 +172,8 @@ class ArithmeticTests: XCTestCase {
                 XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
             }
 
-            Int.printGoldbachCompositionsLimited(inRange: 1...50)
+            let goldbachCompositions = Int.goldbachCompositionsLimitedString(inRange: 1...50)
+            XCTAssertEqual(goldbachCompositions, "2 = 1 + 1, 3 = 1 + 2")
         }
     }
 
