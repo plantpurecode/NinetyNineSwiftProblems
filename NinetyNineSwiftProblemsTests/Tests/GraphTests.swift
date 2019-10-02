@@ -673,23 +673,23 @@ class GraphTests : XCTestCase {
     }
 
     func testColoredNodes() {
-        let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")!
+        func testColoredNodes(with graph: StringGraph, expecting expected: [(String, Int)], line: UInt = #line) {
+            let coloredNodes = graph.coloredNodes()!.values.sorted { $0.0 < $1.0 }
 
-        let coloredNodes = graph.coloredNodes()!.values.sorted { (one, two) -> Bool in
-            return one.0 < two.0
+            expected.enumerated().forEach {
+                let correspondingTuple = coloredNodes[$0.offset]
+                XCTAssertEqual($0.element.0,
+                               correspondingTuple.0, file: #file, line: line)
+                XCTAssertEqual($0.element.1,
+                               correspondingTuple.1, file: #file, line: line)
+            }
         }
 
-        let expected = [("a", 1), ("b", 2), ("c", 3), ("d", 2)]
+        testColoredNodes(with: StringGraph(string: "[a-b, b-c, a-c, a-d]")!,
+                         expecting: [("a", 1), ("b", 2), ("c", 3), ("d", 2)])
 
-        print("\(expected) -> \(coloredNodes)")
-
-        expected.enumerated().forEach {
-            let correspondingTuple = coloredNodes[$0.offset]
-            XCTAssertEqual($0.element.0,
-                           correspondingTuple.0)
-            XCTAssertEqual($0.element.1,
-                           correspondingTuple.1)
-        }
+        testColoredNodes(with: StringGraph(string: "[a-b, b-c, a-c, a-d, e]")!,
+                         expecting: [("a", 1), ("b", 2), ("c", 3), ("d", 2), ("e", 1)])
     }
 
     func testIsBipartite() {
