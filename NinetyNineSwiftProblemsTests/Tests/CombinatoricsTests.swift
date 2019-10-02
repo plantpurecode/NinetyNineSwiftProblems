@@ -48,8 +48,6 @@ class CombinatoricsTests: XCTestCase {
         (0...2).forEach {
             XCTAssertTrue([].combinations(taking: $0).isEmpty)
             XCTAssertTrue([].combinations(taking: $0, repeating: true).isEmpty)
-            XCTAssertTrue([].combinations(taking: $0).isEmpty)
-            XCTAssertTrue([].combinations(taking: $0, repeating: true).isEmpty)
             XCTAssertTrue([].permutations(taking: $0).isEmpty)
             XCTAssertTrue([].permutations(taking: $0, repeating: true).isEmpty)
         }
