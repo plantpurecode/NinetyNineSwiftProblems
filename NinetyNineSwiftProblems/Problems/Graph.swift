@@ -309,7 +309,7 @@ class Graph<T : GraphValueTypeConstraint, U : GraphLabelTypeConstraint> : Custom
             
             return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
         }
-        
+
         return coloredNodesRecursive(1, uncolored: nodesByDegree(strict: true).values).map { ($0.value, $1) }.toList()
     }
 
