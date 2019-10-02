@@ -10,21 +10,21 @@ import Foundation
 
 // MARK: Combinatorics
 
-extension Array {
+extension Collection {
     func combinations(taking: Int? = nil, repeating: Bool = false) -> [[Element]] {
         if repeating {
-            return repeatingCombinations(self, taking: taking ?? count)
+            return repeatingCombinations(ArraySlice(self), taking: taking ?? count)
         }
         
-        return nonRepeatingCombinations(self, taking: taking ?? count)
+        return nonRepeatingCombinations(ArraySlice(self), taking: taking ?? count)
     }
     
     func permutations(taking: Int? = nil, repeating: Bool = false) -> [[Element]] {
         if repeating {
-            return repeatingPermutations(self, taking: taking ?? count)
+            return repeatingPermutations(ArraySlice(self), taking: taking ?? count)
         }
         
-        return nonRepeatingPermutations(self, taking: taking ?? count)
+        return nonRepeatingPermutations(ArraySlice(self), taking: taking ?? count)
     }
 }
 
@@ -42,7 +42,7 @@ extension Array {
 
 // MARK: - Private Combinatoric functions
 
-fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func repeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else {
         return []
     }
@@ -62,7 +62,7 @@ fileprivate func repeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]]
     }
 }
 
-fileprivate func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func nonRepeatingCombinations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
     guard elements.count > 0 && taking > 0 else { return [] }
     
@@ -79,7 +79,7 @@ fileprivate func nonRepeatingCombinations<T>(_ elements: [T], taking: Int) -> [[
     }
 }
 
-fileprivate func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func nonRepeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= taking else { return [] }
     guard elements.count >= taking && taking > 0 else { return [] }
     
@@ -96,7 +96,7 @@ fileprivate func nonRepeatingPermutations<T>(_ elements: [T], taking: Int) -> [[
     }
 }
 
-fileprivate func repeatingPermutations<T>(_ elements: [T], taking: Int) -> [[T]] {
+fileprivate func repeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard elements.count >= 0 && taking > 0 else { return [] }
     guard taking > 1 else {
         return elements.map {[$0]}
