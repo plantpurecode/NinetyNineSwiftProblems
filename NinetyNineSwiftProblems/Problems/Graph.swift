@@ -554,7 +554,7 @@ extension Graph {
         let separator = type(of: self).humanFriendlyEdgeSeparator
 
         func findLabel(`in` string: String) -> (U?, Int?) {
-            var label:U? = nil
+            var label:U?
             var position:Int?
 
             if let labelPosition = string.scan(for: { $0 == "/" }),
