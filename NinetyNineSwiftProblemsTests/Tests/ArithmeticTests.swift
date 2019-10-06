@@ -140,45 +140,35 @@ class ArithmeticTests: XCTestCase {
     }
 
     func testGoldbach() {
-        measure {
-            do {
-                let expectsNil = [0, 1, 4, 5, 7, 9]
-                expectsNil.forEach {
-                    XCTAssertNil(try? $0.goldbach())
-                }
-
-                let result = try 28.goldbach()
-                XCTAssertNotNil(result)
-                XCTAssertEqual(result?.0, 5)
-                XCTAssertEqual(result?.1, 23)
-
-                XCTAssertNil(try 29.goldbach())
-            } catch {
-                XCTFail("Caught error: \(error)")
-            }
+        let expectsNil = [0, 1, 4, 5, 7, 9, 29]
+        expectsNil.forEach {
+            XCTAssertNil(try? $0.goldbach())
         }
+
+        let result = try? 28.goldbach()
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.0, 5)
+        XCTAssertEqual(result?.1, 23)
     }
 
     func testGoldbachCompositions() {
-        measure {
-            let expected = [
-                10: [3, 7],
-                12: [5, 7],
-                14: [3, 11],
-                16: [3, 13],
-                18: [5, 13],
-                20: [3, 17]
-            ]
+        let expected = [
+            10: [3, 7],
+            12: [5, 7],
+            14: [3, 11],
+            16: [3, 13],
+            18: [5, 13],
+            20: [3, 17]
+        ]
 
-            for (number, goldbach) in Int.goldbachCompositions(inRange: 9...20) {
-                let expectedGoldbach = expected[number]
+        for (number, goldbach) in Int.goldbachCompositions(inRange: 9...20) {
+            let expectedGoldbach = expected[number]
 
-                XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
-            }
-
-            let goldbachCompositions = Int.goldbachCompositionsLimited(inRange: 1...50)
-            XCTAssertEqual(goldbachCompositions, "2 = 1 + 1, 3 = 1 + 2")
+            XCTAssertEqual([goldbach.0, goldbach.1], expectedGoldbach)
         }
+
+        let goldbachCompositions = Int.goldbachCompositionsLimited(inRange: 1...20)
+        XCTAssertEqual(goldbachCompositions, "2 = 1 + 1, 3 = 1 + 2")
     }
 
     func testGoldbachCompositionsFull() {
