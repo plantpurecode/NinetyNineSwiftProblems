@@ -634,17 +634,17 @@ class GraphTests: XCTestCase {
     }
 
     func testAllSpanningTrees() {
-        let spanningTrees = StringGraph(string: "[a-b, b-c, a-c]")!.spanningTrees()
+        let spanningTrees = StringGraph(string: "[a-b, b-c, a-c]")?.spanningTrees().map { $0.description }
         let expected = [
-            StringGraph(adjacentList: [("a", ["b"]), ("b", ["c"])]),
-            StringGraph(adjacentList: [("a", ["c"]), ("b", ["c"])]),
-            StringGraph(adjacentList: [("a", ["b"]), ("a", ["c"])])
-        ].compactMap { $0 }
+            "[a-b, b-c]",
+            "[a-c, b-c]",
+            "[a-b, a-c]"
+        ]
 
-        print(expected)
-        print(spanningTrees)
-
-        XCTAssertEqual(expected.count, spanningTrees.count)
+        XCTAssertEqualCollectionIgnoringOrder(expected, spanningTrees ?? [])
+        XCTAssertEmpty(StringGraph(string: "[a, b, c]")?.spanningTrees())
+        XCTAssertEmpty(StringDigraph(string: "[a>b, b>d, c>d]")?.spanningTrees())
+        XCTAssertEmpty(StringDigraph(string: "[a, b, c]")?.spanningTrees())
     }
 
     func testDegreeForNode() {

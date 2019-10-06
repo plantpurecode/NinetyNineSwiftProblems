@@ -490,10 +490,6 @@ extension Graph {
 
         private mutating func _node(forValue value: T) -> Node {
             // swiftlint:disable force_unwrapping
-            if _nodeCache[value] == nil {
-                _nodeCache[value] = Node(value: value)
-            }
-
             return _nodeCache[value]!
             // swiftlint:enable force_unwrapping
         }
@@ -603,7 +599,6 @@ extension Graph {
         let (label, labelPositionOptional) = findLabel(in: toNodeValue)
 
         if let position = labelPositionOptional {
-            // OK to force-unwrap here because we know the label position is valid
             toNodeValue = toNodeValue[0..<position]
         }
 
@@ -646,7 +641,7 @@ extension Graph: Hashable where U: Equatable {
     func spanningTrees() -> [Graph<T, U>] {
         func spanningTreesRecursive(edges _edges: [Edge], nodes _nodes: [Node], treeEdges: [Edge] = []) -> [Graph<T, U>] {
             guard _nodes.isEmpty == false else {
-                return [Graph<T, U>(nodes: _nodes.map { $0.value }, edges: treeEdges.map { ($0.from.value, $0.to.value) })]
+                return [Graph<T, U>(nodes: nodes.map { $0.value }, edges: treeEdges.map { ($0.from.value, $0.to.value) })]
             }
 
             guard _edges.isEmpty == false else {
@@ -661,15 +656,12 @@ extension Graph: Hashable where U: Equatable {
             }
         }
 
-        return spanningTreesRecursive(edges: edges, nodes: Array(nodes.dropFirst()))
-    }
+        guard type(of: self).isDirected == false else {
+            // No spanning trees for directed graphs.
+            return []
+        }
 
-    var isTree: Bool {
-        spanningTrees().count == 1
-    }
-
-    var isConnected: Bool {
-        spanningTrees().isEmpty == false
+        return spanningTreesRecursive(edges: edges.reversed(), nodes: Array(nodes.dropLast()))
     }
 }
 
