@@ -61,6 +61,10 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
 
             return nil
         }
+
+        func connects(to nodes: [Node]) -> Bool {
+            return !(nodes.contains(from) == nodes.contains(to))  // xor
+        }
     }
 
     enum Direction {
@@ -92,7 +96,8 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
 
     }
 
-    required init(adjacentLabeledList list: [(T, [(T, U?)]?)]) {
+    typealias AdjacencyList = [(T, [(T, U?)]?)]
+    required init(adjacentLabeledList list: AdjacencyList) {
         var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 })
 
         edges = list.compactMap { tuple -> [Edge]? in
@@ -445,7 +450,7 @@ extension Graph {
         private let _edgeSeparator: String
 
         // For fast access to nodes through their underlying value
-        private let _nodeCache: [T: Node]
+        private var _nodeCache: [T: Node]
 
         // To track the edges we've already added to prevent against duplicates
         private var _allEdges = Set<String>()
@@ -483,8 +488,12 @@ extension Graph {
             return edge
         }
 
-        private func _node(forValue value: T) -> Node {
+        private mutating func _node(forValue value: T) -> Node {
             // swiftlint:disable force_unwrapping
+            if _nodeCache[value] == nil {
+                _nodeCache[value] = Node(value: value)
+            }
+
             return _nodeCache[value]!
             // swiftlint:enable force_unwrapping
         }
@@ -630,9 +639,37 @@ extension Graph: Equatable where T: Equatable {
 
 extension Graph: Hashable where U: Equatable {
     func hash(into hasher: inout Hasher) {
-        hasher.combine(description)
-        hasher.combine(nodes)
-        hasher.combine(edges)
+        hasher.combine(Set(nodes))
+        hasher.combine(Set(edges))
+    }
+
+    func spanningTrees() -> [Graph<T, U>] {
+        func spanningTreesRecursive(edges _edges: [Edge], nodes _nodes: [Node], treeEdges: [Edge] = []) -> [Graph<T, U>] {
+            guard _nodes.isEmpty == false else {
+                return [Graph<T, U>(nodes: _nodes.map { $0.value }, edges: treeEdges.map { ($0.from.value, $0.to.value) })]
+            }
+
+            guard _edges.isEmpty == false else {
+                return []
+            }
+
+            let connectedEdges = _edges.filter { $0.connects(to: _nodes) }
+            return connectedEdges.flatMap { edge -> [Graph<T, U>] in
+                spanningTreesRecursive(edges: _edges.removingAllContained(in: [edge]).reversed(),
+                                       nodes: Array(_nodes.dropLast()),
+                                       treeEdges: [edge] + treeEdges)
+            }
+        }
+
+        return spanningTreesRecursive(edges: edges, nodes: Array(nodes.dropFirst()))
+    }
+
+    var isTree: Bool {
+        spanningTrees().count == 1
+    }
+
+    var isConnected: Bool {
+        spanningTrees().isEmpty == false
     }
 }
 
@@ -644,7 +681,7 @@ extension Graph.Node: Equatable where T: Equatable {
 
 extension Graph.Edge: Equatable where T: Equatable, U: Equatable {
     static func == (lhs: Graph.Edge, rhs: Graph.Edge) -> Bool {
-        return lhs.from == rhs.from && lhs.to == rhs.to && lhs.label == rhs.label
+        return lhs.from.value == rhs.from.value && lhs.to.value == rhs.to.value && lhs.label == rhs.label
     }
 }
 

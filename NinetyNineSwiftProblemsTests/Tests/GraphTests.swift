@@ -633,6 +633,20 @@ class GraphTests: XCTestCase {
         XCTAssertNil(uncycledGraph?.findCycles(from: "i"))
     }
 
+    func testAllSpanningTrees() {
+        let spanningTrees = StringGraph(string: "[a-b, b-c, a-c]")!.spanningTrees()
+        let expected = [
+            StringGraph(adjacentList: [("a", ["b"]), ("b", ["c"])]),
+            StringGraph(adjacentList: [("a", ["c"]), ("b", ["c"])]),
+            StringGraph(adjacentList: [("a", ["b"]), ("a", ["c"])])
+        ].compactMap { $0 }
+
+        print(expected)
+        print(spanningTrees)
+
+        XCTAssertEqual(expected.count, spanningTrees.count)
+    }
+
     func testDegreeForNode() {
         let graph = StringGraph(string: "[a-b, b-c, a-c, a-d]")
 
