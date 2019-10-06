@@ -10,9 +10,9 @@ import Foundation
 
 class MTree<T> {
     let value: T
-    var children: List<MTree<T>>?
+    private (set) var children: [MTree<T>] = []
 
-    init(_ value: T, _ children: List<MTree<T>>? = nil) {
+    init(_ value: T, _ children: [MTree<T>] = []) {
         self.value = value
         self.children = children
     }
@@ -21,19 +21,15 @@ class MTree<T> {
 // MARK: - Computed Properties
 extension MTree {
     var nodeCount: Int {
-        return (children?.values ?? []).reduce(1) { res, child in
-            return res + child.nodeCount
-        }
+        children.reduce(1) { $0 + $1.nodeCount }
     }
 
     var internalPathLength: Int {
-        return (children?.values ?? []).reduce(0) { res, node in
-            return res + node.internalPathLength + node.nodeCount
-        }
+        children.reduce(0) { $0 + $1.internalPathLength + $1.nodeCount }
     }
 
-    var postOrder: List<T> {
-        return List((children?.values ?? []).flatMap { $0.postOrder.values } + [value])!
+    var postOrder: [T] {
+        children.flatMap { $0.postOrder } + [value]
     }
 }
 
@@ -51,7 +47,7 @@ extension MTree where T == String {
             }
 
             func nextNestingOffset() -> Int {
-                return string.character(atIndex: position) == "^" ? -1 : 1
+                return string[position] == "^" ? -1 : 1
             }
 
             return nextPosition(fromPosition: position + 1, atNestingLevel: nesting + nextNestingOffset())
@@ -63,13 +59,13 @@ extension MTree where T == String {
             }
 
             let endPosition = nextPosition(fromPosition: position + 1, atNestingLevel: 1)
-            let substring = string.substring(in: position..<endPosition - 1)!
+            let substring = string[position..<endPosition - 1]
 
             return [substring] + extractChildren(atPosition: endPosition)
         }
 
         let children = extractChildren(atPosition: 1).compactMap { MTree(string: $0) }
-        self.init(String(string.prefix(1)), List(children))
+        self.init(String(string.prefix(1)), children)
     }
 }
 
@@ -77,7 +73,7 @@ extension MTree where T == String {
 
 extension MTree where T: CustomStringConvertible {
     var lispyRepresentation: String {
-        guard let children = children else {
+        guard children.isEmpty == false else {
             return value.description
         }
 
@@ -106,10 +102,11 @@ extension MTree where T == String {
                 }
             }
 
-            guard position < lispyRepresentation.count,
-                let character = lispyRepresentation.character(atIndex: position) else {
+            guard position < lispyRepresentation.count else {
                 return nil
             }
+
+            let character = Character(lispyRepresentation[position])
 
             switch character {
             case " " where nesting == 0,
@@ -125,7 +122,7 @@ extension MTree where T == String {
         }
 
         func nextSubstring(at position: Int) -> String? {
-            let character = lispyRepresentation.character(atIndex: position)
+            let character = lispyRepresentation[position]
 
             guard position < lispyRepresentation.count,
                 character !=  ")",
@@ -133,10 +130,10 @@ extension MTree where T == String {
                 return nil
             }
 
-            return lispyRepresentation.substring(in: position..<endPosition)!
+            return lispyRepresentation[position..<endPosition]
         }
 
-        let firstChar = lispyRepresentation.character(atIndex: 0)
+        let firstChar = lispyRepresentation[0]
 
         guard firstChar == "(" else {
             guard firstChar != " ", firstChar != ")" else {
@@ -149,17 +146,18 @@ extension MTree where T == String {
 
         guard
             let nextSpaceIndex = nextSpace(at: 1),
-            let nextNonSpaceIndex = nextNonSpace(at: nextSpaceIndex),
-            let value = lispyRepresentation.substring(in: 1..<nextSpaceIndex)?.trimmingCharacters(in: .whitespaces),
-            value.isEmpty == false else {
+            let nextNonSpaceIndex = nextNonSpace(at: nextSpaceIndex) else {
             return nil
         }
 
-        guard let next = nextSubstring(at: nextNonSpaceIndex) else {
+        let value = lispyRepresentation[1..<nextSpaceIndex].trimmingCharacters(in: .whitespaces)
+
+        guard value.isEmpty == false,
+            let next = nextSubstring(at: nextNonSpaceIndex) else {
             return nil
         }
 
-        self.init(String(value), List([MTree(fromLispyRepresentation: next)].compactMap { $0 }))
+        self.init(String(value), [MTree(fromLispyRepresentation: next)].compactMap { $0 })
     }
 }
 
@@ -171,10 +169,10 @@ extension MTree: CustomStringConvertible where T: CustomStringConvertible {
     }
 
     private func description(at depth: Int = 0) -> String {
-        let suffix = depth == 0 && children?.length ?? 0 > 0 ? "^" : ""
+        let suffix = depth == 0 && children.isEmpty == false ? "^" : ""
 
         return [value.description,
-                children?.map { $0.description(at: depth + 1) + "^" }.joined() ?? "",
+                children.map { $0.description(at: depth + 1) + "^" }.joined(),
                 suffix].joined()
     }
 }

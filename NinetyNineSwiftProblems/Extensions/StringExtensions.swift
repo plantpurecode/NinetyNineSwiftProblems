@@ -8,24 +8,23 @@
 
 import Foundation
 
-extension String {
-    func character(atIndex index: Int) -> Character? {
-        guard index < count else {
-            return nil
-        }
-
-        return self[self.index(startIndex, offsetBy: index)]
+public extension String {
+    subscript(_ i: Int) -> Self {
+        let idx1 = index(startIndex, offsetBy: i)
+        let idx2 = index(idx1, offsetBy: 1)
+        return String(self[idx1..<idx2])
     }
 
-    func substring(in range: Range<Int>) -> String? {
-        guard range.lowerBound >= 0, range.upperBound <= count else {
-            return nil
-        }
+    subscript (r: Range<Int>) -> String {
+        let start = index(startIndex, offsetBy: r.lowerBound)
+        let end = index(startIndex, offsetBy: r.upperBound)
+        return String(self[start ..< end])
+    }
 
-        let start = index(startIndex, offsetBy: range.lowerBound)
-        let end = index(startIndex, offsetBy: range.upperBound)
-
-        return String(self[start..<end])
+    subscript (r: CountableClosedRange<Int>) -> String {
+        let startIndex = self.index(self.startIndex, offsetBy: r.lowerBound)
+        let endIndex = self.index(startIndex, offsetBy: r.upperBound - r.lowerBound)
+        return String(self[startIndex...endIndex])
     }
 
     func scan(`for` matching: (Character) -> Bool, fromIndex from: Int = 0) -> Int? {
@@ -34,7 +33,7 @@ extension String {
         }
 
         let suff = suffix(count - from)
-        guard let matchedChar = suff.filter({ matching($0) }).first else {
+        guard let matchedChar = suff.first(where: matching) else {
             return nil
         }
 

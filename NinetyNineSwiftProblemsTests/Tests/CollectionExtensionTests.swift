@@ -21,8 +21,12 @@ class CollectionExtensionTests: XCTestCase {
     }
 
     func testBookends() {
-        let (head, tail) = [1, 2, 3, 4].bookends()!
+        guard let bookends = [1, 2, 3, 4].bookends() else {
+            XCTFail("Expected non-nil bookends")
+            return
+        }
 
+        let (head, tail) = bookends
         XCTAssertEqual(head, 1)
         XCTAssertEqual(tail, 4)
 
@@ -33,11 +37,19 @@ class CollectionExtensionTests: XCTestCase {
     func testSplitHeadAndTails() {
         XCTAssertNil([].splitHeadAndTails())
 
-        let (head, tails) = [1].splitHeadAndTails()!
+        guard let (head, tails) = [1].splitHeadAndTails() else {
+            XCTFail("Expected non-nil return value from splitHeadAndTails!")
+            return
+        }
+
         XCTAssertEqual(head, 1)
         XCTAssertEqual(tails, [])
 
-        let (head1, tails1) = [1, 2, 3, 4].splitHeadAndTails()!
+        guard let (head1, tails1) = [1, 2, 3, 4].splitHeadAndTails() else {
+            XCTFail("Expected non-nil return value from splitHeadAndTails!")
+            return
+        }
+
         XCTAssertEqual(head1, 1)
         XCTAssertEqual(tails1, [2, 3, 4])
     }

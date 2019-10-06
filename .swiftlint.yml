@@ -3,8 +3,50 @@ disabled_rules: # rule identifiers to exclude from running
   - nesting
   - function_parameter_count
 opt_in_rules:
-  - control_statement
+  - anyobject_protocol
+  - array_init
+  - attributes
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - discouraged_object_literal
+  - explicit_init
+  - extension_access_modifier
+  - fallthrough
+  - fatal_error_message
+  - first_where
+  - identical_operands
+  - joined_default_parameter
+  - legacy_random
+  - let_var_whitespace
+  - last_where
+  - literal_expression_end_indentation
+  - lower_acl_than_parent
+  - modifier_order
+  - nimble_operator
+  - nslocalizedstring_key
+  - number_separator
+  - object_literal
+  - operator_usage_whitespace
+  - overridden_super_call
+  - override_in_extension
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - unneeded_parentheses_in_closure_argument
+  - xct_specific_matcher
+  - yoda_condition
+  - force_unwrapping
+  - empty_xctest_method
   - empty_count
+  - empty_string
+  - empty_collection_literal
+  - implicit_return
+  - implicitly_unwrapped_optional
+  - control_statement
   - trailing_newline
   - colon
   - comma

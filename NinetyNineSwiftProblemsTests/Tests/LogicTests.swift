@@ -14,9 +14,9 @@ class LogicTests: XCTestCase {
     private func performTruthTableTest(_ type: LogicalExpression.ExpressionType, line: UInt = #line) {
         for row in type.truthTable {
             let operands = Array(row.prefix(through: 1))
-            let evaluated = logExpr(type, operands.first!, operands.last!)
+            let evaluated = logExpr(type, operands[0], operands[1])
 
-            XCTAssertEqual(evaluated, row.last!, "\(type.rawValue) expression failed with operands (\(operands))", file: #file, line: line)
+            XCTAssertEqual(evaluated, row[2], "\(type.rawValue) expression failed with operands (\(operands))", file: #file, line: line)
         }
     }
 
@@ -51,15 +51,15 @@ class LogicTests: XCTestCase {
     func testTruthTableGeneration() {
         for type in LogicalExpression.ExpressionType.allCases {
             let result = generateTruthTable(expression: { array in
-                return logExpr(type, array.first!, array.last!)
-            }).values.map { $0.values }
+                logExpr(type, array[0], array[1])
+            })
 
             XCTAssertEqual(result, type.truthTable)
         }
 
         let table = generateTruthTable(variables: 3) { vars in
             vars[0] ∧ vars[1] ∨ vars[2]
-        }.values.map { $0.values }
+        }
 
         let expectation = [
             [true, true, true, true],
@@ -102,8 +102,8 @@ class LogicTests: XCTestCase {
 
     func testGrayCodes() {
         XCTAssertNil(gray(0))
-        XCTAssertEqual(gray(1), List("0", "1"))
-        XCTAssertEqual(gray(2), List("00", "01", "11", "10"))
-        XCTAssertEqual(gray(3), List("000", "001", "011", "010", "110", "111", "101", "100"))
+        XCTAssertEqual(gray(1), ["0", "1"])
+        XCTAssertEqual(gray(2), ["00", "01", "11", "10"])
+        XCTAssertEqual(gray(3), ["000", "001", "011", "010", "110", "111", "101", "100"])
     }
 }

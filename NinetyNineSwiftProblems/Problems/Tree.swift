@@ -40,24 +40,20 @@ extension Tree: CustomStringConvertible {
 // MARK: - Tree Factories
 
 extension Tree {
-    class func makeBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
-        return List(_makeBalancedTrees(nodes: n, value: value))
+    class func makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
+        return _makeBalancedTrees(nodes: n, value: value)
     }
 
-    class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> List<Tree<T>>? {
-        return List(_makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric })
+    class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
+        return _makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric }
     }
 
-    class func makeHeightBalancedTrees(height: Int, value: T) -> List<Tree<T>>? {
-        guard let result = _makeHeightBalancedTrees(height: height, value: value) else {
-            return nil
-        }
-
-        return List(result)
+    class func makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>] {
+        return _makeHeightBalancedTrees(height: height, value: value)
     }
 
-    class func makeHeightBalancedTrees(nodes: Int, value: T) -> List<Tree<T>>? {
-        return _makeHeightBalancedTrees(nodes: nodes, value: value).toList()
+    class func makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>] {
+        return _makeHeightBalancedTrees(nodes: nodes, value: value)
     }
 
     class func makeCompleteTree(nodes: Int, value: T) -> Tree<T>? {
@@ -88,14 +84,14 @@ extension Tree {
         return (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
     }
 
-    var leaves: List<T> {
+    var leaves: [T] {
         guard isLeaf == false else {
-            return List(value)!
+            return [value]
         }
 
         return [left, right].compactMap { $0 }.reduce([T]()) {
-            return $0 + $1.leaves.values
-        }.toList()!
+            $0 + $1.leaves
+        }
     }
 
     var nodeCount: Int {
@@ -134,32 +130,32 @@ extension Tree {
         return left.isMirror(of: right)
     }
 
-    var internalNodes: List<T>? {
+    var internalNodes: [T] {
         guard isLeaf == false else {
-            return nil
+            return []
         }
 
         let successorNodes = [left, right].compactMap { $0 }.filter { !$0.isLeaf }
         let prefix = successorNodes.isEmpty == false ? [value] : [T]()
         let internalNodes = prefix +
             successorNodes.map({ $0.value }) +
-            successorNodes.flatMap({ $0.internalNodes?.values ?? [] })
+            successorNodes.flatMap({ $0.internalNodes })
 
-        return internalNodes.toList()
+        return internalNodes
     }
 
     // MARK: Traversal
 
-    var preOrder: List<T> {
-        return List(_preOrder)!
+    var preOrder: [T] {
+        return _preOrder
     }
 
-    var inOrder: List<T> {
-        return List(_inOrder)!
+    var inOrder: [T] {
+        return _inOrder
     }
 
-    var postOrder: List<T> {
-        return List(_postOrder)!
+    var postOrder: [T] {
+        return _postOrder
     }
 }
 
@@ -212,28 +208,28 @@ extension Tree {
         return nodePairs.allSatisfy { nodePair in
             let bothNil = nodePair.allNil()
             let areMirrors = { () -> Bool in
-                guard nodePair.allNotNil() else {
+                guard let (f, l) = nodePair.bookends(), let first = f, let last = l else {
                     return false
                 }
 
-                return nodePair[0]!.isMirror(of: nodePair[1]!)
+                return first.isMirror(of: last)
             }()
 
             return bothNil || areMirrors
         }
     }
 
-    func nodes(atLevel level: Int) -> List<T>? {
+    func nodes(atLevel level: Int) -> [T] {
         switch level {
         case level where level < 1:
-            return nil
+            return []
         case 1:
-            return List(value)
+            return [value]
         default:
-            let leftNodes = left?.nodes(atLevel: level - 1)?.values ?? [T]()
-            let rightNodes = right?.nodes(atLevel: level - 1)?.values ?? [T]()
+            let leftNodes = left?.nodes(atLevel: level - 1) ?? []
+            let rightNodes = right?.nodes(atLevel: level - 1) ?? []
 
-            return List(leftNodes + rightNodes)
+            return leftNodes + rightNodes
         }
     }
 }
@@ -241,8 +237,12 @@ extension Tree {
 // MARK: - Comparable
 
 extension Tree where T: Comparable {
-    convenience init(list: List<T>!) {
-        let tree = Tree<T>(list.value)
+    convenience init?(list: [T]) {
+        guard let first = list.first else {
+            return nil
+        }
+
+        let tree = Tree<T>(first)
         list.dropFirst().forEach {
             _ = tree.insert(value: $0)
         }
@@ -252,16 +252,16 @@ extension Tree where T: Comparable {
 
     func insert(value v: T) -> Tree {
         if v < value {
-            if left == nil {
-                left = Tree(v)
+            if let left = left {
+                _ = left.insert(value: v)
             } else {
-                _ = left!.insert(value: v)
+                left = Tree(v)
             }
         } else if v > value {
-            if right == nil {
-                right = Tree(v)
+            if let right = right {
+                _ = right.insert(value: v)
             } else {
-                _ = right!.insert(value: v)
+                right = Tree(v)
             }
         }
 
@@ -281,7 +281,7 @@ extension Tree: Equatable where T: Equatable {
 
 extension Tree where T == String {
     convenience init?(string: String) {
-        guard string.isEmpty == false else {
+        guard let first = string.first else {
             return nil
         }
 
@@ -310,22 +310,23 @@ extension Tree where T == String {
         }
 
         guard string.count > 1 else {
-            self.init(String(string.first!))
+            self.init(String(first))
             return
         }
 
         let (left, commaPosition) = extractTreeString(string, start: 2, end: ",")
         let (right, _) = extractTreeString(string, start: commaPosition + 1, end: ")")
 
-        self.init(String(string.first!), Tree(string: left), Tree(string: right))
+        self.init(String(first), Tree(string: left), Tree(string: right))
     }
 }
 
 // MARK: - Traversal Based Tree Initialization
 
 extension Tree where T: Comparable {
-    convenience init?(preOrder po: List<T>, inOrder io: List<T>) {
-        guard let tree = Tree<T>._makeTraversalBasedTree(preOrder: po.values, inOrder: io.values, preStart: 0, preEnd: po.length - 1, inStart: 0, inEnd: io.length - 1) else {
+    convenience init?(preOrder po: [T], inOrder io: [T]) {
+        guard po.isEmpty == false, io.isEmpty == false,
+            let tree = Tree<T>._makeTraversalBasedTree(preOrder: po, inOrder: io, preStart: 0, preEnd: po.count - 1, inStart: 0, inEnd: io.count - 1) else {
             return nil
         }
 
@@ -338,7 +339,11 @@ extension Tree where T: Comparable {
 extension Tree where T: CustomStringConvertible {
     var dotString: String {
         return [value.description, left?.dotString, right?.dotString].map {
-            $0 == nil ? "." : $0!
+            guard let string = $0 else {
+                return "."
+            }
+
+            return string
         }.joined()
     }
 }
@@ -350,14 +355,15 @@ extension Tree where T == Character {
         }
 
         func buildTree(atPosition position: Int) -> (Tree<T>?, Int) {
-            guard let character = dotString.character(atIndex: position), character != "." else {
+            let character = dotString[position]
+            guard character != "." else {
                 return (nil, position + 1)
             }
 
             let (left, leftPosition) = buildTree(atPosition: position + 1)
             let (right, rightPosition) = buildTree(atPosition: leftPosition)
 
-            return (Tree(character, left, right), rightPosition)
+            return (Tree(Character(character), left, right), rightPosition)
         }
 
         guard let tree = buildTree(atPosition: 0).0 else {
@@ -380,7 +386,7 @@ extension Tree: Sequence {
             case postOrder
         }
 
-        let elements: List<T>!
+        let elements: [T]
 
         init(_ tree: Tree, kind: Kind = .inOrder) {
             switch kind {
@@ -394,11 +400,13 @@ extension Tree: Sequence {
         }
 
         var index = 0
+
         mutating func next() -> T? {
-            guard let next = elements[index]?.value else {
+            guard index < elements.endIndex else {
                 return nil
             }
 
+            let next = elements[index]
             index += 1
             return next
         }
@@ -548,27 +556,25 @@ extension Tree {
             .filter { $0.nodeCount == nodes }
     }
 
-    private class func _makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>]? {
+    private class func _makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>] {
         switch height {
         case height where height < 1:
-            return nil
+            return []
         case 1:
             return [Tree(value)]
         default:
-            let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)!
-            let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value) ?? Array(repeating: nil, count: maxHeightSubtree.count / 2)
+            let maxHeightSubtree = _makeHeightBalancedTrees(height: height - 1, value: value)
+            let minHeightSubtree = _makeHeightBalancedTrees(height: height - 2, value: value)
 
             return maxHeightSubtree.flatMap { l in
-                return maxHeightSubtree.map { r in
+                maxHeightSubtree.map { r in
                     Tree(value, l, r)
                 }
-            } + maxHeightSubtree.compactMap { full in
-                return minHeightSubtree.flatMap { short in
-                    return short.flatMap {
-                        [Tree(value, full, $0), Tree(value, $0, full)]
-                    }
+            } + maxHeightSubtree.flatMap { full -> [Tree<T>] in
+                minHeightSubtree.flatMap {
+                    [Tree(value, full, $0), Tree(value, $0, full)]
                 }
-            }.flatMap { $0 }
+            }
         }
     }
 
@@ -582,8 +588,8 @@ extension Tree {
             let subtrees = _makeBalancedTrees(nodes: n / 2, value: value)
 
             return subtrees.reduce([]) { res, left in
-                return res + subtrees.map { right in
-                    return Tree(value, left, right)
+                res + subtrees.map { right in
+                    Tree(value, left, right)
                 }
             }
         case n where n > 0 && n.even:
@@ -591,8 +597,8 @@ extension Tree {
             let greater = _makeBalancedTrees(nodes: (n - 1) / 2 + 1, value: value)
 
             return lesser.reduce([]) { res, less in
-                return res + greater.flatMap { great in
-                    return [Tree(value, less, great), Tree(value, great, less)]
+                res + greater.flatMap { great in
+                    [Tree(value, less, great), Tree(value, great, less)]
                 }
             }
         default:
@@ -609,7 +615,7 @@ extension Tree where T: Comparable {
 
         let preOrderValue = preOrder[preStart]
         guard let indexOfPreOrderElementInInOrder = inOrder.dropFirst(inStart).firstIndex(where: {
-            return $0 == preOrderValue
+            $0 == preOrderValue
         }) else {
             return nil
         }
@@ -643,8 +649,10 @@ private func minimumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
 }
 
 private func maximumHeightForBalancedTree(withNodeCount nodeCount: Int) -> Int {
-    return Array((1...).prefix {
+    let heightArray = Array((1...).prefix {
         let nodes = minimumNodesForBalancedTree(ofHeight: $0)
         return nodes <= nodeCount
-    }).last!
+    })
+
+    return heightArray[heightArray.count - 1]
 }

@@ -12,14 +12,14 @@ import XCTest
 
 class MultiwayTreeTests: XCTestCase {
     func testInitialization() {
-        let mtree = MTree("x", List(MTree("y")))
+        let mtree = MTree("x", [MTree("y")])
         XCTAssertEqual(mtree.value, "x")
-        XCTAssertEqual(mtree.children?.value.value, "y")
+        XCTAssertEqual(mtree.children[0].value, "y")
     }
 
     func testStringBasedInitialization() {
         let mtree = MTree(string: "afg^^c^bd^e^^^")
-        let testMtree = MTree("a", List(MTree("f", List(MTree("g"))), MTree("c"), MTree("b", List(MTree("d"), MTree("e")))))
+        let testMtree = MTree("a", [MTree("f", [MTree("g")]), MTree("c"), MTree("b", [MTree("d"), MTree("e")])])
 
         XCTAssertEqual(mtree, testMtree)
         XCTAssertEqual(MTree(string: "a"), MTree("a"))
@@ -28,7 +28,7 @@ class MultiwayTreeTests: XCTestCase {
     }
 
     func testNodeCount() {
-        let test = MTree("a", List(MTree("b", List(MTree("c")))))
+        let test = MTree("a", [MTree("b", [MTree("c")])])
 
         XCTAssertEqual(test.nodeCount, 3)
     }
@@ -36,25 +36,24 @@ class MultiwayTreeTests: XCTestCase {
     func testDescription() {
         let description = "afg^^c^bd^e^^^"
 
-        XCTAssertEqual(MTree(string: description)!.description, description)
+        XCTAssertEqual(MTree(string: description)?.description, description)
         XCTAssertEqual(MTree("a").description, "a")
     }
 
     func testInternalPathLength() {
-        let mtree = MTree(string: "afg^^c^bd^e^^^")!
+        let mtree = MTree(string: "afg^^c^bd^e^^^")
 
-        XCTAssertEqual(mtree.internalPathLength, 9)
+        XCTAssertEqual(mtree?.internalPathLength, 9)
         XCTAssertEqual(MTree("a").internalPathLength, 0)
     }
 
     func testPostOrder() {
-        let mtree = MTree(string: "afg^^c^bd^e^^^")!
-
-        XCTAssertEqual(mtree.postOrder, List("g", "f", "c", "d", "e", "b", "a"))
+        let mtree = MTree(string: "afg^^c^bd^e^^^")
+        XCTAssertEqual(mtree?.postOrder, ["g", "f", "c", "d", "e", "b", "a"])
     }
 
     func testLispyRepresentation() {
-        let mtree = MTree("a", List(MTree("b", List(MTree("c")))))
+        let mtree = MTree("a", [MTree("b", [MTree("c")])])
 
         XCTAssertEqual(mtree.lispyRepresentation, "(a (b c))")
         XCTAssertEqual(MTree("a").lispyRepresentation, "a")
@@ -62,14 +61,14 @@ class MultiwayTreeTests: XCTestCase {
 
     func testLispyRepresentationInitialization() {
         let lispyRepresentation = "(a (b c))"
-        let mtree = MTree(fromLispyRepresentation: lispyRepresentation)!
+        let mtree = MTree(fromLispyRepresentation: lispyRepresentation)
 
         XCTAssertNil(MTree(fromLispyRepresentation: "(a (b"))
         XCTAssertNil(MTree(fromLispyRepresentation: ")"))
         XCTAssertNil(MTree(fromLispyRepresentation: "()"))
 
-        XCTAssertEqual(mtree, MTree("a", List(MTree("b", List(MTree("c"))))))
-        XCTAssertEqual(mtree.lispyRepresentation, "(a (b c))")
+        XCTAssertEqual(mtree, MTree("a", [MTree("b", [MTree("c")])]))
+        XCTAssertEqual(mtree?.lispyRepresentation, "(a (b c))")
         XCTAssertEqual(MTree(fromLispyRepresentation: "a")?.lispyRepresentation, "a")
 
         XCTAssertNil(MTree(fromLispyRepresentation: ""))

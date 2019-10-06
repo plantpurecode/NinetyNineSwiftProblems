@@ -14,6 +14,10 @@ class List<T> {
     var value: T
     var nextItem: List<T>?
 
+    init(value: T) {
+        self.value = value
+    }
+
     convenience init?(_ values: T...) {
         self.init(Array(values))
     }
@@ -77,7 +81,7 @@ extension List {
     }
 
     var reversed: List<T> {
-        let copied = copy()!
+        let copied = copy()
         copied.reverse()
         return copied
     }
@@ -86,12 +90,12 @@ extension List {
 // MARK: - Functions
 
 extension List {
-    subscript(index: Int) -> List<T>? {
+    subscript(index: Int) -> List<T> {
         var node = self
 
         for _ in 0..<index {
             guard let next = node.nextItem else {
-                return nil
+                return self
             }
 
             node = next
@@ -100,8 +104,10 @@ extension List {
         return node
     }
 
-    func copy() -> List? {
-        return values.toList()
+    func copy() -> List {
+        // swiftlint:disable force_unwrapping
+        return values.toList()!
+        // swiftlint:enable force_unwrapping
     }
 
     func append(_ list: List<T>) {
@@ -118,18 +124,21 @@ extension List {
 
     func reverse() {
         var index = 1
-        var item: List<T>? = self
+        var item = self
         let len = length
 
-        while index <= len/2 {
-            let other = self[len-index]!
+        while index <= len / 2 {
+            let other = self[len - index]
             let otherValue = other.value
 
-            other.value = item!.value
-            item!.value = otherValue
+            other.value = item.value
+            item.value = otherValue
 
-            item = item!.nextItem
-            index += 1
+            if let next = item.nextItem {
+                item = next
+            }
+
+           index += 1
         }
     }
 
@@ -161,10 +170,10 @@ extension List {
 
         while let n = node {
             let next = n.nextItem
-            let newNext = List(n.value)!
+            let newNext = List(value: n.value)
 
-            for _ in 0..<times-1 {
-                newNext.append(List(n.value)!)
+            for _ in 0..<times - 1 {
+                newNext.append(List(value: n.value))
             }
 
             if let next = next {
@@ -181,7 +190,7 @@ extension List {
             return nil
         }
 
-        let head = copy()!
+        let head = copy()
 
         var index = 0
         var node = Optional(head)
@@ -237,12 +246,13 @@ extension List {
 
     func slice(_ from: Int, _ to: Int) -> List? {
         let endIndex = to - from - 1
-        guard let list = copy(),
-            let fromNode = list[from],
-            let endNode = fromNode[endIndex] else {
-                return nil
+        let list = copy()
+        guard from < list.length, endIndex > 0 else {
+            return nil
         }
 
+        let fromNode = list[from]
+        let endNode = fromNode[endIndex]
         endNode.nextItem = nil
         return fromNode
     }
@@ -279,7 +289,8 @@ extension List {
 
     func insertAt(index: Int, _ value: T) -> List? {
         let len = length
-        guard index < len, let newList = copy(), let nodeToInsert = List(value) else {
+        let newList = copy()
+        guard index < len, let nodeToInsert = List(value) else {
             return nil
         }
 
@@ -305,12 +316,12 @@ extension List {
         return left
     }
 
-    func randomSelect(_ amount: Int) -> List {
-        var new = copy()!
+    func randomSelect(_ amount: Int) -> List? {
+        var new = copy()
         var vals = [T]()
 
         for _ in 0..<amount {
-            let randomIndex = Int(arc4random_uniform(UInt32(new.length)))
+            let randomIndex = Int.random(in: 0..<new.length)
             let (rest, value) = new.removeAt(randomIndex)
             if let rest = rest {
                 new = rest
@@ -321,27 +332,33 @@ extension List {
             }
         }
 
-        return vals.toList()!
+        return vals.toList()
     }
 }
 
 // MARK: - Class Functions where T == Int
 
 extension List where T == Int {
-    class func lotto(numbers: Int, _ maximum: Int) -> List {
+    class func lotto(numbers: Int, _ maximum: Int) -> List? {
+        guard numbers > 0, maximum > 0 else {
+            return nil
+        }
+
         var values = Set<Int>()
         while values.count < numbers {
             let random = Int.random(in: 0..<maximum)
             values.insert(random)
         }
 
-        return values.toList()!
+        return values.toList()
     }
 
-    class func range(from: Int, _ to: Int) -> List {
-        precondition(from < to)
+    class func range(from: Int, to: Int) -> List? {
+        guard from < to else {
+            return nil
+        }
 
-        return Array(from...to).toList()!
+        return Array(from...to).toList()
     }
 }
 
@@ -349,7 +366,7 @@ extension List where T == Int {
 
 extension List where T == Any {
     var flattened: List<T> {
-        let list = copy()!
+        let list = copy()
         list.flatten()
         return list
     }
@@ -391,22 +408,27 @@ extension List: Equatable where T: Equatable {
     }
 
     static func == (lhs: List<T>, rhs: T) -> Bool {
-        guard lhs.length == 1, let first = lhs[0] else {
+        guard lhs.length == 1 else {
             return false
         }
 
-        return first.value == rhs
+        return lhs[0].value == rhs
     }
 }
 
 extension List where T: Equatable {
     var compressed: List<T> {
-        let list = copy()!
+        let list = copy()
         list.compress()
         return list
     }
 
     var packed: List<List<T>> {
+        // A List cannot be constructed without an initial value,
+        // Therefore, it is reasonable to force-unwrap List creation.
+
+        // swiftlint:disable force_unwrapping
+
         var node = Optional(self)
         var outerList = [List<T>]()
 
@@ -423,10 +445,11 @@ extension List where T: Equatable {
                 nn = nn?.nextItem
             } while n.value == nn?.value
 
-            outerList.append(List(innerList)!)
+            outerList.append(innerList.toList()!)
         }
 
-        return List<List<T>>(outerList)!
+        return outerList.toList()!
+        // swiftlint:enable force_unwrapping
     }
 
     func isPalindrome() -> Bool {
@@ -456,7 +479,7 @@ extension List where T: Equatable {
             let value = n.value
 
             repeat {
-                node = node!.nextItem
+                node = node?.nextItem
             } while node?.value == value
         }
     }
@@ -464,6 +487,7 @@ extension List where T: Equatable {
     // MARK: Run-length encoding
 
     func encode() -> List<(Int, T)> {
+        // swiftlint:disable force_unwrapping
         var node = Optional(self)
         var outerList = [(Int, T)]()
 
@@ -484,10 +508,12 @@ extension List where T: Equatable {
             outerList.append(tuple)
         }
 
-        return List<(Int, T)>(outerList)!
+        return outerList.toList()!
+        // swiftlint:enable force_unwrapping
     }
 
     func encodeModified() -> List<Any> {
+        // swiftlint:disable force_unwrapping
         var node = Optional(self)
         var outerList = [Any]()
 
@@ -513,6 +539,7 @@ extension List where T: Equatable {
         }
 
         return outerList.toList()!
+        // swiftlint:disable force_unwrapping
     }
 }
 
@@ -612,7 +639,7 @@ extension List {
 
             for i in 0..<gVals.count {
                 let r = list[i]
-                if index == r.count-1 {
+                if index == r.count - 1 {
                     shouldBreak = true
                     break
                 }
@@ -642,7 +669,7 @@ extension List where T == List<Any> {
     }
 
     func lsortFreq() -> List<List<Any>> {
-        let listsSortedByLengthFrequencies = values.reduce(into: [Int: (Int, [List<Any>])]()) { (result, list) in
+        let listsSortedByLengthFrequencies = values.reduce(into: [Int: (Int, [List<Any>])]()) { result, list in
             var lists: [List<Any>]?
             var freq = 1
 
@@ -677,19 +704,20 @@ extension List where T == List<Any> {
 extension List: Sequence {
     struct ListIterator: IteratorProtocol {
         typealias Element = T
+
         let list: List
+        var index = 0
 
         init(_ givenList: List) {
             list = givenList
         }
 
-        var index = 0
-
         mutating func next() -> T? {
-            guard let next = list[index] else {
+            guard index < list.length else {
                 return nil
             }
 
+            let next = list[index]
             index += 1
             return next.value
         }

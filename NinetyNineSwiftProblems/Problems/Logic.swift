@@ -113,12 +113,12 @@ func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> 
     return LogicalExpression(left: l, right: r, type: type).evaluate()
 }
 
-func generateTruthTable(variables: Int = 2, expression: @escaping ([Bool]) -> Bool) -> List<List<Bool>> {
+func generateTruthTable(variables: Int = 2, expression: @escaping ([Bool]) -> Bool) -> [[Bool]] {
     let inputs = [true, false].permutations(taking: variables, repeating: true)
 
-    return List(inputs.reduce([List<Bool>]()) { res, combo in
-        return res + [List(combo + [expression(combo)])!]
-    })!
+    return inputs.reduce([[Bool]]()) { res, combo in
+        res + [combo + [expression(combo)]]
+    }
 }
 
 infix operator ∧ : LogicalConjunctionPrecedence
@@ -171,11 +171,11 @@ private func toBinary(number: Int, ofLength length: Int) -> String {
     }
 
     return stride(from: binary.count - 1, through: 0, by: -1).reduce(padding) { str, current in
-        return str + "\(binary[current])"
+        str + "\(binary[current])"
     }
 }
 
-func gray(_ number: Int) -> List<String>? {
+func gray(_ number: Int) -> [String]? {
     guard number > 0 else {
         return nil
     }
@@ -185,5 +185,5 @@ func gray(_ number: Int) -> List<String>? {
         let x = current ^ (current >> 1)
 
         return codes + [toBinary(number: x, ofLength: number)]
-    }.toList()!
+    }
 }

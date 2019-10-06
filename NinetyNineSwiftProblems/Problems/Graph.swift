@@ -30,10 +30,10 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
             return adjacentEdges.count
         }
 
-        var neighbors: List<Node>? {
+        var neighbors: [Node] {
             return adjacentEdges.compactMap {
                 $0.partner(for: self)
-            }.toList()
+            }
         }
 
         var adjacentEdges = [Edge]()
@@ -85,45 +85,44 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }
     }
 
-    var nodes: List<Node>!
-    var edges: List<Edge>?
+    fileprivate(set) var nodes: [Node] = []
+    fileprivate(set) var edges: [Edge] = []
 
     required init() {
 
     }
 
-    required init(adjacentLabeledList list: List<(T, List<(T, U?)>?)>) {
-        var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 }.toList()!)
+    required init(adjacentLabeledList list: [(T, [(T, U?)]?)]) {
+        var helper = GraphInitializationHelper(graph: self, nodes: list.map { $0.0 })
 
-        // Explicitly specify return type of the closure given to flatMap to signal that we want to use the non-deprecated form of flatMap for concatenating together the mapped collections.
-        edges = list.flatMap { tuple -> [Edge] in
-            let (nodeValue, adjacentNodeValueTuples) = tuple
+        edges = list.compactMap { tuple -> [Edge]? in
+            let (node, adjacentNodeValueTuples) = tuple
 
-            return adjacentNodeValueTuples?.values.compactMap {
-                return helper.generateEdge(for: (nodeValue, $0.0), label: $0.1)
-            } ?? []
-        }.toList()
+            return adjacentNodeValueTuples?.compactMap {
+                helper.generateEdge(for: (node, $0.0), label: $0.1)
+            }
+        }.flatMap { $0 }
     }
 
-    var orphanNodes: List<Node>? {
-        return nodes.reversed.filter { node in
-            edges?.map { $0.from }.contains {
-                return $0.value == node.value
+    var orphanNodes: [Node] {
+        return nodes.reversed().filter { node in
+            edges.map { $0.from }.contains {
+                $0.value == node.value
             } == false
-        }.toList()
+        }
     }
 
     var description: String {
         let separator = type(of: self).humanFriendlyEdgeSeparator
         let orphanNodes = nodes.filter { node in
-            return (edges?.values ?? []).allSatisfy { (edge) -> Bool in
-                return edge.from.value != node.value && edge.to.value != node.value
+            edges.allSatisfy { edge -> Bool in
+                edge.from.value != node.value && edge.to.value != node.value
             }
         }.map { String(describing: $0.value) }
 
-        let allEdges = edges?.values.reduce([String](), { res, edge in
-            return res + [[edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)]
-        }) ?? [String]()
+        let allEdges = edges.reduce([String](), { res, edge in
+            res + [[edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)]
+        })
 
         return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
     }
@@ -140,13 +139,13 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         return edge.partner(for: node)
     }
 
-    func toTermForm() -> (List<T>, List<(T, T, U?)>?) {
-        return (nodes.map({ $0.value }).toList()!, edges?.map({ ($0.from.value, $0.to.value, $0.label) }).toList())
+    func toTermForm() -> ([T], [(T, T, U?)]) {
+        return (nodes.map({ $0.value }), edges.map({ ($0.from.value, $0.to.value, $0.label) }))
     }
 
-    func toAdjacentForm() -> List<(T, List<(T, U?)>?)>? {
-        guard let edges = edges else {
-            return nil
+    func toAdjacentForm() -> [(T, [(T, U?)]?)] {
+        guard edges.isEmpty == false else {
+            return []
         }
 
         var adjacentForm = [(T, [(T, U?)]?)]()
@@ -174,14 +173,14 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }
 
         // Process the orphan nodes
-        adjacentForm.append(contentsOf: either(orphanNodes?.values.map { ($0.value, nil) }, []))
-        return adjacentForm.map { ($0.0, $0.1?.toList()) }.toList()
+        adjacentForm.append(contentsOf: orphanNodes.map { ($0.value, nil) })
+        return adjacentForm.map { ($0.0, $0.1) }
     }
 
-    func findPaths(from: T, to: T, withEdges filteredEdges: [Edge]? = nil) -> List<List<T>>? {
+    func findPaths(from: T, to: T, withEdges filteredEdges: [Edge]? = nil) -> [[T]] {
         var paths = [[T]]()
 
-        let edgesToTraverse = filteredEdges ?? (edges?.values ?? [])
+        let edgesToTraverse = filteredEdges ?? edges
 
         for edge in edgesToTraverse {
             guard edge.from.value == from else {
@@ -192,23 +191,23 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
                 paths.append([edge.from.value, edge.to.value])
             } else {
                 let subAcyclicEdges = edgesToTraverse.filter { $0.to.value != from }
-                guard var subpaths = findPaths(from: edge.to.value, to: to, withEdges: subAcyclicEdges)?.values,
-                    subpaths.isEmpty == false else {
+                var subpaths = findPaths(from: edge.to.value, to: to, withEdges: subAcyclicEdges)
+                guard subpaths.isEmpty == false else {
                     continue
                 }
 
-                let first = subpaths.remove(at: 0).values
-                let insertionList = ([edge.from.value] + first).toList()!
+                let first = subpaths.remove(at: 0)
+                let insertionList = [edge.from.value] + first
                 subpaths.insert(insertionList, at: 0)
-                paths += subpaths.map { $0.values }
+                paths += subpaths
             }
         }
 
-        return paths.compactMap { $0.toList() }.toList()
+        return paths.filter { !$0.isEmpty }
     }
 
-    func findCycles(from: T) -> List<List<T>>? {
-        guard let node = edges?.first(where: { $0.from.value == from })?.from else {
+    func findCycles(from: T) -> [[T]]? {
+        guard let node = edges.first(where: { $0.from.value == from })?.from else {
             return nil
         }
 
@@ -216,15 +215,13 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
             edgeTarget($0, node: node)?.value
         })
 
-        var paths = targets.flatMap {
-            findPaths(from: $0, to: from)?.values ?? []
-        }.map { [from] + $0.values }
+        var paths = targets.flatMap { findPaths(from: $0, to: from) }.map { [from] + $0 }
 
         if type(of: self).isDirected == false {
             paths += targets
-            .compactMap { findPaths(from: from, to: $0)?.values }
+            .compactMap { findPaths(from: from, to: $0) }
             .flatMap { $0 }
-            .map { $0.values + [from] }
+            .map { $0 + [from] }
 
             paths += paths.map {
                 $0.reversed()
@@ -233,9 +230,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
 
         return paths
             .filter { $0.count > 3 }
-            .compactMap { $0.toList() }
             .reversed()
-            .toList()
     }
 
     func degree(forNodeWithValue value: T) -> Int {
@@ -244,21 +239,21 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         })?.degree ?? 0
     }
 
-    func nodesByDegree(strict: Bool = false) -> List<Node> {
-        return nodes.sorted(by: { (one, two) -> Bool in
+    func nodesByDegree(strict: Bool = false) -> [Node] {
+        return nodes.sorted(by: { one, two -> Bool in
             if strict {
                 return one.degree > two.degree
             }
 
             return one.degree >= two.degree
-        }).toList()!
+        })
     }
 
-    func depthFirstTraversalFrom(node: T) -> List<T>? {
-        return nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed().toList()
+    func depthFirstTraversalFrom(node: T) -> [T]? {
+        return nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed()
     }
 
-    func split() -> List<Graph<T, U>> {
+    func split() -> [Graph<T, U>] {
         func findConnected(within potentials: [Node], cache: [Node]) -> [Node] {
             guard let (head, tails) = potentials.splitHeadAndTails() else {
                 return cache
@@ -282,17 +277,16 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
             return [adjacent] + splitRecursive(remaining: remaining.removingAllContained(in: connectedNodes))
         }
 
-        // Since there can not be an empty node list in a graph, we can force-unwrap this toList() call.
-        return splitRecursive(remaining: nodes.values).toList()!
+        return splitRecursive(remaining: nodes)
     }
 
-    func coloredNodes() -> List<(T, Int)>? {
+    func coloredNodes() -> [(T, Int)]? {
         func computeColor(_ color: Int, uncolored: [Node], colored: [(Node, Int)], adjacent: Set<Node> = Set()) -> [(Node, Int)] {
             guard let current = uncolored.first else {
                 return colored
             }
 
-            let newAdjacent = adjacent.union(current.neighbors?.values ?? [])
+            let newAdjacent = adjacent.union(current.neighbors)
 
             return computeColor(color,
                                 uncolored: uncolored.dropFirst().removingAllContained(in: newAdjacent),
@@ -311,11 +305,11 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
             return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
         }
 
-        return coloredNodesRecursive(1, uncolored: nodesByDegree(strict: true).values).map { ($0.value, $1) }.toList()
+        return coloredNodesRecursive(1, uncolored: nodesByDegree(strict: true)).map { ($0.value, $1) }
     }
 
     func isBipartite() -> Bool {
-        return split().values.allSatisfy { $0.isGraphBipartite() }
+        return split().allSatisfy { $0.isGraphBipartite() }
     }
 
     func DOTRepresentation() -> String {
@@ -323,21 +317,21 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         let spacer = "    "
         let identifier = "\(directed ? "di" : "")graph"
         let edgeJoiner = directed ? "->" : "--"
-        let edgeDescriptions = edges?.map {
+        let edgeDescriptions = edges.map { edge -> String in
             var components = [
-                $0.from.value.description,
+                edge.from.value.description,
                 edgeJoiner,
-                $0.to.value.description
+                edge.to.value.description
             ]
 
-            if let label = $0.label {
+            if let label = edge.label {
                 components.append("[label=\(label.description)]")
             }
 
             return spacer + components.joined(separator: " ")
-        }.joined(separator: "\n")
+        }
 
-        var dotDataComponents = edgeDescriptions.map { [$0] } ?? []
+        var dotDataComponents = edgeDescriptions
         let completelyOrphaned = completelyOrphanedNodes
         if completelyOrphaned.isEmpty == false {
             dotDataComponents.append(completelyOrphaned.map { spacer + $0.value.description }.joined(separator: "\n"))
@@ -354,30 +348,30 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     // MARK: -
 
     private var completelyOrphanedNodes: [Node] {
-        let edgeNodes = edges?.values.flatMap { [$0.from, $0.to] } ?? []
+        let edgeNodes = edges.flatMap { [$0.from, $0.to] }
         return nodes.filter { edgeNodes.contains($0) == false }
     }
 
     private func isGraphBipartite() -> Bool {
         func isBipartiteRecursive(oddPending: [Node],
-                                evenPending: [Node],
-                                oddVisited: Set<Node> = Set(),
-                                evenVisited: Set<Node> = Set()) -> Bool {
+                                  evenPending: [Node],
+                                  oddVisited: Set<Node> = Set(),
+                                  evenVisited: Set<Node> = Set()) -> Bool {
             switch (evenPending, oddPending) {
             case (_, let odd) where !odd.isEmpty:
-                let (oddHead, oddTail) = odd.splitHeadAndTails()!
+                let oddHead = odd[0]
 
                 return oddHead.partners.allNotContained(in: oddVisited) &&
-                    isBipartiteRecursive(oddPending: oddTail,
+                    isBipartiteRecursive(oddPending: Array(odd.dropFirst()),
                                          evenPending: oddHead.partners.removingAllContained(in: evenVisited),
                                          oddVisited: oddVisited.union([oddHead]),
                                          evenVisited: evenVisited.union(oddHead.partners))
             case (let even, _) where !even.isEmpty:
-                let (evenHead, evenTail) = even.splitHeadAndTails()!
+                let evenHead = even[0]
 
                 return evenHead.partners.allNotContained(in: evenVisited) &&
                     isBipartiteRecursive(oddPending: evenHead.partners.removingAllContained(in: oddVisited),
-                                         evenPending: evenTail,
+                                         evenPending: Array(even.dropFirst()),
                                          oddVisited: oddVisited.union(evenHead.partners),
                                          evenVisited: evenVisited.union([evenHead]))
             default:
@@ -385,19 +379,19 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
             }
         }
 
-        return isBipartiteRecursive(oddPending: [], evenPending: nodesByDegree().values)
+        return isBipartiteRecursive(oddPending: [], evenPending: nodesByDegree())
     }
 
     private func adjacentForm(from nodes: [Node]) -> Self {
         return .init(adjacentLabeledList: nodes.map { n in
-            return (n.value, n.adjacentEdges.compactMap { e in
+            (n.value, n.adjacentEdges.compactMap { e in
                 guard let target = edgeTarget(e, node: n) else {
                     return nil
                 }
 
                 return (target.value, e.label)
-            }.toList())
-        }.toList()!)
+            })
+        })
     }
 }
 
@@ -424,12 +418,13 @@ extension Graph.Node {
             return subnodes + nodesByDepthRecursive(neighbors: tail, set: set.union(subnodes))
         }
 
-        guard let neighbors = neighbors, neighbors.length > 0 else {
+        let neighbors = self.neighbors
+        guard neighbors.isEmpty == false else {
             return []
         }
 
         let newSet = Set([self]).union(seen)
-        return [self] + nodesByDepthRecursive(neighbors: neighbors.values, set: newSet)
+        return [self] + nodesByDepthRecursive(neighbors: neighbors, set: newSet)
     }
 }
 
@@ -457,19 +452,16 @@ extension Graph {
 
         private let _edgeGenerationMode: EdgeGenerationMode
 
-        init(graph: Graph<T, U>, nodes: List<T>) {
-            // OK to unwrap here because we are accepting a List, which cannot be empty!
-            graph.nodes = nodes.map { Node(value: $0) }.toList()!
+        init(graph: Graph, nodes: [T]) {
+            graph.nodes = nodes.map { Node(value: $0) }
 
             _edgeSeparator = type(of: graph).humanFriendlyEdgeSeparator
             _edgeGenerationMode = EdgeGenerationMode(direction: type(of: graph).direction)
-            _nodeCache = type(of: self)._generateNodeCache(graph.nodes.values)
+            _nodeCache = type(of: self)._generateNodeCache(graph.nodes)
         }
 
         mutating func generateEdge(`for` nodePair: (T, T), label: U?) -> Edge? {
-            let from = _node(forValue: nodePair.0)!
-            let to = _node(forValue: nodePair.1)!
-
+            let (from, to) = (_node(forValue: nodePair.0), _node(forValue: nodePair.1))
             let nodeValues = [from, to].map { "\($0.value)" }
             var edgeStrings = [nodeValues.joined(separator: _edgeSeparator)]
 
@@ -491,12 +483,14 @@ extension Graph {
             return edge
         }
 
-        private func _node(forValue value: T) -> Node? {
-            return _nodeCache[value]
+        private func _node(forValue value: T) -> Node {
+            // swiftlint:disable force_unwrapping
+            return _nodeCache[value]!
+            // swiftlint:enable force_unwrapping
         }
 
         private static func _generateNodeCache(_ nodes: [Node]) -> [T: Node] {
-            return nodes.reduce([T: Node]()) { (res, node) -> [T: Node] in
+            return nodes.reduce([T: Node]()) { res, node -> [T: Node] in
                 var r = res
                 r[node.value] = node
                 return r
@@ -504,19 +498,19 @@ extension Graph {
         }
     }
 
-    convenience init(nodes n: List<T>, edges e: List<(T, T)>) {
-        self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, nil) }.toList()!)
+    convenience init(nodes n: [T], edges e: [(T, T)]) {
+        self.init(nodes: n, labeledEdges: e.map { ($0.0, $0.1, nil) })
     }
 
-    convenience init(nodes n: List<T>, labeledEdges: List<(T, T, U?)>) {
+    convenience init(nodes n: [T], labeledEdges: [(T, T, U?)]) {
         self.init()
 
         var helper = GraphInitializationHelper(graph: self, nodes: n)
-        edges = labeledEdges.compactMap { helper.generateEdge(for: ($0.0, $0.1), label: $0.2) }.toList()
+        edges = labeledEdges.compactMap { helper.generateEdge(for: ($0.0, $0.1), label: $0.2) }
     }
 
-    convenience init(adjacentList list: List<(T, List<T>?)>) {
-        self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, nil) }.toList()) }.toList()!)
+    convenience init(adjacentList list: [(T, [T]?)]) {
+        self.init(adjacentLabeledList: list.map { ($0.0, $0.1?.map { ($0, nil) }) })
     }
 
     convenience init?(string: String) {
@@ -546,12 +540,12 @@ extension Graph {
                 .forEach { a.append($0) }
 
             return a
-        }.toList()!
+        }
 
         var helper = GraphInitializationHelper(graph: self, nodes: nodes)
         edges = edgeInfoTuples
             .filter { $0.1 != nil }
-            .compactMap { helper.generateEdge(for: ($0.0, $0.1!), label: $0.2) }.toList()
+            .compactMap { helper.generateEdge(for: ($0.0, $0.1!), label: $0.2) }
     }
 
     private func _parseEdgeComponent(_ edgeComponent: String) -> (T, T?, U?)? {
@@ -561,11 +555,13 @@ extension Graph {
             var label: U?
             var position: Int?
 
-            if let labelPosition = string.scan(for: { $0 == "/" }),
-                let foundLabel = string.substring(in: labelPosition + 1..<string.count),
-                let createdLabel = U(foundLabel) {
-                label = createdLabel
-                position = labelPosition
+            if let labelPosition = string.scan(for: { $0 == "/" }) {
+                let foundLabel = string[labelPosition + 1..<string.count]
+
+                if let createdLabel = U(foundLabel) {
+                    label = createdLabel
+                    position = labelPosition
+                }
             }
 
             return (label, position)
@@ -579,7 +575,7 @@ extension Graph {
                 return nil
             }
 
-            guard let from = T.init(edgeComponent.trimmingCharacters(in: .whitespaces)) else {
+            guard let from = T(edgeComponent.trimmingCharacters(in: .whitespaces)) else {
                 return nil
             }
 
@@ -599,14 +595,14 @@ extension Graph {
 
         if let position = labelPositionOptional {
             // OK to force-unwrap here because we know the label position is valid
-            toNodeValue = toNodeValue.substring(in: 0..<position)!
+            toNodeValue = toNodeValue[0..<position]
         }
 
-        guard let concreteFromValue = T.init(fromNodeValue) else {
+        guard let concreteFromValue = T(fromNodeValue) else {
             return nil
         }
 
-        let concreteToValue = T.init(toNodeValue)
+        let concreteToValue = T(toNodeValue)
         return (from: concreteFromValue, to: concreteToValue, label: label)
     }
 
@@ -635,11 +631,8 @@ extension Graph: Equatable where T: Equatable {
 extension Graph: Hashable where U: Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(description)
-        hasher.combine(nodes.values)
-
-        if let edges = edges {
-            hasher.combine(edges.values)
-        }
+        hasher.combine(nodes)
+        hasher.combine(edges)
     }
 }
 
@@ -669,10 +662,12 @@ extension Graph.Node: CustomStringConvertible {
 
 extension Graph.Edge: CustomStringConvertible {
     var description: String {
-        let components = ["from": Optional(from.description), "to": Optional(to.description), "label": label?.description].filter { $0.value != nil }.map {
-            "\($0.key): \($0.value!)"
-        }
-
+        let components = [
+            "from": Optional(from.description),
+            "to": Optional(to.description),
+            "label": label?.description]
+            .compactMapValues { $0 }
+            .map { "\($0.key): \($0.value)" }
         return "Graph.Edge(\(components.joined(separator: ", ")))"
     }
 }

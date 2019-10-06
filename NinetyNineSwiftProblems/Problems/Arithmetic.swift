@@ -48,7 +48,7 @@ struct Primes {
             }
         }
 
-        (squareRootN+1...n).filter { !composite[$0] }.forEach { primes.append($0) }
+        (squareRootN + 1...n).filter { !composite[$0] }.forEach { primes.append($0) }
 
         return primes
     }
@@ -111,7 +111,7 @@ extension Int {
             return true
         }
 
-        return (2...Int(Double(self).squareRoot())).filter { self % $0 == 0 }.isEmpty
+        return (2...Int(Double(self).squareRoot())).contains(where: { self % $0 == 0 }) == false
     }
 
     func isCoprimeTo(_ other: Int) -> Bool {
@@ -157,7 +157,7 @@ extension Int {
             return nil
         }
 
-        for first in 0...self/2 {
+        for first in 0...self / 2 {
             let both = [first, self - first]
             if !both.allSatisfy({ $0 >= minimum }) {
                 continue
@@ -184,21 +184,21 @@ extension Int {
         }
     }
 
-    var primeFactors: List<Int>? {
+    var primeFactors: [Int]? {
         guard self > 1 else {
             return nil
         }
 
-        return List(_rawPrimeFactorization())
+        return _rawPrimeFactorization()
     }
 
-    var primeFactorMultiplicity: List<(Int, Int)> {
-        return List(primeFactorMultiplicityDict.map { ($0.key, $0.value) })!
+    var primeFactorMultiplicity: [(Int, Int)] {
+        return primeFactorMultiplicityDict.map { ($0.key, $0.value) }
     }
 
     var primeFactorMultiplicityDict: [Int: Int] {
         let factors = _rawPrimeFactorization()
-        return factors.reduce([Int: Int]()) { (res, factor) -> [Int: Int] in
+        return factors.reduce([Int: Int]()) { res, factor -> [Int: Int] in
             var result = res
             result[factor] = (res[factor] ?? 0) + 1
             return result
@@ -216,7 +216,7 @@ extension Collection where Element == Int, Index == Int {
             throw Primes.Error.negativeGreatestIndex
         }
 
-        let gi = greatestIndex == -1 ? count-1 : greatestIndex
+        let gi = greatestIndex == -1 ? count - 1 : greatestIndex
         guard gi < count else {
             throw Primes.Error.greatestIndexTooLarge
         }

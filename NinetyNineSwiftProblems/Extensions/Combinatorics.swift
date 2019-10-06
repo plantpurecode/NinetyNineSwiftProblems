@@ -99,11 +99,11 @@ private func nonRepeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int)
 private func repeatingPermutations<T>(_ elements: ArraySlice<T>, taking: Int) -> [[T]] {
     guard taking > 0 else { return [] }
     guard elements.isEmpty == false, taking > 1 else {
-        return elements.map {[$0]}
+        return elements.map { [$0] }
     }
 
     return elements.reduce([[T]]()) { res, element in
-        return res + repeatingPermutations(elements, taking: taking - 1).map {
+        res + repeatingPermutations(elements, taking: taking - 1).map {
             [element] + $0
         }
     }

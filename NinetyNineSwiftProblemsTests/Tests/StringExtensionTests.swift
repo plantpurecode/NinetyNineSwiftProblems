@@ -11,33 +11,35 @@ import XCTest
 @testable import NinetyNineSwiftProblems
 
 class StringExtensionTests: XCTestCase {
-    func testCharacterAtIndex() {
+    func testSubscriptCharacter() {
         let test = "abcdef"
-        test.enumerated().forEach {
-            XCTAssertEqual(test.character(atIndex: $0.offset), $0.element)
-        }
-
-        XCTAssertNil("abcdef".character(atIndex: 10))
+        XCTAssertEqual(test[0], "a")
+        XCTAssertEqual(test[5], "f")
     }
 
-    func testSubstring() {
-        XCTAssertEqual("abcdef".substring(in: 0..<3), "abc")
-        XCTAssertEqual("abcdef".substring(in: 3..<6), "def")
-        XCTAssertNil("abcdef".substring(in: 3..<8))
-        XCTAssertNil("abcdef".substring(in: -5..<5))
+    func testSubscriptingWithRange() {
+        let test = "abcdef"
+        XCTAssertEqual(test[0..<2], "ab")
+        XCTAssertEqual(test[3..<6], "def")
+    }
+
+    func testSubscriptingWithClosedRange() {
+        let test = "abcdef"
+        XCTAssertEqual(test[0...4], "abcde")
+        XCTAssertEqual(test[3...5], "def")
     }
 
     func testScan() {
-        XCTAssertEqual("abcdef".scan(for: { (char) -> Bool in
-            return char == "d"
+        XCTAssertEqual("abcdef".scan(for: { char -> Bool in
+            char == "d"
         }), 3)
 
-        XCTAssertNil("abcdef".scan(for: { (char) -> Bool in
-            return char == "g"
+        XCTAssertNil("abcdef".scan(for: { char -> Bool in
+            char == "g"
         }))
 
-        XCTAssertNil("abcdef".scan(for: { (char) -> Bool in
-            return char == "a"
+        XCTAssertNil("abcdef".scan(for: { char -> Bool in
+            char == "a"
         }, fromIndex: 7))
 
     }

@@ -9,12 +9,24 @@
 import XCTest
 @testable import NinetyNineSwiftProblems
 
+// swiftlint:disable force_unwrapping
+
 class ListTests: XCTestCase {
     let defaultValues = [1, 1, 2, 3, 5, 8, 6]
+    // swiftlint:disable implicitly_unwrapped_optional
     var defaultList: List<Int>!
+    // swiftlint:enable implicitly_unwrapped_optional
 
     override func setUp() {
+        super.setUp()
+
         defaultList = List(defaultValues)!
+    }
+
+    func testInitWithOneValue() {
+        let list = List(value: 5)
+        XCTAssertEqual(list.value, 5)
+        XCTAssertNil(list.nextItem)
     }
 
     func testValueEquality() {
@@ -23,7 +35,7 @@ class ListTests: XCTestCase {
 
     func testComparators() {
         // List to List
-        XCTAssertEqual(List(1, 2, 3)!, List(1, 2, 3)!)
+        XCTAssertTrue(List(1, 2, 3) == List(1, 2, 3))
 
         // List to Array
         XCTAssertTrue(List(1, 2, 3)! == [1, 2, 3])
@@ -34,7 +46,7 @@ class ListTests: XCTestCase {
     }
 
     func testReversed() {
-        XCTAssertTrue(defaultList.reversed == defaultValues.reversed())
+        XCTAssertTrue(defaultList.reversed() == defaultValues.reversed())
     }
 
     func testLength() {
@@ -44,106 +56,102 @@ class ListTests: XCTestCase {
     func testSubscripting() {
         let values = defaultList.values
         for (i, value) in values.enumerated() {
-            XCTAssertEqual(defaultList[i]?.value, value)
+            XCTAssertEqual(defaultList[i].value, value)
         }
 
         // Shouldn't allow subscripting above length
-        XCTAssertNil(defaultList[100])
+        XCTAssertEqual(defaultList[100], defaultList)
     }
 
     func testPenultimate() {
         XCTAssertTrue(defaultList.penultimate == defaultValues[defaultValues.count - 2])
-        XCTAssertNil(List(1)!.penultimate)
+        XCTAssertNil(List(value: 1).penultimate)
     }
 
     func testLast() {
-        XCTAssertTrue(defaultList.last == defaultValues.last!)
+        XCTAssertTrue(defaultList.last == defaultValues.last)
     }
 
     func testValue() {
         for (i, value) in defaultValues.enumerated() {
-            XCTAssertTrue(defaultList[i]!.value == value)
+            XCTAssertTrue(defaultList[i].value == value)
         }
     }
 
     func testReverse() {
-        let copy = defaultList.copy()!
+        let copy = defaultList.copy()
         copy.reverse()
         XCTAssertTrue(copy == defaultValues.reversed())
     }
 
     func testPalindromes() {
-        let list = List(1, 2, 3, 2, 1)!
-        XCTAssertTrue(list.isPalindrome())
-        XCTAssertTrue(List(1, 2, 3, 4)?.isPalindrome() == false)
+        XCTAssertTrue(List(1, 2, 3, 2, 1)?.isPalindrome() ?? false)
+        XCTAssertFalse(List(1, 2, 3, 4)?.isPalindrome() ?? true)
     }
 
     func testFlattening() {
-        let nestedList = List<Any>(List<Any>(1, 2, List<Any>(3, List<Any>(4, List<Any>(5, 6, 7)!)!, 8)!)!, 9)!
-        XCTAssertTrue(nestedList.flattened.values as? [Int] == [1, 2, 3, 4, 5, 6, 7, 8, 9])
+        let nestedList = List<Any>(List<Any>(1, 2, List<Any>(3, List<Any>(4, List<Any>(5, 6, 7)!)!, 8)!)!, 9)
+        XCTAssertTrue(nestedList?.flattened.values as? [Int] == [1, 2, 3, 4, 5, 6, 7, 8, 9])
     }
 
     func testCompression() {
-        let list = List(1, 2, 2, 3, 4, 4, 5)!
-        XCTAssertTrue(list.compressed == [1, 2, 3, 4, 5])
+        XCTAssertEqual(List(1, 2, 2, 3, 4, 4, 5)?.compressed.values, [1, 2, 3, 4, 5])
     }
 
     func testPacking() {
-        let list = List(1, 1, 2, 3, 3, 5, 5, 2, 2, 2)!
-        XCTAssertTrue(list.packed == [List(1, 1), List(2), List(3, 3), List(5, 5), List(2, 2, 2)].map { $0! })
+        XCTAssertEqual(List(1, 1, 2, 3, 3, 5, 5, 2, 2, 2)?.packed.values, [List(1, 1), List(2), List(3, 3), List(5, 5), List(2, 2, 2)].compactMap { $0 })
     }
 
     func testEncoding() {
-        let list = List(1, 1, 2, 2, 3, 3, 5, 5, 5, 2, 2, 2)!
+        let list = List(1, 1, 2, 2, 3, 3, 5, 5, 5, 2, 2, 2)
         let expected = [(2, 1), (2, 2), (2, 3), (3, 5), (3, 2)]
-        list.encode().values.enumerated().forEach { i, value in
+        list?.encode().values.enumerated().forEach { i, value in
             XCTAssertTrue(value == expected[i])
         }
 
-        let list2 = List(1, 2, 2, 3, 5, 5, 5, 2, 2, 2)!
-        XCTAssertTrue(list2.encodeModified().description == "[1, (2, 2), 3, (3, 5), (3, 2)]")
+        let list2 = List(1, 2, 2, 3, 5, 5, 5, 2, 2, 2)
+        XCTAssertEqual(list2?.encodeModified().description, "[1, (2, 2), 3, (3, 5), (3, 2)]")
     }
 
     func testAppending() {
-        let list = List(1)!
-        list.append(List(2)!)
-        XCTAssertTrue(list == List(1, 2))
+        let list = List(1)
+        list?.append([List(2)].compactMap { $0 }[0])
+        XCTAssertEqual(list, List(1, 2))
     }
 
     func testDecoding() {
-        let list = List((4, "a"), (1, "b"), (2, "c"), (2, "a"), (1, "d"), (4, "e"))!
-        XCTAssertTrue(list.decode() == ["a", "a", "a", "a", "b", "c", "c", "a", "a", "d", "e", "e", "e", "e"])
+        let list = List((4, "a"), (1, "b"), (2, "c"), (2, "a"), (1, "d"), (4, "e"))
+        XCTAssertEqual(list?.decode().values, ["a", "a", "a", "a", "b", "c", "c", "a", "a", "d", "e", "e", "e", "e"])
     }
 
     func testDuplication() {
-        let list1 = List("a", "b", "c", "c", "d")!
-        XCTAssertTrue(list1.duplicateNew()! == ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
+        let list1 = List("a", "b", "c", "c", "d")
+        XCTAssertEqual(list1?.duplicateNew()?.values, ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
 
         let duplicated1 = ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c", "c", "c", "d", "d", "d"]
-        let dupList1 = list1.duplicateNew(times: 2)!
+        let dupList1 = list1?.duplicateNew(times: 2)
 
-        XCTAssertTrue(dupList1 == duplicated1)
-        XCTAssertNil(list1.duplicateNew(times: 0))
+        XCTAssertEqual(dupList1?.values, duplicated1)
+        XCTAssertNil(list1?.duplicateNew(times: 0))
 
-        let list2 = List("a", "b", "c", "c", "d")!
-        list2.duplicate()
-        XCTAssertTrue(list2 == ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
+        let list2 = List("a", "b", "c", "c", "d")
+        list2?.duplicate()
+        XCTAssertEqual(list2?.values, ["a", "a", "b", "b", "c", "c", "c", "c", "d", "d"])
 
-        let list3 = List("a", "b", "c", "c", "d")!
+        let list3 = List("a", "b", "c", "c", "d")
         let duplicated2 = ["a", "a", "a", "a", "b", "b", "b", "b", "c", "c", "c", "c", "c", "c", "c", "c", "d", "d", "d", "d"]
 
         // Should NOP when passing 0 times, so run assertion again
         for t in [3, 0] {
-            list3.duplicate(times: t)
-            XCTAssertTrue(list3 == duplicated2)
+            list3?.duplicate(times: t)
+            XCTAssertEqual(list3?.values, duplicated2)
         }
     }
 
     func testDrop() {
-        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")!
-        XCTAssertTrue(list.drop(every: 3)! == ["a", "b", "d", "e", "g", "h", "j", "k"])
-
-        XCTAssertNil(list.drop(every: 0))
+        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")
+        XCTAssertEqual(list?.drop(every: 3)?.values, ["a", "b", "d", "e", "g", "h", "j", "k"])
+        XCTAssertNil(list?.drop(every: 0))
     }
 
     func testSplit() {
@@ -155,18 +163,18 @@ class ListTests: XCTestCase {
     }
 
     func testSlice() {
-        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")!
-        XCTAssertTrue(list.slice(3, 7)! == ["d", "e", "f", "g"])
+        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")
+        XCTAssertEqual(list?.slice(3, 7)?.values, ["d", "e", "f", "g"])
 
         // Should return nil when providing out-of-bounds range.
-        let len = list.length
-        XCTAssertNil(list.slice(len, len))
+        let len = list?.length ?? 0
+        XCTAssertNil(list?.slice(len, len))
     }
 
     func testRotation() {
-        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")!
-        XCTAssertTrue(list.rotate(amount: 3) == ["d", "e", "f", "g", "h", "i", "j", "k", "a", "b", "c"])
-        XCTAssertTrue(list.rotate(amount: -2) == ["j", "k", "a", "b", "c", "d", "e", "f", "g", "h", "i"])
+        let list = List("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k")
+        XCTAssertEqual(list?.rotate(amount: 3).values, ["d", "e", "f", "g", "h", "i", "j", "k", "a", "b", "c"])
+        XCTAssertEqual(list?.rotate(amount: -2).values, ["j", "k", "a", "b", "c", "d", "e", "f", "g", "h", "i"])
     }
 
     func testRemoveAt() {
@@ -189,23 +197,30 @@ class ListTests: XCTestCase {
     }
 
     func testRange() {
-        XCTAssertTrue(List.range(from: 4, 9) == [4, 5, 6, 7, 8, 9])
+        XCTAssertEqual(List.range(from: 4, to: 9)?.values, [4, 5, 6, 7, 8, 9])
+        XCTAssertNil(List.range(from: 0, to: -1))
     }
 
     func testRandomSelect() {
         let list = List("a", "b", "c", "d", "e", "f", "g", "h")!
-        let rand3 = list.randomSelect(3)
+        let rand3 = list.randomSelect(3)!
+
         let listSet = Set(list.values)
         let randSet = Set(rand3.values)
 
         XCTAssertTrue(listSet.intersection(randSet).count == rand3.length)
         XCTAssertTrue(rand3.length == 3)
+        XCTAssertNil(list.randomSelect(0))
     }
 
     func testLotto() {
         let lotto = List.lotto(numbers: 5, 20)
-        XCTAssertTrue(lotto.length == 5)
-        XCTAssertTrue(lotto.values.filter { $0 >= 20 }.isEmpty)
+        XCTAssertTrue(lotto?.length == 5)
+        XCTAssertTrue(lotto?.values.contains(where: { $0 >= 20 }) == false)
+
+        XCTAssertNil(List.lotto(numbers: 0, 1))
+        XCTAssertNil(List.lotto(numbers: 0, 0))
+        XCTAssertNil(List.lotto(numbers: 100, 0))
     }
 
     func testPermutations() {
@@ -236,7 +251,7 @@ class ListTests: XCTestCase {
 
     func testCombinations() {
         let length = 12
-        let list = List.lotto(numbers: length, 50)
+        let list = List.lotto(numbers: length, 50)!
         let group = Int.random(in: 1...length)
         let combinations = list.combinations(group)!.values.map { $0.values }
         let set = Set(list.values)
@@ -274,7 +289,7 @@ class ListTests: XCTestCase {
         XCTAssertEqual(group3.value, List<List<String>>(expectedFirstSubset.map { List($0)! })!)
 
         // Try calling it with a list of length != 9
-        let invalidLengthList = List((1...8).map { $0 })!
+        let invalidLengthList = List(Array(1...8))!
         XCTAssertNil(invalidLengthList.group3())
     }
 
@@ -335,7 +350,7 @@ class ListSequenceTests: XCTestCase {
         var index = 0
         for (i, val) in list.enumerated() {
             XCTAssertTrue(i == index)
-            XCTAssertTrue(val == list[i]?.value)
+            XCTAssertTrue(val == list[i].value)
             index += 1
         }
     }
@@ -349,3 +364,5 @@ class ListSequenceTests: XCTestCase {
         XCTAssertTrue(nilList.compactMap { $0 }.count == 1)
     }
 }
+
+// swiftlint:enable force_unwrapping

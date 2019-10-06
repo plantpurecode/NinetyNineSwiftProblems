@@ -33,31 +33,26 @@ class TreeTests: XCTestCase {
 
     func testBalancedTreeGeneration() {
         let balancedTrees = Tree.makeBalancedTrees(nodes: 4, value: "x")
-        let expected = List(
+        let expected = [
             Tree("x", Tree("x"), Tree("x", nil, Tree("x"))),
             Tree("x", Tree("x"), Tree("x", Tree("x"), nil)),
             Tree("x", Tree("x", nil, Tree("x")), Tree("x")),
             Tree("x", Tree("x", Tree("x"), nil), Tree("x"))
-        )!
+        ]
 
-        XCTAssertNotNil(balancedTrees)
-
-        if let trees = balancedTrees {
-            XCTAssertEqual(trees.length, expected.length)
-            XCTAssertTrue(trees.allSatisfy(expected.contains))
-        }
-
-        XCTAssertNil(Tree.makeBalancedTrees(nodes: 0, value: "x"))
+        XCTAssertEqual(balancedTrees.count, expected.count)
+        XCTAssertTrue(balancedTrees.allSatisfy(expected.contains))
+        XCTAssertEmpty(Tree.makeBalancedTrees(nodes: 0, value: "x"))
     }
 
     func testSymmetricBalancedTreeGeneration() {
-        let expected = List(
+        let expected = [
             Tree("x", Tree("x", nil, Tree("x")), Tree("x", Tree("x"), nil)),
             Tree("x", Tree("x", Tree("x"), nil), Tree("x", nil, Tree("x")))
-        )
+        ]
 
         XCTAssertEqual(Tree.makeSymmetricBalancedTrees(nodes: 5, value: "x"), expected)
-        XCTAssertNil(Tree.makeSymmetricBalancedTrees(nodes: 0, value: "x"))
+        XCTAssertEmpty(Tree.makeSymmetricBalancedTrees(nodes: 0, value: "x"))
     }
 
     func testSymmetric() {
@@ -82,8 +77,8 @@ class TreeTests: XCTestCase {
 
         negativeTestSet.forEach { XCTAssertFalse($0.symmetric) }
 
-        XCTAssertTrue(Tree(list: List(5, 3, 18, 1, 4, 12, 21)).symmetric)
-        XCTAssertFalse(Tree(list: List(3, 2, 5, 7, 4)).symmetric)
+        XCTAssertTrue(Tree(list: [5, 3, 18, 1, 4, 12, 21])?.symmetric ?? false)
+        XCTAssertFalse(Tree(list: [3, 2, 5, 7, 4])?.symmetric ?? true)
     }
 
     func testInsertion() {
@@ -96,58 +91,53 @@ class TreeTests: XCTestCase {
     }
 
     func testListInitializer() {
-        let tree = Tree(list: List(3, 2, 5, 7, 1))
+        let tree = Tree(list: [3, 2, 5, 7, 1])
         XCTAssertEqual(tree, Tree(3, Tree(2, Tree(1), nil), Tree(5, nil, Tree(7))))
+        XCTAssertNil(Tree(list: [Int]()))
     }
 
     func testHeightBalancedTreeGeneration() {
         let result = Tree.makeHeightBalancedTrees(height: 3, value: "x")
         XCTAssertNotNil(result)
-        XCTAssertTrue(result?.values.allSatisfy { $0.heightBalanced } ?? false)
+        XCTAssertTrue(result.allSatisfy { $0.heightBalanced })
 
-        XCTAssertNil(Tree.makeHeightBalancedTrees(height: 0, value: "a"))
+        XCTAssertEmpty(Tree.makeHeightBalancedTrees(height: 0, value: "a"))
     }
 
     func testHeightBalancedTreeGenerationReduxWithNodeCount() {
         let result = Tree.makeHeightBalancedTrees(nodes: 15, value: "x")
-
-        guard let res = result else {
-            XCTFail("Unexpectedly got a nil tree list")
-            return
-        }
-
-        XCTAssertTrue(res.values.allSatisfy { $0.heightBalanced })
+        XCTAssertTrue(result.allSatisfy { $0.heightBalanced })
     }
 
     func testLeafCount() {
         let elements = [10, 11, 8, 1, 5, 7, 12, 6, 3, 4, 9, 2]
 
-        XCTAssertEqual(Tree(list: List(elements)).leafCount, 5)
+        XCTAssertEqual(Tree(list: elements)?.leafCount, 5)
         XCTAssertEqual(Tree("x", Tree("x"), nil).leafCount, 1)
     }
 
     func testLeaves() {
         let elements = [10, 11, 8, 1, 5, 7, 12, 6, 3, 4, 9, 2]
-        let tree = Tree(list: List(elements))
+        let tree = Tree(list: elements)
 
-        XCTAssertEqual(tree.leaves, List(2, 4, 6, 9, 12))
+        XCTAssertEqual(tree?.leaves, [2, 4, 6, 9, 12])
     }
 
     func testInternalNodes() {
         let internalNodes = Tree("a", Tree("b"), Tree("c", Tree("d"), Tree("e"))).internalNodes
 
-        XCTAssertEqual(internalNodes, List("a", "c"))
+        XCTAssertEqual(internalNodes, ["a", "c"])
 
         let leafInternalNodes = Tree("a").internalNodes
-        XCTAssertNil(leafInternalNodes)
+        XCTAssertEmpty(leafInternalNodes)
     }
 
     func testNodesAtLevel() {
         let test = Tree("a", Tree("b"), Tree("c", Tree("d"), Tree("e"))).nodes(atLevel: 2)
 
-        XCTAssertEqual(test, List("b", "c"))
-        XCTAssertNil(Tree("a").nodes(atLevel: 0))
-        XCTAssertNil(Tree("a").nodes(atLevel: 2))
+        XCTAssertEqual(test, ["b", "c"])
+        XCTAssertEmpty(Tree("a").nodes(atLevel: 0))
+        XCTAssertEmpty(Tree("a").nodes(atLevel: 2))
     }
 
     func testMakingCompleteTrees() {
@@ -199,51 +189,52 @@ class TreeTests: XCTestCase {
     }
 
     func testPreOrderTraversal() {
-        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")
 
-        XCTAssertEqual(tree.preOrder, List("a", "b", "d", "e", "c", "f", "g"))
-        XCTAssertEqual(Tree("a").preOrder, List("a"))
+        XCTAssertEqual(tree?.preOrder, ["a", "b", "d", "e", "c", "f", "g"])
+        XCTAssertEqual(Tree("a").preOrder, ["a"])
     }
 
     func testInOrderTraversal() {
-        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")
 
-        XCTAssertEqual(tree.inOrder, List("d", "b", "e", "a", "c", "g", "f"))
-        XCTAssertEqual(Tree("a").inOrder, List("a"))
+        XCTAssertEqual(tree?.inOrder, ["d", "b", "e", "a", "c", "g", "f"])
+        XCTAssertEqual(Tree("a").inOrder, ["a"])
     }
 
     func testPostOrderTraversal() {
-        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")!
+        let tree = Tree(string: "a(b(d,e),c(,f(g,)))")
 
-        XCTAssertEqual(tree.postOrder, List("d", "e", "b", "g", "f", "c", "a"))
-        XCTAssertEqual(Tree("a").postOrder, List("a"))
+        XCTAssertEqual(tree?.postOrder, ["d", "e", "b", "g", "f", "c", "a"])
+        XCTAssertEqual(Tree("a").postOrder, ["a"])
     }
 
     func testPreInOrderTreeInitialization() {
         let tree = Tree(
-            preOrder: List("a", "b", "d", "e", "c", "f", "g")!,
-            inOrder: List("d", "b", "e", "a", "c", "g", "f")!
-        )!
+            preOrder: ["a", "b", "d", "e", "c", "f", "g"],
+            inOrder: ["d", "b", "e", "a", "c", "g", "f"]
+        )
 
-        XCTAssertEqual(tree.description, "a(b(d,e),c(,f(g,)))")
+        XCTAssertEqual(tree?.description, "a(b(d,e),c(,f(g,)))")
 
-        let treeConstructedFromDuplicateValues = Tree(preOrder: List("a", "b", "a")!, inOrder: List("b", "a", "a")!)!
-        XCTAssertEqual(treeConstructedFromDuplicateValues.description, "a(b,a)")
+        let treeConstructedFromDuplicateValues = Tree(preOrder: ["a", "b", "a"], inOrder: ["b", "a", "a"])
+        XCTAssertEqual(treeConstructedFromDuplicateValues?.description, "a(b,a)")
 
-        XCTAssertNil(Tree(preOrder: List("k")!, inOrder: List("a")!))
+        XCTAssertNil(Tree(preOrder: ["k"], inOrder: ["a"]))
+        XCTAssertNil(Tree(preOrder: ["k"], inOrder: []))
+        XCTAssertNil(Tree(preOrder: [], inOrder: ["a"]))
     }
 
     func testDotStringGeneration() {
-        let dotString = Tree(string: "a(b(d,e),c(,f(g,)))")!.dotString
-
+        let dotString = Tree(string: "a(b(d,e),c(,f(g,)))")?.dotString
         XCTAssertEqual(dotString, "abd..e..c.fg...")
     }
 
     func testDotStringInitialization() {
         let dotString = "abd..e..c.fg..."
-        let characterTree = Tree(dotString: dotString)!
+        let characterTree = Tree(dotString: dotString)
 
-        XCTAssertEqual(characterTree.dotString, dotString)
+        XCTAssertEqual(characterTree?.dotString, dotString)
 
         for invalidString in ["", " ", ".", "..", "..."] {
             XCTAssertNil(Tree(dotString: invalidString))
@@ -252,7 +243,7 @@ class TreeTests: XCTestCase {
 }
 
 class TreeSequenceTests: XCTestCase {
-    let tree = Tree(string: "a(b,c)")!
+    let tree = Tree("a", Tree("b"), Tree("c"))
     let inOrder = ["b", "a", "c"]
 
     func testContains() {

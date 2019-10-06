@@ -20,5 +20,5 @@ func zipAll<T>(left: [T], right: [T], leftShorterDefault: T, rightShorterDefault
     l.pad(upTo: maxCount, with: leftShorterDefault)
     r.pad(upTo: maxCount, with: rightShorterDefault)
 
-    return zip(l, r).map { $0 }
+    return Array(zip(l, r))
 }
