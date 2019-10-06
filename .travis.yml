@@ -13,4 +13,7 @@ git:
   submodules: false
 before_install: rvm use $RVM_RUBY_VERSION
 script: set -o pipefail; NSUnbufferedIO=YES xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" build test 2>&1 | ./travis/bin/xcbeautify/0.6.0/xcbeautify
-after_success: bundle exec slather
+after_success:
+  - bundle exec slather # Upload to Coveralls
+  - bundle exec slather coverage -x --output-directory ./output/coverage # Generate Cobertura XML report for Codacy
+  - java -jar ./travis/bin/codacy-coverage-reporter-assembly.jar report -l Swift -r ./output/coverage/cobertura.xml # Upload to Codacy
