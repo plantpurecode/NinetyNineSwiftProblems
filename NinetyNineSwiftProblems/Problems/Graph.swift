@@ -336,7 +336,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
 
             return minimalSpanningTreeRecursive(nodes: gNodes.filter { edgeTarget(nEdge, node: $0) != nil },
                                                 edges: gEdges.removingAllContained(in: [nEdge]),
-                                                treeEdges: [nEdge].compactMap { $0 } + treeEdges)
+                                                treeEdges: [nEdge] + treeEdges)
         }
 
         guard edges.map({ $0.label }).allNotNil() else {
