@@ -9,7 +9,7 @@ language: swift
 os: osx
 osx_image: xcode11
 git:
-  depth: 1
+  depth: 5
   submodules: false
 before_install: rvm use $RVM_RUBY_VERSION
 script: set -o pipefail; NSUnbufferedIO=YES xcodebuild -project "NinetyNineSwiftProblems.xcodeproj" -scheme "NinetyNineSwiftProblems" build test 2>&1 | ./travis/bin/xcbeautify/0.6.0/xcbeautify
