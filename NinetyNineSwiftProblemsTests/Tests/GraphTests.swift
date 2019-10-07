@@ -10,7 +10,7 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint & Equatable> {
+struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint> {
     typealias EdgeTuple = (from: T, to: T, label: U?)
     typealias EdgeClosure = () -> [EdgeTuple]
     typealias NodeClosure = () -> [T]
@@ -397,8 +397,8 @@ class GraphTests: XCTestCase {
     }
 
     func testGraphHumanFriendlyDescription() {
-        let humanFriendlyString = "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]"
-        XCTAssertEqual(StringGraph(string: humanFriendlyString)?.description, "[b-c, f-c, g-h, f-b, k-f]")
+        XCTAssertEqual(StringGraph(string: "[b-c, f-c, g-h, f-b, k-f, h-g, g-h]")?.description, "[b-c, f-c, g-h, f-b, k-f]")
+        XCTAssertEqual(Graph<String, Int>(string: "[b-c/1, f-c/2, g-h/3]")?.description, "[b-c/1, f-c/2, g-h/3]")
         XCTAssertEqual(StringGraph(string: "[a]")?.description, "[a]")
         XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
@@ -406,6 +406,8 @@ class GraphTests: XCTestCase {
     func testDigraphHumanFriendlyDescription() {
         let humanFriendlyString = "[b>c, f>c, g>h, d, f>b, k>f, h>g]"
         XCTAssertEqual(StringDigraph(string: humanFriendlyString)?.description, "[b>c, f>c, g>h, f>b, k>f, h>g, d]")
+        XCTAssertEqual(Digraph<String, Int>(string: "[b>c/1, f>c, g>h/2, d, f>b/3, k>f, h>g/4]")?.description,
+                       "[b>c/1, f>c, g>h/2, f>b/3, k>f, h>g/4, d]")
         XCTAssertEqual(StringDigraph(string: "[a]")?.description, "[a]")
         XCTAssertEqual(StringDigraph(string: "[d, e]")?.description, "[d, e]")
     }
@@ -645,6 +647,17 @@ class GraphTests: XCTestCase {
         XCTAssertEmpty(StringGraph(string: "[a, b, c]")?.spanningTrees())
         XCTAssertEmpty(StringDigraph(string: "[a>b, b>d, c>d]")?.spanningTrees())
         XCTAssertEmpty(StringDigraph(string: "[a, b, c]")?.spanningTrees())
+    }
+
+    func testMinimalSpanningTree() {
+        let minimalSpanningTree = Graph<String, Int>(string: "[a-b/1, b-c/2, a-c/3]")?.minimalSpanningTree()
+        XCTAssertEqual(minimalSpanningTree?.description, "[a-b/1, b-c/2]")
+
+        let minimalSpanningTree2 = Graph<String, Int>(string: "[a-b, b-c, a-c/1]")?.minimalSpanningTree()
+        XCTAssertNil(minimalSpanningTree2) // Incompletely labeled graph!
+
+        let minimalSpanningTree3 = Graph<String, Int>(string: "[a-b/0, b-c/1, d, a-c/3]")?.minimalSpanningTree()
+        XCTAssertNil(minimalSpanningTree3) // Disconnected graph!
     }
 
     func testDegreeForNode() {

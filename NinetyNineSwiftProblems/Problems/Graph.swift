@@ -9,7 +9,7 @@
 import Foundation
 
 typealias GraphValueTypeConstraint = LosslessStringConvertible & Hashable
-typealias GraphLabelTypeConstraint = LosslessStringConvertible
+typealias GraphLabelTypeConstraint = LosslessStringConvertible & Comparable
 
 class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStringConvertible {
     class Node: Hashable {
@@ -126,7 +126,12 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }.map { String(describing: $0.value) }
 
         let allEdges = edges.reduce([String](), { res, edge in
-            res + [[edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)]
+            var edgeComponents = [edge.from.value, edge.to.value].map { $0.description }.joined(separator: separator)
+            if let label = edge.label {
+                edgeComponents += "/\(label.description)"
+            }
+
+            return res + [edgeComponents]
         })
 
         return "[\((allEdges + orphanNodes).joined(separator: ", "))]"
@@ -283,6 +288,63 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }
 
         return splitRecursive(remaining: nodes)
+    }
+
+    func spanningTrees() -> [Graph<T, U>] {
+        func spanningTreesRecursive(edges _edges: [Edge], nodes _nodes: [Node], treeEdges: [Edge] = []) -> [Graph<T, U>] {
+            guard _nodes.isEmpty == false else {
+                return [Graph<T, U>(nodes: nodes.map { $0.value }, edges: treeEdges.map { ($0.from.value, $0.to.value) })]
+            }
+
+            guard _edges.isEmpty == false else {
+                return []
+            }
+
+            let connectedEdges = _edges.filter { $0.connects(to: _nodes) }
+            return connectedEdges.flatMap { edge -> [Graph<T, U>] in
+                spanningTreesRecursive(edges: _edges.removingAllContained(in: [edge]).reversed(),
+                                       nodes: Array(_nodes.dropLast()),
+                                       treeEdges: [edge] + treeEdges)
+            }
+        }
+
+        guard type(of: self).isDirected == false else {
+            // No spanning trees for directed graphs.
+            return []
+        }
+
+        return spanningTreesRecursive(edges: edges.reversed(), nodes: Array(nodes.dropLast()))
+    }
+
+    func minimalSpanningTree() -> Graph<T, U>? {
+        func minimalSpanningTreeRecursive(nodes gNodes: [Node], edges gEdges: [Edge], treeEdges: [Edge] = []) -> Graph<T, U>? {
+            guard gNodes.isEmpty == false else {
+                return Graph<T, U>(nodes: nodes.map { $0.value }, labeledEdges: treeEdges.map { ($0.from.value, $0.to.value, $0.label) })
+            }
+
+            let connectedEdges = gEdges.filter { $0.connects(to: gNodes) }
+            guard let firstConnectedEdge = connectedEdges.first else {
+                return nil
+            }
+
+            let nEdge = connectedEdges.reduce(firstConnectedEdge) {
+                // swiftlint:disable force_unwrapping
+                let (first, second) = ($0.label!, $1.label!)
+                // swiftlint:enable force_unwrapping
+                return first < second ? $0 : $1
+            }
+
+            return minimalSpanningTreeRecursive(nodes: gNodes.filter { edgeTarget(nEdge, node: $0) != nil },
+                                                edges: gEdges.removingAllContained(in: [nEdge]),
+                                                treeEdges: [nEdge].compactMap { $0 } + treeEdges)
+        }
+
+        guard edges.map({ $0.label }).allNotNil() else {
+            // Provided a graph with edges that do not all have labels -- invalid
+            return nil
+        }
+
+        return minimalSpanningTreeRecursive(nodes: Array(nodes.dropLast()), edges: edges)
     }
 
     func coloredNodes() -> [(T, Int)]? {
@@ -632,36 +694,10 @@ extension Graph: Equatable where T: Equatable {
     }
 }
 
-extension Graph: Hashable where U: Equatable {
+extension Graph: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(Set(nodes))
         hasher.combine(Set(edges))
-    }
-
-    func spanningTrees() -> [Graph<T, U>] {
-        func spanningTreesRecursive(edges _edges: [Edge], nodes _nodes: [Node], treeEdges: [Edge] = []) -> [Graph<T, U>] {
-            guard _nodes.isEmpty == false else {
-                return [Graph<T, U>(nodes: nodes.map { $0.value }, edges: treeEdges.map { ($0.from.value, $0.to.value) })]
-            }
-
-            guard _edges.isEmpty == false else {
-                return []
-            }
-
-            let connectedEdges = _edges.filter { $0.connects(to: _nodes) }
-            return connectedEdges.flatMap { edge -> [Graph<T, U>] in
-                spanningTreesRecursive(edges: _edges.removingAllContained(in: [edge]).reversed(),
-                                       nodes: Array(_nodes.dropLast()),
-                                       treeEdges: [edge] + treeEdges)
-            }
-        }
-
-        guard type(of: self).isDirected == false else {
-            // No spanning trees for directed graphs.
-            return []
-        }
-
-        return spanningTreesRecursive(edges: edges.reversed(), nodes: Array(nodes.dropLast()))
     }
 }
 
