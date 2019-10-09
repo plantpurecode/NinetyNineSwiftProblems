@@ -567,8 +567,8 @@ extension List {
     // MARK: Combinatorics
 
     func randomPermute() -> List {
-        let perms = values.permutations()
-        return List<T>(perms.randomElement()!)!
+        let permutation = values.randomPermutation()
+        return List<T>(permutation)!
     }
 
     func combinations(_ group: Int = 0) -> List<List<T>>? {
