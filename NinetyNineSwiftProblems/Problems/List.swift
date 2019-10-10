@@ -270,7 +270,7 @@ extension List {
         return result
     }
 
-    func removeAt(_ position: Int) -> (rest: List?, removed: T?) {
+    func remove(at position: Int) -> (rest: List?, removed: T?) {
         guard position < length else {
             return (rest: nil, removed: nil)
         }
@@ -322,7 +322,7 @@ extension List {
 
         for _ in 0..<amount {
             let randomIndex = Int.random(in: 0..<new.length)
-            let (rest, value) = new.removeAt(randomIndex)
+            let (rest, value) = new.remove(at: randomIndex)
             if let rest = rest {
                 new = rest
             }

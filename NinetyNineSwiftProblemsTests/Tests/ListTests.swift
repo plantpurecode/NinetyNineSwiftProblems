@@ -179,10 +179,10 @@ class ListTests: XCTestCase {
 
     func testRemoveAt() {
         let list = List("a", "b", "c", "d")!
-        XCTAssertTrue(list.removeAt(0) == (List("b", "c", "d"), "a"))
-        XCTAssertTrue(list.removeAt(1) == (List("a", "c", "d"), "b"))
-        XCTAssertTrue(list.removeAt(3) == (List("a", "b", "c"), "d"))
-        XCTAssertTrue(list.removeAt(4) == (nil, nil))
+        XCTAssertTrue(list.remove(at: 0) == (List("b", "c", "d"), "a"))
+        XCTAssertTrue(list.remove(at: 1) == (List("a", "c", "d"), "b"))
+        XCTAssertTrue(list.remove(at: 3) == (List("a", "b", "c"), "d"))
+        XCTAssertTrue(list.remove(at: 4) == (nil, nil))
     }
 
     func testInsertion() {
