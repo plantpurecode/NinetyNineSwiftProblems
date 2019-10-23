@@ -176,4 +176,14 @@ class ArithmeticTests: XCTestCase {
             XCTAssertEqual(Int.goldbachCompositions(inRange: 1...5_000, aboveMinimum: 50).count, 2_447)
         }
     }
+
+    func testEnglishWordRepresentation() {
+        XCTAssertEqual(0.englishWordRepresentation, "Zero")
+        XCTAssertEqual(1.englishWordRepresentation, "One")
+        XCTAssertEqual(106.englishWordRepresentation, "One Zero Six")
+        XCTAssertEqual(175.englishWordRepresentation, "One Seven Five")
+        XCTAssertEqual(209.englishWordRepresentation, "Two Zero Nine")
+        XCTAssertEqual((-106).englishWordRepresentation, "Negative One Zero Six")
+        XCTAssertEqual((-175).englishWordRepresentation, "Negative One Seven Five")
+    }
 }
