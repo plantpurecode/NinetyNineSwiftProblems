@@ -14,8 +14,8 @@
 		5222F36D21874765001C2B87 /* ListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5222F36C21874765001C2B87 /* ListTests.swift */; };
 		52272CAB21BB6684009FFB72 /* Combinatorics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52272CAA21BB6684009FFB72 /* Combinatorics.swift */; };
 		5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959921C5D876002B5932 /* OptionalExtensions.swift */; };
-		5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959B21C98A78002B5932 /* IntExtensions.swift */; };
 		5234A5B92349665C00B5B2FB /* AssertionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234A5B82349665C00B5B2FB /* AssertionHelpers.swift */; };
+		52390AC62361623100070C7D /* IntExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234959B21C98A78002B5932 /* IntExtensions.swift */; };
 		524E310921FE66340014D5B2 /* MultiwayTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E310821FE66340014D5B2 /* MultiwayTree.swift */; };
 		524E310B21FE671A0014D5B2 /* MultiwayTreeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524E310A21FE671A0014D5B2 /* MultiwayTreeTests.swift */; };
 		5261F87D21FE53E800224B61 /* Zipping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5261F87C21FE53E800224B61 /* Zipping.swift */; };
@@ -379,11 +379,11 @@
 				52CA1EEF2200FFB5008A3EFA /* StringExtensions.swift in Sources */,
 				52B5E4FE233B4E2C003E26F1 /* CollectionExtensions.swift in Sources */,
 				52D10515220757EC00A21A21 /* Graph.swift in Sources */,
-				5234959C21C98A78002B5932 /* IntExtensions.swift in Sources */,
 				52158CFB21C4001400B4980E /* Tree.swift in Sources */,
 				5234959A21C5D876002B5932 /* OptionalExtensions.swift in Sources */,
 				524E310921FE66340014D5B2 /* MultiwayTree.swift in Sources */,
 				52B3AE9621FA9DD900506491 /* AppDelegate.swift in Sources */,
+				52390AC62361623100070C7D /* IntExtensions.swift in Sources */,
 				526EA6EF218AD9B60047835E /* Arithmetic.swift in Sources */,
 				5261F87D21FE53E800224B61 /* Zipping.swift in Sources */,
 				52272CAB21BB6684009FFB72 /* Combinatorics.swift in Sources */,

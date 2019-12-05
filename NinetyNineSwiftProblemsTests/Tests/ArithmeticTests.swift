@@ -185,5 +185,6 @@ class ArithmeticTests: XCTestCase {
         XCTAssertEqual(209.englishWordRepresentation, "Two Zero Nine")
         XCTAssertEqual((-106).englishWordRepresentation, "Negative One Zero Six")
         XCTAssertEqual((-175).englishWordRepresentation, "Negative One Seven Five")
+        XCTAssertEqual(1_000.englishWordRepresentation, "One Zero Zero Zero")
     }
 }

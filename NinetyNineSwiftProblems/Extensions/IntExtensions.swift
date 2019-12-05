@@ -8,7 +8,7 @@
 
 import Foundation
 
-fileprivate let numberWords = [
+private let numberWords = [
     "zero",
     "one",
     "two",
