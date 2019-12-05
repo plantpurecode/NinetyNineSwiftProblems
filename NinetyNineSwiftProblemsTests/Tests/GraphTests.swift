@@ -313,9 +313,9 @@ class GraphTests: XCTestCase {
         XCTAssertNil(StringGraph(string: ""))
         XCTAssertNil(StringGraph(string: "[]"))
 
-        graph = StringGraph(string: "[d]")
+        graph = StringGraph(string: "[d, e]")
         XCTAssertEmpty(graph?.edges)
-        XCTAssertEqual(graph?.nodes.map { $0.value }, ["d"])
+        XCTAssertEqualCollectionIgnoringOrder(graph?.nodes.map { $0.value } ?? [], ["d", "e"])
 
         // Use a string with duplicate and opposite edges to test for correctness.
         graph = StringGraph(string: "[b-c, f-c, g-h, d, f-b, k-f, h-g, g-h]")
