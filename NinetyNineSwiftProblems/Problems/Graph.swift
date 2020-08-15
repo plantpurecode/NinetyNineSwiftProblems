@@ -550,9 +550,9 @@ extension Graph {
             return edge
         }
 
-        private mutating func _node(forValue value: T) -> Node {
+        private func _node(forValue value: T) -> Node {
             // swiftlint:disable force_unwrapping
-            return _nodeCache[value]!
+            _nodeCache[value]!
             // swiftlint:enable force_unwrapping
         }
 
