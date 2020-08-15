@@ -136,7 +136,7 @@ class ArithmeticTests: XCTestCase {
             primeCount = Primes.generate(upTo: upperBound).count
         }
 
-        print("Found \(primeCount) primes up to \(upperBound)")
+        XCTAssertEqual(primeCount, 348_513)
     }
 
     func testGoldbach() {

@@ -48,8 +48,7 @@ struct Primes {
             }
         }
 
-        (squareRootN + 1...n).filter { !composite[$0] }.forEach { primes.append($0) }
-
+        primes += (squareRootN + 1...n).filter { !composite[$0] }
         return primes
     }
 }
