@@ -10,6 +10,6 @@ import Foundation
 
 extension Set {
     func fullyIntersects(other: Set) -> Bool {
-        return intersection(other).count == other.count
+        intersection(other).count == other.count
     }
 }

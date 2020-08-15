@@ -23,7 +23,7 @@ private let numberWords = [
 
 extension Int {
     var even: Bool {
-        return self % 2 == 0
+        self % 2 == 0
     }
 
     var englishWordRepresentation: String {

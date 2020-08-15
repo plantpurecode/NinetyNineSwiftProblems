@@ -9,7 +9,7 @@
 import Foundation
 
 func zipAll<T>(left: [T], right: [T], defaultValue: T) -> [(T, T)] {
-    return zipAll(left: left, right: right, leftShorterDefault: defaultValue, rightShorterDefault: defaultValue)
+    zipAll(left: left, right: right, leftShorterDefault: defaultValue, rightShorterDefault: defaultValue)
 }
 
 func zipAll<T>(left: [T], right: [T], leftShorterDefault: T, rightShorterDefault: T) -> [(T, T)] {

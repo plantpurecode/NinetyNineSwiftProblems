@@ -27,7 +27,7 @@ struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint> {
         }
 
         func toTuple() -> EdgeTuple {
-            return (from: self.from, to: self.to, label: self.label)
+            (from: self.from, to: self.to, label: self.label)
         }
     }
 
@@ -70,7 +70,7 @@ struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint> {
 
 class RejectingLosslessInitialization: LosslessStringConvertible, Hashable {
     static func == (lhs: RejectingLosslessInitialization, rhs: RejectingLosslessInitialization) -> Bool {
-        return false
+        false
     }
 
     func hash(into hasher: inout Hasher) {
@@ -78,11 +78,11 @@ class RejectingLosslessInitialization: LosslessStringConvertible, Hashable {
     }
 
     required init?(_ description: String) {
-        return nil
+        nil
     }
 
     var description: String {
-        return "\(type(of: self))"
+        "\(type(of: self))"
     }
 }
 
@@ -808,7 +808,7 @@ struct TestGraphValue: LosslessStringConvertible, Hashable {
     }
 
     var description: String {
-        return "TestGraphValue(internalValue: \(internalValue ?? ""))"
+        "TestGraphValue(internalValue: \(internalValue ?? ""))"
     }
 
     func hash(with hasher: inout Hasher) {
@@ -816,6 +816,6 @@ struct TestGraphValue: LosslessStringConvertible, Hashable {
     }
 
     static func == (lhs: TestGraphValue, rhs: TestGraphValue) -> Bool {
-        return lhs.internalValue == rhs.internalValue
+        lhs.internalValue == rhs.internalValue
     }
 }

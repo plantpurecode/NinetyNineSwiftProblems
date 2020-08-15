@@ -110,7 +110,7 @@ extension LogicalExpression.ExpressionType {
 }
 
 func logExpr(_ type: LogicalExpression.ExpressionType, _ l: Bool, _ r: Bool) -> Bool {
-    return LogicalExpression(left: l, right: r, type: type).evaluate()
+    LogicalExpression(left: l, right: r, type: type).evaluate()
 }
 
 func generateTruthTable(variables: Int = 2, expression: @escaping ([Bool]) -> Bool) -> [[Bool]] {
@@ -123,37 +123,37 @@ func generateTruthTable(variables: Int = 2, expression: @escaping ([Bool]) -> Bo
 
 infix operator ∧ : LogicalConjunctionPrecedence
 func ∧(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.and, left, right)
+    logExpr(.and, left, right)
 }
 
 infix operator ⊼ : LogicalConjunctionPrecedence
 func ⊼(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.nand, left, right)
+    logExpr(.nand, left, right)
 }
 
 infix operator ∨ : LogicalDisjunctionPrecedence
 func ∨(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.or, left, right)
+    logExpr(.or, left, right)
 }
 
 infix operator ⊽ : LogicalDisjunctionPrecedence
 func ⊽(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.nor, left, right)
+    logExpr(.nor, left, right)
 }
 
 infix operator ⊕ : LogicalDisjunctionPrecedence
 func ⊕(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.xor, left, right)
+    logExpr(.xor, left, right)
 }
 
 infix operator → : LogicalDisjunctionPrecedence
 func →(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.impl, left, right)
+    logExpr(.impl, left, right)
 }
 
 infix operator ≡ : LogicalDisjunctionPrecedence
 func ≡(_ left: Bool, _ right: Bool) -> Bool {
-    return logExpr(.equ, left, right)
+    logExpr(.equ, left, right)
 }
 
 private func toBinary(number: Int, ofLength length: Int) -> String {

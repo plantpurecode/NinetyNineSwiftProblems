@@ -47,7 +47,7 @@ extension MTree where T == String {
             }
 
             func nextNestingOffset() -> Int {
-                return string[position] == "^" ? -1 : 1
+                string[position] == "^" ? -1 : 1
             }
 
             return nextPosition(fromPosition: position + 1, atNestingLevel: nesting + nextNestingOffset())
@@ -118,7 +118,7 @@ extension MTree where T == String {
         }
 
         func nextNonSpace(at position: Int) -> Int? {
-            return lispyRepresentation.scan(for: { $0 != " " }, fromIndex: position)
+            lispyRepresentation.scan(for: { $0 != " " }, fromIndex: position)
         }
 
         func nextSubstring(at position: Int) -> String? {
@@ -165,7 +165,7 @@ extension MTree where T == String {
 
 extension MTree: CustomStringConvertible where T: CustomStringConvertible {
     var description: String {
-        return description()
+        description()
     }
 
     private func description(at depth: Int = 0) -> String {
@@ -181,6 +181,6 @@ extension MTree: CustomStringConvertible where T: CustomStringConvertible {
 
 extension MTree: Equatable where T: Equatable, T: CustomStringConvertible {
     static func == (tree: MTree, otherTree: MTree) -> Bool {
-        return tree.description == otherTree.description
+        tree.description == otherTree.description
     }
 }

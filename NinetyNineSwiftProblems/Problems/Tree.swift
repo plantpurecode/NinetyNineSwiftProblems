@@ -41,19 +41,19 @@ extension Tree: CustomStringConvertible {
 
 extension Tree {
     class func makeBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
-        return _makeBalancedTrees(nodes: n, value: value)
+        _makeBalancedTrees(nodes: n, value: value)
     }
 
     class func makeSymmetricBalancedTrees(nodes n: Int, value: T) -> [Tree<T>] {
-        return _makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric }
+        _makeBalancedTrees(nodes: n, value: value).filter { $0.symmetric }
     }
 
     class func makeHeightBalancedTrees(height: Int, value: T) -> [Tree<T>] {
-        return _makeHeightBalancedTrees(height: height, value: value)
+        _makeHeightBalancedTrees(height: height, value: value)
     }
 
     class func makeHeightBalancedTrees(nodes: Int, value: T) -> [Tree<T>] {
-        return _makeHeightBalancedTrees(nodes: nodes, value: value)
+        _makeHeightBalancedTrees(nodes: nodes, value: value)
     }
 
     class func makeCompleteTree(nodes: Int, value: T) -> Tree<T>? {
@@ -77,11 +77,11 @@ extension Tree {
 
 extension Tree {
     var isLeaf: Bool {
-        return [left, right].compactMap { $0 }.isEmpty
+        [left, right].compactMap { $0 }.isEmpty
     }
 
     var leafCount: Int {
-        return (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
+        (isLeaf ? 1 : 0) + (left?.leafCount).orZero + (right?.leafCount).orZero
     }
 
     var leaves: [T] {
@@ -95,27 +95,27 @@ extension Tree {
     }
 
     var nodeCount: Int {
-        return 1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
+        1 + (left?.nodeCount ?? 0) + (right?.nodeCount ?? 0)
     }
 
     var height: Int {
-        return 1 + Swift.max(leftHeight, rightHeight)
+        1 + Swift.max(leftHeight, rightHeight)
     }
 
     var leftHeight: Int {
-        return (left?.height).orZero
+        (left?.height).orZero
     }
 
     var rightHeight: Int {
-        return (right?.height).orZero
+        (right?.height).orZero
     }
 
     var heightBalanced: Bool {
-        return _heightDifferential <= 1
+        _heightDifferential <= 1
     }
 
     var completelyBalanced: Bool {
-        return !(_nodeCountDifferential > 1)
+        !(_nodeCountDifferential > 1)
     }
 
     var symmetric: Bool {
@@ -147,15 +147,15 @@ extension Tree {
     // MARK: Traversal
 
     var preOrder: [T] {
-        return _preOrder
+        _preOrder
     }
 
     var inOrder: [T] {
-        return _inOrder
+        _inOrder
     }
 
     var postOrder: [T] {
-        return _postOrder
+        _postOrder
     }
 }
 
@@ -273,7 +273,7 @@ extension Tree where T: Comparable {
 
 extension Tree: Equatable where T: Equatable {
     static func == (lhs: Tree, rhs: Tree) -> Bool {
-        return lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
+        lhs.value == rhs.value && lhs.right == rhs.right && lhs.left == rhs.left
     }
 }
 
@@ -338,7 +338,7 @@ extension Tree where T: Comparable {
 
 extension Tree where T: CustomStringConvertible {
     var dotString: String {
-        return [value.description, left?.dotString, right?.dotString].map {
+        [value.description, left?.dotString, right?.dotString].map {
             guard let string = $0 else {
                 return "."
             }
@@ -413,11 +413,11 @@ extension Tree: Sequence {
     }
 
     func makeIterator() -> TreeIterator {
-        return TreeIterator(self)
+        TreeIterator(self)
     }
 
     func makeIterator(ofKind kind: TreeIterator.Kind) -> TreeIterator {
-        return TreeIterator(self, kind: kind)
+        TreeIterator(self, kind: kind)
     }
 }
 
@@ -440,25 +440,25 @@ extension Tree {
     // MARK: Traversal
 
     private var _preOrder: [T] {
-        return [value] + (left?._preOrder ?? []) + (right?._preOrder ?? [])
+        [value] + (left?._preOrder ?? []) + (right?._preOrder ?? [])
     }
 
     private var _inOrder: [T] {
-        return (left?._inOrder ?? []) + [value] + (right?._inOrder ?? [])
+        (left?._inOrder ?? []) + [value] + (right?._inOrder ?? [])
     }
 
     private var _postOrder: [T] {
-        return (left?._postOrder ?? []) + (right?._postOrder ?? []) + [value]
+        (left?._postOrder ?? []) + (right?._postOrder ?? []) + [value]
     }
 
     // MARK: Layout
 
     private var _depth: Int {
-        return Swift.max(left?._depth ?? 0, right?._depth ?? 0) + 1
+        Swift.max(left?._depth ?? 0, right?._depth ?? 0) + 1
     }
 
     private var _leftmostDepth: Int {
-        return (left?._leftmostDepth ?? 0) + 1
+        (left?._leftmostDepth ?? 0) + 1
     }
 
     private var _bounds: [(Int, Int)] {
@@ -512,7 +512,7 @@ extension Tree {
     }
 
     private func _layoutBinaryTree2Internal(x: Int, depth: Int, exp: Int) -> PositionedTree<T> {
-        return PositionedTree<T>(x: x,
+        PositionedTree<T>(x: x,
                                  y: depth,
                                  value: value,
                                  left?._layoutBinaryTree2Internal(x: x - (2 ^^ exp),
@@ -538,11 +538,11 @@ extension Tree {
     // MARK: Differentials
 
     private var _heightDifferential: Int {
-        return abs(leftHeight - rightHeight)
+        abs(leftHeight - rightHeight)
     }
 
     private var _nodeCountDifferential: Int {
-        return abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
+        abs((left?.nodeCount).orZero - (right?.nodeCount).orZero)
     }
 
     // MARK: - Tree Builder Functions

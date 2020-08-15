@@ -35,11 +35,11 @@ class List<T> {
 
 extension List {
     var last: T? {
-        return lastNode?.value
+        lastNode?.value
     }
 
     var lastNode: List<T>? {
-        return nextItem?.lastNode ?? self
+        nextItem?.lastNode ?? self
     }
 
     var penultimate: T? {
@@ -400,11 +400,11 @@ extension List where T == Any {
 
 extension List: Equatable where T: Equatable {
     static func == (lhs: List<T>, rhs: List<T>) -> Bool {
-        return lhs.values == rhs.values
+        lhs.values == rhs.values
     }
 
     static func == (lhs: List<T>, rhs: [T]) -> Bool {
-        return lhs.values == rhs
+        lhs.values == rhs
     }
 
     static func == (lhs: List<T>, rhs: T) -> Bool {
@@ -665,7 +665,7 @@ extension List where T == List<Any> {
     // MARK: Sorting
 
     func lsort() -> List<List<Any>> {
-        return List(values.sorted { $0.length < $1.length })!
+        List(values.sorted { $0.length < $1.length })!
     }
 
     func lsortFreq() -> List<List<Any>> {
@@ -724,7 +724,7 @@ extension List: Sequence {
     }
 
     func makeIterator() -> ListIterator {
-        return ListIterator(self)
+        ListIterator(self)
     }
 }
 
@@ -746,6 +746,6 @@ extension List: CustomStringConvertible {
 
 extension Sequence {
     func toList() -> List<Element>? {
-        return List(map { $0 })
+        List(map { $0 })
     }
 }

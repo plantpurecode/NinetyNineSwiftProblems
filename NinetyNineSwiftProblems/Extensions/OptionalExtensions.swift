@@ -21,6 +21,6 @@ extension Optional {
 
 extension Optional where Wrapped: Numeric {
     var orZero: Wrapped {
-        return or(0)
+        or(0)
     }
 }

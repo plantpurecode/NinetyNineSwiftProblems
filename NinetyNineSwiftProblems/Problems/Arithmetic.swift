@@ -11,7 +11,7 @@ import Foundation
 infix operator ^^ : MultiplicationPrecedence
 
 func ^^ (radix: Int, power: Int) -> Int {
-    return Int(pow(Double(radix), Double(power)))
+    Int(pow(Double(radix), Double(power)))
 }
 
 struct Primes {
@@ -70,7 +70,7 @@ extension Int {
     }
 
     static func lcm(_ m: Int, _ n: Int) -> Int {
-        return m / gcd(m, n) * n
+        m / gcd(m, n) * n
     }
 
     static func listPrimesInRange(range: ClosedRange<Int>) -> List<Int>? {
@@ -82,7 +82,7 @@ extension Int {
     }
 
     static func goldbachCompositions(inRange range: ClosedRange<Int>, aboveMinimum minimum: Int = 2) -> [Int: (Int, Int)] {
-        return range.dropFirst().reduce([:]) { result, current in
+        range.dropFirst().reduce([:]) { result, current in
             guard let goldbach = try? current.goldbach(aboveMinimum: minimum) else {
                 return result
             }
@@ -115,7 +115,7 @@ extension Int {
     }
 
     func isCoprimeTo(_ other: Int) -> Bool {
-        return Int.gcd(self, other) == 1
+        Int.gcd(self, other) == 1
     }
 
     private func _rawPrimeFactorization() -> [Int] {
@@ -193,7 +193,7 @@ extension Int {
     }
 
     var primeFactorMultiplicity: [(Int, Int)] {
-        return primeFactorMultiplicityDict.map { ($0.key, $0.value) }
+        primeFactorMultiplicityDict.map { ($0.key, $0.value) }
     }
 
     var primeFactorMultiplicityDict: [Int: Int] {

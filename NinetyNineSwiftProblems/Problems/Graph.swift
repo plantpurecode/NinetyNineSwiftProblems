@@ -27,11 +27,11 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }
 
         var degree: Int {
-            return adjacentEdges.count
+            adjacentEdges.count
         }
 
         var neighbors: [Node] {
-            return adjacentEdges.compactMap {
+            adjacentEdges.compactMap {
                 $0.partner(for: self)
             }
         }
@@ -63,7 +63,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
         }
 
         func connects(to nodes: [Node]) -> Bool {
-            return !(nodes.contains(from) == nodes.contains(to))  // xor
+            !(nodes.contains(from) == nodes.contains(to))  // xor
         }
     }
 
@@ -73,11 +73,11 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     class var direction: Direction {
-        return .Indirected
+        .Indirected
     }
 
     class var humanFriendlyEdgeSeparator: String {
-        return "-"
+        "-"
     }
 
     final class var isDirected: Bool {
@@ -110,7 +110,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     var orphanNodes: [Node] {
-        return nodes.reversed().filter { node in
+        nodes.reversed().filter { node in
             edges.map { $0.from }.contains {
                 $0.value == node.value
             } == false
@@ -150,7 +150,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     func toTermForm() -> ([T], [(T, T, U?)]) {
-        return (nodes.map({ $0.value }), edges.map({ ($0.from.value, $0.to.value, $0.label) }))
+        (nodes.map({ $0.value }), edges.map({ ($0.from.value, $0.to.value, $0.label) }))
     }
 
     func toAdjacentForm() -> [(T, [(T, U?)]?)] {
@@ -244,13 +244,13 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     func degree(forNodeWithValue value: T) -> Int {
-        return nodes.first(where: {
+        nodes.first(where: {
             $0.value == value
         })?.degree ?? 0
     }
 
     func nodesByDegree(strict: Bool = false) -> [Node] {
-        return nodes.sorted(by: { one, two -> Bool in
+        nodes.sorted(by: { one, two -> Bool in
             if strict {
                 return one.degree > two.degree
             }
@@ -260,7 +260,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     func depthFirstTraversalFrom(node: T) -> [T]? {
-        return nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed()
+        nodes.first(where: { $0.value == node })?.nodesByDepth(Set()).map { $0.value }.reversed()
     }
 
     func split() -> [Graph<T, U>] {
@@ -376,7 +376,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     func isBipartite() -> Bool {
-        return split().allSatisfy { $0.isGraphBipartite() }
+        split().allSatisfy { $0.isGraphBipartite() }
     }
 
     func DOTRepresentation() -> String {
@@ -450,7 +450,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
     }
 
     private func adjacentForm(from nodes: [Node]) -> Self {
-        return .init(adjacentLabeledList: nodes.map { n in
+        .init(adjacentLabeledList: nodes.map { n in
             (n.value, n.adjacentEdges.compactMap { e in
                 guard let target = edgeTarget(e, node: n) else {
                     return nil
@@ -464,7 +464,7 @@ class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStr
 
 extension Graph.Node {
     var partners: Set<Graph.Node> {
-        return Set(adjacentEdges.compactMap {
+        Set(adjacentEdges.compactMap {
             $0.partner(for: self)
         })
     }
@@ -557,7 +557,7 @@ extension Graph {
         }
 
         private static func _generateNodeCache(_ nodes: [Node]) -> [T: Node] {
-            return nodes.reduce([T: Node]()) { res, node -> [T: Node] in
+            nodes.reduce([T: Node]()) { res, node -> [T: Node] in
                 var r = res
                 r[node.value] = node
                 return r
@@ -684,13 +684,13 @@ extension Graph {
 }
 
 class Digraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: Graph<T, U> {
-    override class var direction: Direction { return .Directed }
-    override class var humanFriendlyEdgeSeparator: String { return ">" }
+    override class var direction: Direction { .Directed }
+    override class var humanFriendlyEdgeSeparator: String { ">" }
 }
 
 extension Graph: Equatable where T: Equatable {
     static func == (lhs: Graph, rhs: Graph) -> Bool {
-        return lhs.description == rhs.description
+        lhs.description == rhs.description
     }
 }
 
@@ -703,13 +703,13 @@ extension Graph: Hashable {
 
 extension Graph.Node: Equatable where T: Equatable {
     static func == (lhs: Graph.Node, rhs: Graph.Node) -> Bool {
-        return lhs.value == rhs.value && lhs.degree == rhs.degree
+        lhs.value == rhs.value && lhs.degree == rhs.degree
     }
 }
 
 extension Graph.Edge: Equatable where T: Equatable, U: Equatable {
     static func == (lhs: Graph.Edge, rhs: Graph.Edge) -> Bool {
-        return lhs.from.value == rhs.from.value && lhs.to.value == rhs.to.value && lhs.label == rhs.label
+        lhs.from.value == rhs.from.value && lhs.to.value == rhs.to.value && lhs.label == rhs.label
     }
 }
 
@@ -721,7 +721,7 @@ extension Graph.Edge: Hashable where U: Equatable {
 
 extension Graph.Node: CustomStringConvertible {
     var description: String {
-        return "Graph.Node(value: \(value))"
+        "Graph.Node(value: \(value))"
     }
 }
 

@@ -10,25 +10,25 @@ import Foundation
 
 extension Collection {
     func allNil<T>() -> Bool where Element == T? {
-        return allSatisfy { $0 == nil }
+        allSatisfy { $0 == nil }
     }
 
     func allNotNil<T>() -> Bool where Element == T? {
-        return allSatisfy { $0 != nil }
+        allSatisfy { $0 != nil }
     }
 }
 
 extension Collection where Element: Equatable {
     func allContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
-        return allSatisfy { collection.contains($0) }
+        allSatisfy { collection.contains($0) }
     }
 
     func allNotContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
-        return allSatisfy { !collection.contains($0) }
+        allSatisfy { !collection.contains($0) }
     }
 
     func removingAllContained<C: Collection>(in collection: C) -> [Element] where C.Element == Element {
-        return filter { !collection.contains($0) }
+        filter { !collection.contains($0) }
     }
 }
 
