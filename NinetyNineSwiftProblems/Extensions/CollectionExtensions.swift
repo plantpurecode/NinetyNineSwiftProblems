@@ -19,6 +19,14 @@ extension Collection {
 }
 
 extension Collection where Element: Equatable {
+    static func - (_ this: Self, _ other: Element) -> [Self.Element] {
+        this.filter { $0 != other }
+    }
+
+    static func -<C: Collection> (_ this: Self, _ other: C) -> [Self.Element] where C.Element == Element {
+        this.removingAllContained(in: other)
+    }
+
     func allContained<C: Collection>(in collection: C) -> Bool where C.Element == Element {
         allSatisfy { collection.contains($0) }
     }

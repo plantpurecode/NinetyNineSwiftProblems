@@ -62,7 +62,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             return nil
         }
 
-        func connects(to nodes: [Node]) -> Bool {
+        func connects<T: Collection>(to nodes: T) -> Bool where T.Element == Node {
             !(nodes.contains(from) == nodes.contains(to))  // xor
         }
     }
@@ -284,7 +284,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             let connectedNodes = findConnected(within: [head], cache: [])
             let adjacent = adjacentForm(from: connectedNodes)
 
-            return [adjacent] + splitRecursive(remaining: remaining.removingAllContained(in: connectedNodes))
+            return [adjacent] + splitRecursive(remaining: remaining - connectedNodes)
         }
 
         return splitRecursive(remaining: nodes)
@@ -302,8 +302,8 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
 
             let connectedEdges = _edges.filter { $0.connects(to: _nodes) }
             return connectedEdges.flatMap { edge -> [Graph<T, U>] in
-                spanningTreesRecursive(edges: _edges.removingAllContained(in: [edge]).reversed(),
-                                       nodes: Array(_nodes.dropLast()),
+                spanningTreesRecursive(edges: (_edges - edge).reversed(),
+                                       nodes: _nodes.dropLast(),
                                        treeEdges: [edge] + treeEdges)
             }
         }
@@ -313,7 +313,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             return []
         }
 
-        return spanningTreesRecursive(edges: edges.reversed(), nodes: Array(nodes.dropLast()))
+        return spanningTreesRecursive(edges: edges.reversed(), nodes: nodes.dropLast())
     }
 
     func minimalSpanningTree() -> Graph<T, U>? {
@@ -335,7 +335,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             }
 
             return minimalSpanningTreeRecursive(nodes: gNodes.filter { edgeTarget(nEdge, node: $0) != nil },
-                                                edges: gEdges.removingAllContained(in: [nEdge]),
+                                                edges: gEdges - nEdge,
                                                 treeEdges: [nEdge] + treeEdges)
         }
 
@@ -344,7 +344,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             return nil
         }
 
-        return minimalSpanningTreeRecursive(nodes: Array(nodes.dropLast()), edges: edges)
+        return minimalSpanningTreeRecursive(nodes: nodes.dropLast(), edges: edges)
     }
 
     func coloredNodes() -> [(T, Int)]? {
@@ -356,7 +356,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             let newAdjacent = adjacent.union(current.neighbors)
 
             return computeColor(color,
-                                uncolored: uncolored.dropFirst().removingAllContained(in: newAdjacent),
+                                uncolored: uncolored.dropFirst() - newAdjacent,
                                 colored: [(current, color)] + colored,
                                 adjacent: newAdjacent)
         }
@@ -367,7 +367,7 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
             }
 
             let newColored = computeColor(color, uncolored: uncolored, colored: colored)
-            let newUncolored = uncolored.removingAllContained(in: newColored.map { $0.0 })
+            let newUncolored = uncolored - newColored.map { $0.0 }
 
             return coloredNodesRecursive(color + 1, uncolored: newUncolored, colored: newColored)
         }
@@ -430,14 +430,14 @@ class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
 
                 return oddHead.partners.allNotContained(in: oddVisited) &&
                     isBipartiteRecursive(oddPending: Array(odd.dropFirst()),
-                                         evenPending: oddHead.partners.removingAllContained(in: evenVisited),
+                                         evenPending: oddHead.partners - evenVisited,
                                          oddVisited: oddVisited.union([oddHead]),
                                          evenVisited: evenVisited.union(oddHead.partners))
             case (let even, _) where !even.isEmpty:
                 let evenHead = even[0]
 
                 return evenHead.partners.allNotContained(in: evenVisited) &&
-                    isBipartiteRecursive(oddPending: evenHead.partners.removingAllContained(in: oddVisited),
+                    isBipartiteRecursive(oddPending: evenHead.partners - oddVisited,
                                          evenPending: Array(even.dropFirst()),
                                          oddVisited: oddVisited.union(evenHead.partners),
                                          evenVisited: evenVisited.union([evenHead]))
@@ -599,11 +599,10 @@ extension Graph {
         let nodes = edgeInfoTuples.reduce([T]()) { array, tuple in
             var a = array
 
-            [tuple.0, tuple.1]
-                // Filter out nil (i.e. when there is only one node in the component.)
-                .compactMap { $0 }
-                // Ensure we don't have duplicate nodes
-                .removingAllContained(in: a)
+            // Filter out nil (i.e. when there is only one node in the component.)
+            // Ensure we don't have duplicate nodes
+            ([tuple.0, tuple.1]
+                .compactMap { $0 } - a)
                 .forEach { a.append($0) }
 
             return a
