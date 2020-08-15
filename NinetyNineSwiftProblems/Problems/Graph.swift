@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias GraphValueTypeConstraint = LosslessStringConvertible & Hashable
-typealias GraphLabelTypeConstraint = LosslessStringConvertible & Comparable
+typealias GraphValue = LosslessStringConvertible & Hashable
+typealias GraphLabel = LosslessStringConvertible & Comparable
 
-class Graph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: CustomStringConvertible {
+class Graph<T: GraphValue, U: GraphLabel>: CustomStringConvertible {
     class Node: Hashable {
         // MARK: Hashable
         func hash(into hasher: inout Hasher) {
@@ -683,7 +683,7 @@ extension Graph {
     }
 }
 
-class Digraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>: Graph<T, U> {
+class Digraph<T: GraphValue, U: GraphLabel>: Graph<T, U> {
     override class var direction: Direction { .Directed }
     override class var humanFriendlyEdgeSeparator: String { ">" }
 }

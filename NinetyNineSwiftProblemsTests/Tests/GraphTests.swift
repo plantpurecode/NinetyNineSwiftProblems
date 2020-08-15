@@ -10,7 +10,7 @@ import XCTest
 
 @testable import NinetyNineSwiftProblems
 
-struct TestGraphData<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint> {
+struct TestGraphData<T: GraphValue, U: GraphLabel> {
     typealias EdgeTuple = (from: T, to: T, label: U?)
     typealias EdgeClosure = () -> [EdgeTuple]
     typealias NodeClosure = () -> [T]
@@ -90,7 +90,7 @@ typealias StringGraph = Graph<String, String>
 typealias StringDigraph = Digraph<String, String>
 
 class GraphTests: XCTestCase {
-    func _testGraph<T: GraphValueTypeConstraint, U: GraphLabelTypeConstraint>(_ graph: Graph<T, U>?, nodes: [T], edges: [TestGraphData<T, U>.Edge], file: StaticString = #file, line: UInt = #line) {
+    func _testGraph<T: GraphValue, U: GraphLabel>(_ graph: Graph<T, U>?, nodes: [T], edges: [TestGraphData<T, U>.Edge], file: StaticString = #file, line: UInt = #line) {
         let data = TestGraphData(graph: graph, expectedNodes: nodes, expectedEdges: edges)
         data.runAssertions(file: file, line: line)
     }
