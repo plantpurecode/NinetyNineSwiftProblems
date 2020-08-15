@@ -34,14 +34,6 @@ extension Collection {
     func randomPermutation(repeating: Bool = false) -> [Element] {
         permutations(taking: nil, repeating: repeating).randomElement() ?? []
     }
-
-    func randomCombination<T>(using rng: inout T, repeating: Bool = false) -> [Element] where T: RandomNumberGenerator {
-        combinations(taking: nil, repeating: repeating).randomElement(using: &rng) ?? []
-    }
-
-    func randomPermutation<T>(using rng: inout T, repeating: Bool = false) -> [Element] where T: RandomNumberGenerator {
-        permutations(taking: nil, repeating: repeating).randomElement(using: &rng) ?? []
-    }
 }
 
 // MARK: - Miscellaneous

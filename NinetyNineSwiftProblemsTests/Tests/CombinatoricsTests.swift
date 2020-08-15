@@ -101,20 +101,17 @@ class CombinatoricsTests: XCTestCase {
         numbers.randomCombination(repeating: true).forEach {
             XCTAssertTrue(numbers.contains($0))
         }
-
-        var rng = TestingRandomNumberGenerator(values: [0, 8, 8])
         XCTAssertEmpty([].randomCombination())
         XCTAssertEmpty([].randomCombination(repeating: true))
-        XCTAssertEmpty([].randomCombination(using: &rng))
-
-        XCTAssertEqual(numbers.randomCombination(using: &rng), numbers.combinations().first)
-        XCTAssertEqual(numbers.randomCombination(using: &rng, repeating: true), [2, 3, 3])
     }
 
     func testRandomPermutation() {
         let numbers = Array(1...3)
+        let perm = numbers.randomPermutation()
 
-        numbers.randomPermutation().forEach {
+        XCTAssertEqual(perm.count, numbers.count)
+
+        perm.forEach {
             XCTAssertTrue(numbers.contains($0))
         }
 
@@ -122,25 +119,7 @@ class CombinatoricsTests: XCTestCase {
             XCTAssertTrue(numbers.contains($0))
         }
 
-        var rng = TestingRandomNumberGenerator(values: [0, 16, 16])
-
         XCTAssertEmpty([].randomPermutation())
         XCTAssertEmpty([].randomPermutation(repeating: true))
-        XCTAssertEmpty([].randomPermutation(using: &rng))
-
-        XCTAssertEqual(numbers.randomPermutation(using: &rng), [3, 1, 2])
-        XCTAssertEqual(numbers.randomPermutation(using: &rng, repeating: true), [3, 3, 1])
-    }
-}
-
-struct TestingRandomNumberGenerator: RandomNumberGenerator {
-    var values: [Int]
-
-    mutating func next() -> UInt64 {
-        guard values.isEmpty == false else {
-            return .max
-        }
-
-        return UInt64(values.removeFirst())
     }
 }
