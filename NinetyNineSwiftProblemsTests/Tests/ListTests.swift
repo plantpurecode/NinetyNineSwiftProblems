@@ -46,7 +46,7 @@ class ListTests: XCTestCase {
     }
 
     func testReversed() {
-        XCTAssertTrue(defaultList.reversed() == defaultValues.reversed())
+        XCTAssertTrue(defaultList.reversed == defaultValues.reversed())
     }
 
     func testLength() {
